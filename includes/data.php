@@ -10,6 +10,20 @@ function e(string $text): string
     return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 }
 
+
+function format_tanggal($tanggal)
+{
+    $format = new IntlDateFormatter(
+        'id_ID',
+        IntlDateFormatter::LONG,
+        IntlDateFormatter::SHORT,
+        'Asia/Jakarta'
+    );
+
+    return $format->format(strtotime($tanggal));
+}
+
+
 /**
  * Cari file gambar event di assets/img (event-1.jpg / .jpeg / .png / .webp).
  * Mengembalikan path relatif, atau null kalau belum ada filenya.
@@ -58,13 +72,13 @@ $partners = ['Logo Mitra 1', 'Logo Mitra 2', 'Logo Mitra 3', 'Logo Mitra 4', 'Lo
 
 $categories = [
     'semua'    => 'Semua Kategori',
-    'seminar'  => 'Seminar',
-    'workshop' => 'Workshop',
-    'kompetisi'=> 'Kompetisi',
-    'webinar'  => 'Webinar',
+    'Seminar'  => 'Seminar',
+    'Workshop' => 'Workshop',
+    'Kompetisi'=> 'Kompetisi',
+    'Webinar'  => 'Webinar',
 ];
 
-$cardCategories = ['seminar', 'workshop', 'kompetisi', 'webinar', 'seminar', 'workshop'];
+$cardCategories = ['semua', 'Workshop', 'Kompetisi', 'Webinar', 'Seminar', 'Workshop'];
 $events = [];
 foreach ($cardCategories as $i => $cat) {
     $n = $i + 1;

@@ -1,4 +1,14 @@
-<?php require __DIR__ . '/includes/data.php'; ?>
+
+<?php
+
+require __DIR__ . '/includes/data.php';
+require __DIR__ . '/includes/koneksi.php';
+require __DIR__ . '/app/models/Event.php';
+
+$eventModel = new Event($pdo);
+$eventsDb = $eventModel->getAll();
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -104,21 +114,21 @@
         </div>
 
         <div class="event-grid" id="event-grid">
-            <?php foreach ($events as $ev):
-                $img = event_image($ev['n']); ?>
-                <article class="event-card" data-category="<?= e($ev['category']) ?>">
-                    <div class="event-cover cover-<?= $ev['n'] ?>"
+            <?php foreach ($eventsDb as $ev):
+                $img = event_image($ev['id_event']); ?>
+                <article class="event-card" data-category="<?= e($ev['nama_kategori']) ?>">
+                    <div class="event-cover cover-<?= $ev['id_event'] ?>"
                          <?php if ($img): ?>style="background-image: url('<?= e($img) ?>');"<?php endif; ?>>
-                        <span class="event-badge"><?= e(strtoupper($ev['category'])) ?></span>
+                        <span class="event-badge"><?= e(strtoupper($ev['nama_kategori'])) ?></span>
                     </div>
                     <div class="event-body">
-                        <h3><?= e($ev['title']) ?></h3>
+                        <h3><?= e($ev['nama_event']) ?></h3>
                         <div class="event-meta">
-                            <p>Tanggal: <?= e($ev['date']) ?></p>
-                            <p>Lokasi: <?= e($ev['location']) ?></p>
+                            <p>Tanggal: <?= e( date('d M Y : H:i', strtotime($ev['tanggal_mulai']))) ?></p>
+                            <p>Lokasi: <?= e($ev['lokasi']) ?></p>
                         </div>
                         <div class="event-footer">
-                            <span class="price"><?= e($ev['price']) ?></span>
+                            <span class="price">Rp.<?= e($ev['harga']) ?></span>
                             <a class="btn btn-primary" href="<?= e($routes['detail']) ?>">Daftar</a>
                         </div>
                     </div>
