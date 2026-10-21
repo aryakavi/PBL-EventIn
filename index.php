@@ -4,7 +4,7 @@
 require __DIR__ . '/includes/data.php';
 require __DIR__ . '/includes/koneksi.php';
 require __DIR__ . '/app/models/Event.php';
-
+   
 $eventModel = new Event($pdo);
 $eventsDb = $eventModel->getAll();
 ?>
