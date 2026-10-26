@@ -51,8 +51,7 @@ $routes = [
 $stats = [
     ['500+', 'Event Terdaftar'],
     ['10K+', 'Peserta Aktif'],
-    ['100+', 'Mitra Industri'],
-    ['50+',  'Mitra Kampus'],
+    ['100+', 'Organisasi Kampus'],
 ];
 
 $featured = [
