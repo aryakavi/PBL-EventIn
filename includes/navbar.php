@@ -1,4 +1,7 @@
-<?php require_once __DIR__ . '/data.php'; ?>
+<?php
+require_once __DIR__ . '/data.php';
+$activeNav = $activeNav ?? 'home';
+?>
 <header class="navbar">
     <a class="brand" href="<?= e($routes['home']) ?>">
         <span class="brand-mark">EI</span>
@@ -6,9 +9,9 @@
     </a>
 
     <nav class="menu" aria-label="Menu utama">
-        <a class="is-active" href="<?= e($routes['home']) ?>">Beranda</a>
-        <a href="<?= e($routes['explore']) ?>">Jelajah Event</a>
-        <a href="<?= e($routes['partners']) ?>">Mitra</a>
+        <a class="<?= $activeNav === 'home' ? 'is-active' : '' ?>" href="<?= e($routes['home']) ?>">Beranda</a>
+        <a class="<?= $activeNav === 'explore' ? 'is-active' : '' ?>" href="<?= e($routes['explore']) ?>">Jelajah Event</a>
+        <a class="<?= $activeNav === 'partners' ? 'is-active' : '' ?>" href="<?= e($routes['partners']) ?>">Mitra</a>
     </nav>
 
     <div class="actions">

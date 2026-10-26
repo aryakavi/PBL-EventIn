@@ -43,9 +43,10 @@ $routes = [
     'home'      => 'index.php',
     'explore'   => '#',   // explore-events.php
     'partners'  => '#partners',
-    'login'     => '#',
-    'register'  => '#',
-    'detail'    => '#',   // event-detail.php
+    'login'          => 'login.php',
+    'register'       => 'register.php',
+    'register_admin' => 'register-admin.php',
+    'detail'         => '#',   // event-detail.php
 ];
 
 $stats = [
