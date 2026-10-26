@@ -105,7 +105,7 @@ $eventsDb = $eventController->index();
         <!-- Event terpopuler -->
         <section class="section popular">
             <div class="section-header">
-                <h2>hi Event Terpopuler</h2>
+                <h2>Event Terpopuler</h2>
                 <p>Pilih kategori yang paling sesuai dengan minat akademik dan karir Anda</p>
                 <hr>
             </div>

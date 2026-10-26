@@ -28,14 +28,15 @@
 
     chips.forEach(function (chip) {
         chip.addEventListener('click', function () {
-            var filter = chip.getAttribute('data-filter');
+            var filter = (chip.getAttribute('data-filter') || '').toLowerCase();
 
             chips.forEach(function (c) {
                 c.classList.toggle('is-active', c === chip);
             });
 
             cards.forEach(function (card) {
-                var match = filter === 'semua' || card.getAttribute('data-category') === filter;
+                var category = (card.getAttribute('data-category') || '').toLowerCase();
+                var match = filter === 'semua' || category === filter;
                 card.hidden = !match;
             });
         });

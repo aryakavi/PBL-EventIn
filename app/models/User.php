@@ -27,9 +27,9 @@ class User
 
     public function getUkms(): array
     {
-        $sql = "SELECT id_ukm, nama, singkatan, deskripsi
+        $sql = "SELECT id_ukm, nama_ukm AS nama, singkatan, deskripsi
                 FROM ukm
-                ORDER BY nama ASC";
+                ORDER BY nama_ukm ASC";
 
         $stmt = $this->db->query($sql);
 
@@ -88,19 +88,20 @@ class User
                 'no_hp' => $noHp,
                 'nim' => $nim,
                 'password_hash' => $passwordHash,
-                'role' => 'admin_ukm'
+                'role' => 'admin'
             ]);
 
             $idPengguna = (int) $stmt->fetchColumn();
 
-            $sql = "INSERT INTO admin_ukm (id_pengguna, id_ukm)
-                    VALUES (:id_pengguna, :id_ukm)";
+            $sql = "INSERT INTO admin_ukm (id_pengguna, id_ukm, peran)
+                    VALUES (:id_pengguna, :id_ukm, :peran)";
 
             $stmt = $this->db->prepare($sql);
 
             $stmt->execute([
                 'id_pengguna' => $idPengguna,
-                'id_ukm' => $idUkm
+                'id_ukm' => $idUkm,
+                'peran' => 'Ketua'
             ]);
 
             $this->db->commit();
