@@ -2,13 +2,14 @@
 
 require __DIR__ . '/includes/data.php';
 require __DIR__ . '/includes/koneksi.php';
-require __DIR__ . '/app/models/Event.php';
+// require __DIR__ . '/app/models/Event.php';
 require __DIR__ . '/app/controllers/EventController.php';
+require __DIR__ . '/app/controllers/DashboardController.php';
 
-$eventModel = new Event($pdo);
-$eventController = new EventController($eventModel);
+$eventController = new EventController($pdo);
+$dashboardController = new DashboardController($pdo);
 $eventsDb = $eventController->index();
-
+$stats = $dashboardController->index();
 ?>
 
 
@@ -30,7 +31,6 @@ $eventsDb = $eventController->index();
     <?php require __DIR__ . '/includes/navbar.php'; ?>
 
     <main>
-
         <!-- Hero -->
         <section class="hero">
             <div class="hero-text">

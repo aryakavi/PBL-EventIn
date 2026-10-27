@@ -35,6 +35,15 @@ class User
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function countPeserta(): int
+    {
+        $sql = "SELECT COUNT(*) FROM pengguna WHERE
+        role='pengguna'";
+
+        $stmt=$this->db->query($sql);
+        return (int) $stmt->fetchColumn();
+    }
+
     public function registerPengguna(
         string $nama,
         string $email,
