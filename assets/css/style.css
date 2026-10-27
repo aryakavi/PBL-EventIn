@@ -112,6 +112,7 @@ button { font-family: inherit; }
 .menu { display: flex; align-items: center; gap: 32px; font-size: 14px; color: var(--slate-600); }
 .menu a:hover { color: var(--ink); }
 .menu a.is-active { color: var(--ink); font-weight: 700; }
+.page-auth .menu a.is-active { color: var(--slate-600); font-weight: 400; }
 .actions { display: flex; align-items: center; gap: 12px; }
 
 /* ---------- Hero ---------- */
@@ -303,7 +304,7 @@ button { font-family: inherit; }
 
 .event-grid {
     display: grid;
-    grid-template-columns: repeat(3, 400px);
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 32px 24px;
 }
 .event-card {
@@ -566,10 +567,6 @@ button { font-family: inherit; }
 /* ==========================================================
    Responsif (desain Figma hanya 1440px; ini tambahan agar tidak pecah)
    ========================================================== */
-@media (max-width: 1360px) {
-    .event-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-
 @media (max-width: 1100px) {
     :root { --gutter: 40px; }
     .hero { flex-direction: column; align-items: stretch; }
@@ -582,6 +579,7 @@ button { font-family: inherit; }
     .org-grid { grid-template-columns: repeat(2, 1fr); }
     .footer-grid { flex-wrap: wrap; }
     .menu { gap: 20px; }
+    .partner-row { justify-content: flex-start; }
 }
 
 @media (max-width: 700px) {
