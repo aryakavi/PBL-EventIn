@@ -40,3 +40,11 @@ $daftarEvent = [
     ['nama' => 'Coding Camp Mahasiswa 2026',    'tanggal' => '01 Juni 2026',  'lokasi' => 'Aula Gedung C',       'peserta' => '12/40',   'status' => 'Draft',   'kategori' => 'Workshop'],
     ['nama' => 'Pelepasan Alumni & Job Fair',   'tanggal' => '10 Juni 2026',  'lokasi' => 'Plaza Kampus Utama',  'peserta' => '500/500', 'status' => 'Selesai', 'kategori' => 'Seminar'],
 ];
+
+$daftarPembayaran = [
+    ['id' => 'TX-100293', 'peserta' => 'Shin Ryujin',    'event' => 'Simposium Nasional AI', 'jumlah' => 'Rp 75.000', 'status' => 'Menunggu',     'metode' => 'Virtual Account Bank Mandiri', 'waktu' => '24 April 2026, 14:32 WIB', 'berkas' => 'mandiri-transfer.png'],
+    ['id' => 'TX-100294', 'peserta' => 'Park Jinyoung',  'event' => 'Workshop No-Code App',  'jumlah' => 'Rp 75.000', 'status' => 'Diverifikasi', 'metode' => 'Virtual Account BNI',          'waktu' => '23 April 2026, 09:15 WIB', 'berkas' => 'bni-transfer.png'],
+    ['id' => 'TX-100295', 'peserta' => 'Dewi Kurniasari','event' => 'Workshop No-Code App',  'jumlah' => 'Rp 75.000', 'status' => 'Menunggu',     'metode' => 'Virtual Account BCA',          'waktu' => '22 April 2026, 20:47 WIB', 'berkas' => 'bca-transfer.jpg'],
+    ['id' => 'TX-100296', 'peserta' => 'Dewi Lestari',   'event' => 'Simposium Nasional AI', 'jumlah' => 'Rp 75.000', 'status' => 'Diverifikasi', 'metode' => 'Virtual Account Bank Mandiri', 'waktu' => '21 April 2026, 11:05 WIB', 'berkas' => 'mandiri-transfer.png'],
+    ['id' => 'TX-100297', 'peserta' => 'Ahmad Dani',     'event' => 'Simposium Nasional AI', 'jumlah' => 'Rp 75.000', 'status' => 'Ditolak',      'metode' => 'QRIS',                         'waktu' => '20 April 2026, 16:23 WIB', 'berkas' => 'qris-bukti.jpg'],
+];
