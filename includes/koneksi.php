@@ -19,4 +19,4 @@ try {
 } catch (PDOException $e) {
     error_log('Database connection failed: ' . $e->getMessage());
     throw $e;
-}
+}//
