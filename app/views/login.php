@@ -86,7 +86,7 @@ $activeNav = '';
                         Belum memiliki akun?
                         <a class="link-orange" href="<?= e($routes['register'] ?? '#') ?>">Daftar sebagai Peserta</a>
                         <span class="dot" aria-hidden="true">&bull;</span>
-                        <a class="link-blue" href="#">Daftarkan Organisasi</a>
+                        <a class="link-blue" href="#">Daftarkan Admin</a>
                     </div>
                 </section>
 

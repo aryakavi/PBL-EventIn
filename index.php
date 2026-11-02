@@ -43,9 +43,24 @@ if ($page === 'login') {
 }
 
 if ($page === 'register') {
-    require_once __DIR__ . '/app/controllers/AuthController.php';
-
-    $authController = new AuthController($pdo);
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        require_once __DIR__ . '/app/controllers/AuthController.php';
+        $authController = new AuthController($pdo);
+        $registerResult = $authController->registerPengguna([
+            'nama' => $_POST['nama'],
+            'email' => $_POST['email'],
+            'no_hp' => $_POST['no_hp'] ?? '',
+            'nim' => $_POST['nim'],
+            'password' => $_POST['password'],
+            'konfirmasi_password' => $_POST['konfirmasi_password']
+        ]);
+        if ($registerResult['success']) {
+            echo "<script>
+            alert('Register berhasil silahkan login')</script>";
+            header('Location: ?page=login');
+            exit;
+        }
+    }
 
     require __DIR__ . '/app/views/register.php';
     exit;

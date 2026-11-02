@@ -31,7 +31,7 @@ $activeNav = '';
                 <h1 class="auth-title">Daftar sebagai Peserta</h1>
                 <p class="auth-subtitle">Kelola tiket event kampus, sertifikat SKPI, dan pendaftaran kegiatan akademik Anda.</p>
 
-                <form class="auth-form">
+                <form class="auth-form" action="?page=register" method="post">
                     <div class="field">
                         <label for="nama">Nama Lengkap</label>
                         <div class="input-wrap">
