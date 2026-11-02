@@ -137,7 +137,7 @@ $activeNav = '';
                     Sudah memiliki akun?
                     <a class="link-blue" href="<?= e($routes['login'] ?? '#') ?>">Masuk di sini</a>
                     <span class="dot" aria-hidden="true">&bull;</span>
-                    <a class="link-orange" href="#">Daftar sebagai Admin</a>
+                    <a class="link-orange" href="<?= e($routes['register-admin'] ?? '#') ?>">Daftar sebagai Admin</a>
                 </div>
             </section>
 
