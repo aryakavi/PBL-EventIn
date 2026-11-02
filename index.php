@@ -1,4 +1,7 @@
 <?php
+
+ob_start();
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -31,7 +34,6 @@ if ($page === 'login') {
                 header('Location: ?page=admin');
                 exit;
             }
-            exit;
         }
     }
 
