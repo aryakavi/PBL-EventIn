@@ -21,9 +21,9 @@ if ($page === 'login') {
         );
 
         if ($loginResult['success']) {
-            if ($_SESSION['user']['role']==='pengguna') {
+            if ($_SESSION['user']['role'] === 'pengguna') {
                 header('Location: ./');
-            } else if($_SESSION['user']['role']==='admin'){
+            } else if ($_SESSION['user']['role'] === 'admin') {
                 header('Location: ?page=admin');
             }
             exit;
@@ -60,20 +60,59 @@ if ($page === 'admin') {
         exit;
     }
 
+    $adminPages = [
+        'admin' => 'index.php',
+        'admin/event' => 'event.php',
+        'admin/pembayaran' => 'pembayaran.php'
+    ];
+
+    if (isset($adminPages[$page])) {
+        require __DIR__ . '/app/views/admin/' . $adminPages[$page];
+        exit;
+    }
+}
+
+if ($page === 'admin/event') {
+    if (!isset($_SESSION['user'])) {
+        header('Location: ?page=login');
+        exit;
+    }
+
     if ($_SESSION['user']['role'] !== 'admin') {
         http_response_code(403);
-       header('Location: ./');
+        header('Location: ./');
+        exit;
     }
 
     define('APP_ROUTED', true);
 
-    require __DIR__ . '/app/views/admin/index.php';
+    require __DIR__ . '/app/views/admin/event.php';
     exit;
 }
 
+if ($page === 'admin/pembayaran') {
+    if (!isset($_SESSION['user'])) {
+        header('Location: ?page=login');
+        exit;
+    }
+
+    if ($_SESSION['user']['role'] !== 'admin') {
+        http_response_code(403);
+        header('Location: ./');
+        exit;
+    }
+
+    define('APP_ROUTED', true);
+
+    require __DIR__ . '/app/views/admin/pembayaran.php';
+    exit;
+}
+
+
 if (isset($_SESSION['user']['role'])) {
-    if ($_SESSION['user']['role']=='admin') {
+    if ($_SESSION['user']['role'] == 'admin') {
         header('Location: ?page=admin');
+        exit;
     }
 }
 
@@ -104,7 +143,7 @@ $featured = $dashboardController->recentEvent();
 </head>
 
 <body>
-    <?php require __DIR__ . '/includes/navbar.php';?>
+    <?php require __DIR__ . '/includes/navbar.php'; ?>
 
     <main>
         <!-- Hero -->
@@ -258,7 +297,7 @@ $featured = $dashboardController->recentEvent();
         </section>
 
         <!-- Organisasi terdaftar -->
-        <section class="section orgs">
+        <section class="section orgs" id="partners">
             <div class="section-header">
                 <h2>Organisasi &amp; Himpunan Terdaftar</h2>
                 <p>Bekerjasama langsung dengan Unit Kegiatan Mahasiswa dari berbagai kampus terkemuka</p>

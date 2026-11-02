@@ -12,7 +12,7 @@ $halamanAktif = $halamanAktif ?? '';
         <ul class="menu">
             <?php foreach ($menu as $item): ?>
                 <li>
-                    <a href="<?= e($item['href']) ?>"
+                    <a href="?page=<?= $item['href'] ?>"
                        class="menu-item<?= $item['key'] === $halamanAktif ? ' is-active' : '' ?>">
                         <?= e($item['label']) ?>
                     </a>

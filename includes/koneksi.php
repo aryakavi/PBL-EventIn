@@ -1,6 +1,5 @@
 
 <?php
-
 $host = 'aws-0-ap-southeast-1.pooler.supabase.com';
 $port = '5432';
 $dbname = 'postgres';
@@ -18,7 +17,6 @@ try {
         ]
     );
 } catch (PDOException $e) {
-    echo '<pre>';
-    echo htmlspecialchars($e->getMessage());
-    echo '</pre>';
+    error_log('Database connection failed: ' . $e->getMessage());
+    throw $e;
 }
