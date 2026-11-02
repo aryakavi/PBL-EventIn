@@ -23,8 +23,10 @@ if ($page === 'login') {
         if ($loginResult['success']) {
             if ($_SESSION['user']['role'] === 'pengguna') {
                 header('Location: ./');
+                exit;
             } else if ($_SESSION['user']['role'] === 'admin') {
                 header('Location: ?page=admin');
+                exit;
             }
             exit;
         }

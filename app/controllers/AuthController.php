@@ -215,6 +215,9 @@ class AuthController
             ];
         }
 
+        if (headers_sent($file, $line)) {
+            error_log("Headers already sent at $file:$line");
+        }
         session_regenerate_id(true);
 
         $_SESSION['user'] = [
