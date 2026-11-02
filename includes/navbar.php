@@ -10,9 +10,12 @@ $user = $_SESSION['user'] ?? null;
     </a>
 
     <nav class="menu" aria-label="Menu utama">
-        <a class="is-active" href="<?= e($routes['home']) ?>">Beranda</a>
-        <a href="<?= e($routes['explore']) ?>">Jelajah Event</a>
-        <a href="<?= e($routes['partners']) ?>">Mitra</a>
+        <a class="<?= $activeNav === 'home' ? 'is-active' : '' ?>" href="<?= e($routes['home']) ?>">Beranda</a>
+        <a class="<?= $activeNav === 'explore' ? 'is-active' : '' ?>" href="<?= e($routes['explore']) ?>">Jelajah Event</a>
+        <a class="<?= $activeNav === 'partners' ? 'is-active' : '' ?>" href="<?= e($routes['partners']) ?>">Mitra</a>
+        <?php if ($user && $user['role'] === 'pengguna'): ?>
+            <a class="<?= $activeNav === 'tiket' ? 'is-active' : '' ?>" href="?page=tiket">Tiket Saya</a>
+        <?php endif; ?>
     </nav>
 
     <div class="actions">

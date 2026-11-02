@@ -22,7 +22,7 @@ if ($page === 'login') {
 
         if ($loginResult['success']) {
             if ($_SESSION['user']['role'] === 'pengguna') {
-                header('Location: ./');
+                header('Location: ?page=tiket');
             } else if ($_SESSION['user']['role'] === 'admin') {
                 header('Location: ?page=admin');
             }
@@ -105,6 +105,43 @@ if ($page === 'admin/pembayaran') {
     define('APP_ROUTED', true);
 
     require __DIR__ . '/app/views/admin/pembayaran.php';
+    exit;
+}
+
+if ($page === 'tiket') {
+    if (!isset($_SESSION['user'])) {
+        header('Location: ?page=login');
+        exit;
+    }
+
+    if ($_SESSION['user']['role'] === 'admin') {
+        header('Location: ?page=admin');
+        exit;
+    }
+
+    require_once __DIR__ . '/app/controllers/TiketController.php';
+
+    $tiketController = new TiketController($pdo);
+    $pengguna = $_SESSION['user'];
+
+    $tab = (string) ($_GET['tab'] ?? 'aktif');
+    if (!in_array($tab, TiketController::STATUS_VALID, true)) {
+        $tab = 'aktif';
+    }
+
+    $keyword = trim((string) ($_GET['q'] ?? ''));
+    $kategori = trim((string) ($_GET['kategori'] ?? ''));
+
+    $daftarTiket = $tiketController->index(
+        (int) $pengguna['id_pengguna'],
+        $tab,
+        $keyword,
+        $kategori
+    );
+    $jumlah = $tiketController->jumlahPerStatus((int) $pengguna['id_pengguna']);
+    $daftarKategori = $tiketController->daftarKategori((int) $pengguna['id_pengguna']);
+
+    require __DIR__ . '/app/views/peserta/tiket.php';
     exit;
 }
 
