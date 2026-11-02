@@ -1,4 +1,7 @@
-<?php require_once __DIR__ . '/data.php'; ?>
+<?php
+require_once __DIR__ . '/data.php';
+$user = $_SESSION['user'] ?? null;
+?>
 <header class="navbar">
     <a class="brand" href="<?= e($routes['home']) ?>">
         <span class="brand-mark">EI</span>
@@ -12,7 +15,17 @@
     </nav>
 
     <div class="actions">
-        <a class="btn btn-outline" href="<?= e($routes['login']) ?>">Login</a>
-        <a class="btn btn-primary" href="<?= e($routes['register']) ?>">Register</a>
+        <?php if ($user): ?>
+            <div class="user-info">
+                <strong><?= e($user['nama']) ?></strong><br>
+                <span><?= e(ucfirst($user['role'])) ?></span>
+            </div>
+
+            <a class="btn btn-outline" href="?page=logout">Logout</a>
+
+        <?php else: ?>
+            <a class="btn btn-outline" href="<?= e($routes['login']) ?>">Login</a>
+            <a class="btn btn-primary" href="<?= e($routes['register']) ?>">Register</a>
+        <?php endif; ?>
     </div>
 </header>

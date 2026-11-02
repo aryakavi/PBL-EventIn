@@ -23,6 +23,7 @@ $organizer = $organizer ?? ['nama' => 'HMTI', 'role' => 'ORGANIZER', 'inisial' =
             <span class="profile-name"><?= e($organizer['nama']) ?></span>
             <span class="profile-role"><?= e($organizer['role']) ?></span>
         </div>
+         <a class="btn btn-outline" href="?page=logout">Logout</a>
         <span class="avatar"><?= e($organizer['inisial']) ?></span>
     </div>
 </header>

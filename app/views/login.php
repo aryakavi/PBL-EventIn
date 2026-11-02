@@ -1,5 +1,4 @@
 <?php
-require __DIR__ . '/../../includes/data.php';
 $activeNav = '';
 ?>
 
@@ -27,8 +26,13 @@ $activeNav = '';
                 <section class="auth-card">
                     <h1 class="auth-title">Masuk ke EventIn</h1>
                     <p class="auth-subtitle">Kelola tiket event kampus, sertifikat SKPI, dan pendaftaran kegiatan akademik Anda.</p>
+                    <?php if (isset($loginResult) && !$loginResult['success']): ?>
+                        <p class="auth-error">
+                            <?= e($loginResult['message']) ?>
+                        </p>
+                    <?php endif; ?>
 
-                    <form class="auth-form">
+                    <form class="auth-form" action="?page=login" method="POST">
                         <div class="field">
                             <label for="email">Email Institusi Kampus / Pribadi</label>
                             <div class="input-wrap">
@@ -37,7 +41,7 @@ $activeNav = '';
                                     <circle cx="8" cy="11" r="2"></circle>
                                     <path d="M5.5 16a2.5 2.5 0 0 1 5 0M14 10h4M14 14h4"></path>
                                 </svg>
-                                <input type="email" id="email" name="email"
+                                <input type="email" id="email" name="email" required
                                     placeholder="Mahasiswa@polinema.ac.id"
                                     autocomplete="email">
                             </div>
@@ -53,7 +57,7 @@ $activeNav = '';
                                     <circle cx="8" cy="15" r="4"></circle>
                                     <path d="m11 12 9-9M17 6l2 2M14 9l2 2"></path>
                                 </svg>
-                                <input type="password" id="password" name="password" placeholder="Masukkan minimal 8 karakter"
+                                <input type="password" id="password" name="password" placeholder="Masukkan minimal 8 karakter" required
                                     autocomplete="current-password">
                                 <button class="password-toggle" type="button" data-toggle-password="password"
                                     aria-label="Tampilkan kata sandi">

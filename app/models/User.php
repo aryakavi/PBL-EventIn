@@ -1,13 +1,11 @@
-
-declare(strict_types=1);
 <?php
 class User
 {
-    private PDO $db;
+    private PDO $pdo;
 
     public function __construct(PDO $pdo)
     {
-        $this->db = $pdo;
+        $this->pdo = $pdo;
     }
 
     public function findByEmail(string $email): array|false
@@ -16,7 +14,7 @@ class User
                 FROM pengguna
                 WHERE email = :email";
 
-        $stmt = $this->db->prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
             'email' => $email
         ]);
@@ -30,19 +28,19 @@ class User
                 FROM ukm
                 ORDER BY nama ASC";
 
-        $stmt = $this->db->query($sql);
+        $stmt = $this->pdo->query($sql);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function countPeserta(): int
     {
-        $sql = "SELECT COUNT(*) FROM pengguna WHERE
-        role='pengguna'";
+        $sql = "SELECT COUNT(*) FROM pengguna WHERE role = 'pengguna'";
+        $stmt = $this->pdo->query($sql);
 
-        $stmt=$this->db->query($sql);
         return (int) $stmt->fetchColumn();
     }
+
 
     public function registerPengguna(
         string $nama,
@@ -57,7 +55,7 @@ class User
                     (:nama, :email, :no_hp, :nim, :password_hash, :role)
                 RETURNING id_pengguna";
 
-        $stmt = $this->db->prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
 
         $stmt->execute([
             'nama' => $nama,
@@ -80,7 +78,7 @@ class User
         int $idUkm
     ): int {
         try {
-            $this->db->beginTransaction();
+            $this->pdo->beginTransaction();
 
             $sql = "INSERT INTO pengguna
                         (nama, email, no_hp, nim, password_hash, role)
@@ -88,7 +86,7 @@ class User
                         (:nama, :email, :no_hp, :nim, :password_hash, :role)
                     RETURNING id_pengguna";
 
-            $stmt = $this->db->prepare($sql);
+            $stmt = $this->pdo->prepare($sql);
 
             $stmt->execute([
                 'nama' => $nama,
@@ -104,19 +102,19 @@ class User
             $sql = "INSERT INTO admin_ukm (id_pengguna, id_ukm)
                     VALUES (:id_pengguna, :id_ukm)";
 
-            $stmt = $this->db->prepare($sql);
+            $stmt = $this->pdo->prepare($sql);
 
             $stmt->execute([
                 'id_pengguna' => $idPengguna,
                 'id_ukm' => $idUkm
             ]);
 
-            $this->db->commit();
+            $this->pdo->commit();
 
             return $idPengguna;
         } catch (Throwable $e) {
-            if ($this->db->inTransaction()) {
-                $this->db->rollBack();
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
             }
 
             throw $e;

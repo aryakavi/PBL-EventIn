@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Data & helper untuk landing page EventIn.
  * Semua konten dipisah di sini supaya index.php tetap bersih.
@@ -41,16 +42,14 @@ function event_image(int $n): ?string
 
 $routes = [
     'home'      => 'index.php',
-    'explore'   => '#',   // explore-events.php
+    'explore'   => '#explore',   // explore-events.php
     'partners'  => '#partners',
-    'login'     => '#',
-    'register'  => '#',
+    'login' => '?page=login',
+    'register' => '?page=register',
     'detail'    => '#',   // event-detail.php
 ];
 
-$stats = [
-
-];
+$stats = [];
 
 $featured = [
     'ticket_title' => 'Simposium Nasional AI & Masa Depan Pendidikan Tinggi',
@@ -71,7 +70,7 @@ $categories = [
     'semua'    => 'Semua Kategori',
     'Seminar'  => 'Seminar',
     'Workshop' => 'Workshop',
-    'Kompetisi'=> 'Kompetisi',
+    'Kompetisi' => 'Kompetisi',
     'Webinar'  => 'Webinar',
 ];
 
@@ -93,7 +92,7 @@ $steps = [
     ['1', 'Daftar Akun',       'Buat profil mahasiswa menggunakan alamat email resmi institusi kampus Anda.'],
     ['2', 'Pilih Event',       'Temukan ratusan kegiatan menarik sesuai minat akademik dan organisasi.'],
     ['3', 'Ikuti Event',       'Hadiri sesi secara langsung maupun online via tautan video terintegrasi.'],
-    ['4', 'Sertifikat Digital','Unduh sertifikat resmi otomatis langsung dari dashboard akun Anda.'],
+    ['4', 'Sertifikat Digital', 'Unduh sertifikat resmi otomatis langsung dari dashboard akun Anda.'],
 ];
 
 $features = [
@@ -120,7 +119,7 @@ $faqs = [
     ['Apakah platform ini gratis bagi seluruh mahasiswa?',               'bayar.'],
     ['Bagaimana cara melakukan verifikasi e-sertifikat yang sah?',       'kepo amat.'],
     ['Metode pembayaran apa saja yang saat ini didukung?',               'banyak.'],
-    ['Bagaimana jika saya terlambat menghadiri event yang sudah dibeli?','hangus deh.'],
+    ['Bagaimana jika saya terlambat menghadiri event yang sudah dibeli?', 'hangus deh.'],
     ['Bagaimana cara mengajukan pengembalian dana (refund)?',            'gabisa wlee .'],
 ];
 

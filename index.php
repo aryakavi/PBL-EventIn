@@ -1,15 +1,92 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once __DIR__ . '/includes/data.php';
+require_once __DIR__ . '/includes/koneksi.php';
 
-require __DIR__ . '/includes/data.php';
-require __DIR__ . '/includes/koneksi.php';
-// require __DIR__ . '/app/models/Event.php';
-require __DIR__ . '/app/controllers/EventController.php';
-require __DIR__ . '/app/controllers/DashboardController.php';
+$page = $_GET['page'] ?? 'home';
+
+if ($page === 'login') {
+    require_once __DIR__ . '/app/controllers/AuthController.php';
+
+    $authController = new AuthController($pdo);
+
+    $loginResult = null;
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $loginResult = $authController->login(
+            $_POST['email'] ?? '',
+            $_POST['password'] ?? ''
+        );
+
+        if ($loginResult['success']) {
+            if ($_SESSION['user']['role']==='pengguna') {
+                header('Location: ./');
+            } else if($_SESSION['user']['role']==='admin'){
+                header('Location: ?page=admin');
+            }
+            exit;
+        }
+    }
+
+
+    require __DIR__ . '/app/views/login.php';
+    exit;
+}
+
+if ($page === 'register') {
+    require_once __DIR__ . '/app/controllers/AuthController.php';
+
+    $authController = new AuthController($pdo);
+
+    require __DIR__ . '/app/views/register.php';
+    exit;
+}
+
+if ($page === 'logout') {
+    require_once __DIR__ . '/app/controllers/AuthController.php';
+
+    $authController = new AuthController($pdo);
+    $authController->logout();
+
+    header('Location: ./');
+    exit;
+}
+
+if ($page === 'admin') {
+    if (!isset($_SESSION['user'])) {
+        header('Location: ?page=login');
+        exit;
+    }
+
+    if ($_SESSION['user']['role'] !== 'admin') {
+        http_response_code(403);
+       header('Location: ./');
+    }
+
+    define('APP_ROUTED', true);
+
+    require __DIR__ . '/app/views/admin/index.php';
+    exit;
+}
+
+if (isset($_SESSION['user']['role'])) {
+    if ($_SESSION['user']['role']=='admin') {
+        header('Location: ?page=admin');
+    }
+}
+
+require_once __DIR__ . '/app/controllers/EventController.php';
+require_once __DIR__ . '/app/controllers/DashboardController.php';
 
 $eventController = new EventController($pdo);
 $dashboardController = new DashboardController($pdo);
+
 $eventsDb = $eventController->index();
 $stats = $dashboardController->index();
+$featured = $dashboardController->recentEvent();
+
 ?>
 
 
@@ -27,8 +104,7 @@ $stats = $dashboardController->index();
 </head>
 
 <body>
-
-    <?php require __DIR__ . '/includes/navbar.php'; ?>
+    <?php require __DIR__ . '/includes/navbar.php';?>
 
     <main>
         <!-- Hero -->
@@ -56,7 +132,7 @@ $stats = $dashboardController->index();
         <section class="section featured">
             <div class="section-header">
                 <h2>Sorotan Minggu Ini</h2>
-                <p>Event pilihan dengan antusiasme pendaftar tertinggi</p>
+                <p>Event Terbaru</p>
                 <hr>
             </div>
             <div class="featured-body">
@@ -67,26 +143,21 @@ $stats = $dashboardController->index();
                     </div>
                     <hr class="ticket-line">
                     <div class="ticket-info">
-                        <h3><?= e($featured['ticket_title']) ?></h3>
-                        <p><?= e($featured['ticket_meta']) ?></p>
+                        <h3><?= e($featured['nama_event']) ?></h3>
+                        <p><?= e($featured['hari']) ?>, <?= e(date('d M Y', strtotime($featured['tanggal_mulai']))) ?></p>
                     </div>
                     <div class="ticket-bottom">
                         <div>
-                            <small>PEMILIK TIKET</small>
-                            <strong><?= e($featured['ticket_owner']) ?></strong>
+                            <small>UKM Penyelenggara</small>
+                            <strong><?= e($featured['singkatan']) ?></strong>
                         </div>
-                        <span class="ticket-qr">QR</span>
+                        <!-- <span class="ticket-qr">QR</span> -->
                     </div>
                 </div>
 
                 <div class="featured-detail">
-                    <h3><?= e($featured['title']) ?></h3>
-                    <p><?= e($featured['desc']) ?></p>
-                    <ul class="perks">
-                        <?php foreach ($featured['perks'] as $perk): ?>
-                            <li>&#10003; <?= e($perk) ?></li>
-                        <?php endforeach; ?>
-                    </ul>
+                    <h3><?= e($featured['nama_event']) ?></h3>
+                    <p><?= e($featured['deskripsi']) ?></p>
                     <a class="btn btn-primary" href="<?= e($routes['detail']) ?>">Lihat Detail Acara</a>
                 </div>
             </div>
@@ -103,7 +174,7 @@ $stats = $dashboardController->index();
         </section>
 
         <!-- Event terpopuler -->
-        <section class="section popular">
+        <section class="section popular" id="explore">
             <div class="section-header">
                 <h2>hi Event Terpopuler</h2>
                 <p>Pilih kategori yang paling sesuai dengan minat akademik dan karir Anda</p>
@@ -122,7 +193,7 @@ $stats = $dashboardController->index();
                 <?php foreach ($eventsDb as $ev):
                     $img = event_image($ev['id_event']); ?>
                     <article class="event-card"
-                        data-category="<?= e(strtolower(str_replace(' ', '-', $ev['nama_kategori']))) ?>">
+                        data-category="<?= e($ev['nama_kategori']) ?>">
                         <div class="event-cover cover-<?= $ev['id_event'] ?>"
                             <?php if ($img): ?>style="background-image: url('<?= e($img) ?>');" <?php endif; ?>>
                             <span class="event-badge"><?= e(strtoupper($ev['nama_kategori'])) ?></span>
