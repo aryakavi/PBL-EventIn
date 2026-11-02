@@ -29,6 +29,19 @@ body {
 a { color: inherit; text-decoration: none; }
 ul { list-style: none; }
 
+/* Utilitas aksesibilitas: sembunyikan visual, tetap dibaca screen reader */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 /* ===== Navbar ===== */
 .navbar {
     position: sticky;
@@ -152,6 +165,7 @@ ul { list-style: none; }
     font-weight: 700;
     font-size: 13px;
     white-space: nowrap;
+    cursor: pointer;
 }
 .btn-primary {
     background: var(--orange);
@@ -228,6 +242,517 @@ ul { list-style: none; }
 .actions-sep { color: var(--muted); margin: 0 6px; }
 .actions-verify { color: var(--muted); font-weight: 600; }
 .actions a:hover { color: var(--orange); }
+
+/* ===== Halaman Kelola Event (Filter, Badge, Pagination, Form) ===== */
+.filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.filter-search {
+    flex: 1;
+    height: 40px;
+    padding: 0 16px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--font);
+    font-size: 13px;
+    color: var(--text);
+}
+.filter-search::placeholder { color: #94a3b8; }
+
+.filter-select {
+    height: 40px;
+    padding: 0 14px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+}
+
+.btn-outline {
+    background: var(--white);
+    color: var(--text);
+    border: 1px solid var(--border);
+    cursor: pointer;
+}
+.btn-outline:hover { background: #f1f5f9; }
+
+/* Varian Badge Status Event */
+.badge-info {
+    background: #dbeafe;
+    color: #2563eb;
+    border-radius: 6px;
+}
+.badge-neutral {
+    background: #f1f5f9;
+    color: #475569;
+    border-radius: 6px;
+}
+
+/* Tombol Aksi Ikon Tabel */
+.actions-icon {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.icon-btn {
+    width: 26px;
+    height: 26px;
+    border: 1px solid var(--border);
+    background: #f8fafc;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--text);
+    transition: background .15s, border-color .15s;
+}
+.icon-btn:hover {
+    background: var(--white);
+    border-color: var(--orange);
+    color: var(--orange);
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin: 24px 0 0;
+}
+.page-item {
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+}
+.page-item:hover { border-color: var(--navy); }
+.page-item.is-active {
+    background: var(--navy);
+    color: var(--white);
+    border-color: var(--navy);
+}
+
+/* Card Formulir Buat Event */
+.form-card {
+    margin-top: 32px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, .04);
+}
+.form-card-header {
+    padding-bottom: 20px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+}
+.form-card-header h2 {
+    font-size: 16px;
+    font-weight: 700;
+}
+.form-card-header p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 32px;
+}
+.form-col {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.form-group label,
+.form-group .form-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.form-control {
+    height: 40px;
+    padding: 0 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--font);
+    font-size: 13px;
+    color: var(--text);
+    max-width: 280px;
+}
+.form-control::placeholder { color: #94a3b8; }
+.form-control-md { max-width: 160px; }
+.form-control-sm { max-width: 130px; }
+
+.upload-box {
+    height: 112px;
+    background: var(--bg);
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--muted);
+    font-weight: 500 !important;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+}
+.upload-box:hover {
+    border-color: var(--orange);
+    background: #fff7ed;
+}
+.upload-icon {
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 28px;
+}
+.form-actions .btn {
+    border: none;
+    cursor: pointer;
+    font-family: var(--font);
+}
+.form-actions .btn-outline {
+    border: 1px solid var(--border);
+}
+
+/* ===== Halaman Verifikasi Pembayaran ===== */
+.status-tabs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+.tab-item {
+    padding: 8px 18px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    transition: background .15s, color .15s, border-color .15s;
+}
+.tab-item:hover {
+    color: var(--text);
+    border-color: #cbd5e1;
+}
+.tab-item.is-active {
+    background: var(--indigo);
+    color: var(--white);
+    border-color: var(--indigo);
+}
+
+.mono-id {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.proof-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--muted);
+}
+
+.badge-warning {
+    background: #fef3c7;
+    color: #b45309;
+    border-radius: 6px;
+}
+.badge-danger {
+    background: #fee2e2;
+    color: #b91c1c;
+    border-radius: 6px;
+}
+
+/* Detail Transaksi Card */
+.detail-body {
+    display: flex;
+    gap: 36px;
+    align-items: flex-start;
+}
+
+.proof-col {
+    width: 240px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.proof-title {
+    font-size: 12px;
+    font-weight: 700;
+}
+.proof-preview {
+    height: 220px;
+    background: #f1f5f9;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 12px;
+}
+.proof-icon {
+    font-size: 20px;
+}
+.proof-filename {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+}
+
+.info-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-top: 20px;
+}
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.info-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #94a3b8;
+}
+.info-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+}
+.info-text {
+    font-size: 13px;
+    color: #475569;
+}
+
+.detail-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+}
+.detail-actions .btn {
+    border: none;
+    cursor: pointer;
+    font-family: var(--font);
+}
+.detail-actions .btn-outline {
+    border: 1px solid var(--border);
+}
+
+/* ===== Halaman QR Check-in Loket ===== */
+.qr-empty {
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.qr-grid {
+    display: grid;
+    grid-template-columns: 1.65fr 1fr;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.qr-section-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+/* Kotak Pemindai Kamera */
+.scanner-box {
+    height: 360px;
+    background: var(--navy);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(10, 26, 48, .12);
+}
+
+.scanner-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--orange);
+    color: var(--white);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.scanner-title {
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.scanner-sub {
+    color: #94a3b8;
+    font-size: 12px;
+    max-width: 440px;
+}
+
+/* Live Feed Presensi */
+.feed-card {
+    height: 360px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 8px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.feed-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.feed-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+}
+.feed-item:last-child {
+    border-bottom: none;
+}
+
+.feed-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.feed-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+    min-width: 0;
+}
+
+.feed-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.feed-time {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+.badge-small {
+    min-width: 54px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 10px;
+}
+
+/* Grid 3 Kolom untuk Statistik QR */
+.kpi-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+    margin-bottom: 0;
+}
+
+@media (max-width: 960px) {
+    .qr-grid { grid-template-columns: 1fr; }
+    .feed-card { height: auto; padding: 12px 20px; }
+    .kpi-cols-3 { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 760px) {
+    .detail-body { flex-direction: column; }
+    .proof-col { width: 100%; }
+    .info-col { padding-top: 0; }
+
+    .filter-bar { flex-wrap: wrap; }
+    .filter-search { width: 100%; flex: none; }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-control, .form-control-md, .form-control-sm { max-width: 100%; }
+}
 
 /* ===== Responsif ===== */
 @media (max-width: 1100px) {
