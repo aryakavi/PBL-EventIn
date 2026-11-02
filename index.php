@@ -4,6 +4,9 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require_once __DIR__ . '/includes/data.php';
 require_once __DIR__ . '/includes/koneksi.php';
+if (headers_sent($file, $line)) {
+    die("OUTPUT DITEMUKAN: $file pada baris $line");
+}
 
 $page = $_GET['page'] ?? 'home';
 
