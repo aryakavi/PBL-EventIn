@@ -1,0 +1,1 @@
+INSERT INTO public.kehadiran (id_kehadiran, id_tiket, id_petugas, waktu_checkin) VALUES (4, 13, 7, '2026-11-10 08:45:00'), (5, 14, 8, '2026-11-15 07:50:00'), (6, 15, 9, '2026-11-25 12:50:00');

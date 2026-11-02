@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/data.php';
 $activeNav = $activeNav ?? 'home';
+$user = $_SESSION['user'] ?? null;
 ?>
 <header class="navbar">
     <a class="brand" href="<?= e($routes['home']) ?>">
@@ -9,13 +10,23 @@ $activeNav = $activeNav ?? 'home';
     </a>
 
     <nav class="menu" aria-label="Menu utama">
-        <a class="<?= $activeNav === 'home' ? 'is-active' : '' ?>" href="<?= e($routes['home']) ?>">Beranda</a>
-        <a class="<?= $activeNav === 'explore' ? 'is-active' : '' ?>" href="<?= e($routes['explore']) ?>">Jelajah Event</a>
-        <a class="<?= $activeNav === 'partners' ? 'is-active' : '' ?>" href="<?= e($routes['partners']) ?>">Mitra</a>
+        <a class="is-active" href="<?= e($routes['home']) ?>">Beranda</a>
+        <a href="<?= e($routes['explore']) ?>">Jelajah Event</a>
+        <a href="<?= e($routes['partners']) ?>">Mitra</a>
     </nav>
 
     <div class="actions">
-        <a class="btn btn-outline" href="<?= e($routes['login']) ?>">Login</a>
-        <a class="btn btn-primary" href="<?= e($routes['register']) ?>">Register</a>
+        <?php if ($user): ?>
+            <div class="user-info">
+                <strong><?= e($user['nama']) ?></strong><br>
+                <span><?= e(ucfirst($user['role'])) ?></span>
+            </div>
+
+            <a class="btn btn-outline" href="?page=logout">Logout</a>
+
+        <?php else: ?>
+            <a class="btn btn-outline" href="<?= e($routes['login']) ?>">Login</a>
+            <a class="btn btn-primary" href="<?= e($routes['register']) ?>">Register</a>
+        <?php endif; ?>
     </div>
 </header>

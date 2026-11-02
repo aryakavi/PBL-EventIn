@@ -112,6 +112,7 @@ button { font-family: inherit; }
 .menu { display: flex; align-items: center; gap: 32px; font-size: 14px; color: var(--slate-600); }
 .menu a:hover { color: var(--ink); }
 .menu a.is-active { color: var(--ink); font-weight: 700; }
+.page-auth .menu a.is-active { color: var(--slate-600); font-weight: 400; }
 .actions { display: flex; align-items: center; gap: 12px; }
 
 /* ---------- Hero ---------- */
@@ -266,16 +267,11 @@ button { font-family: inherit; }
     font-weight: 700;
     color: var(--slate-400);
 }
-.partner-row {
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    align-items: center;
-    gap: 16px;
-}
+.partner-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .partner-box {
     display: grid;
     place-items: center;
-    min-width: 0;
+    width: 160px;
     height: 48px;
     border-radius: 8px;
     background: var(--white);
@@ -308,7 +304,7 @@ button { font-family: inherit; }
 
 .event-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 32px 24px;
 }
 .event-card {
@@ -571,10 +567,6 @@ button { font-family: inherit; }
 /* ==========================================================
    Responsif (desain Figma hanya 1440px; ini tambahan agar tidak pecah)
    ========================================================== */
-@media (max-width: 1360px) {
-    .event-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-
 @media (max-width: 1100px) {
     :root { --gutter: 40px; }
     .hero { flex-direction: column; align-items: stretch; }
@@ -585,9 +577,9 @@ button { font-family: inherit; }
     .feature-grid { flex-wrap: wrap; }
     .feature-card { flex: 1 1 calc(50% - 24px); }
     .org-grid { grid-template-columns: repeat(2, 1fr); }
-    .partner-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .footer-grid { flex-wrap: wrap; }
     .menu { gap: 20px; }
+    .partner-row { justify-content: flex-start; }
 }
 
 @media (max-width: 700px) {
@@ -603,7 +595,6 @@ button { font-family: inherit; }
     .step-line { display: none; }
     .feature-card { flex-basis: 100%; }
     .org-grid { grid-template-columns: 1fr; }
-    .partner-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .final-cta h2 { font-size: 26px; }
     .footer-bottom { flex-direction: column; }
 }
