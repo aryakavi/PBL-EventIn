@@ -22,8 +22,8 @@ class DashboardController
         $totalUKM = $this->ukmModel->countUKM();
 
         return [
-            [$totalPeserta, 'Event Terdaftar'],
-            [$totalEvent, 'Peserta Aktif'],
+            [$totalEvent, 'Event Terdaftar'],
+            [$totalPeserta, 'Peserta Aktif'],
             [$totalUKM, 'Organisasi Kampus'],
         ];
     }

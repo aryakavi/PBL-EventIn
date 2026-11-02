@@ -239,16 +239,6 @@ $featured = $dashboardController->recentEvent();
             </div>
         </section>
 
-        <!-- Mitra -->
-        <section class="partner-logos" id="partners">
-            <p>BEKERJASAMA DENGAN MITRA TERPERCAYA</p>
-            <div class="partner-row">
-                <?php foreach ($partners as $name): ?>
-                    <div class="partner-box"><?= e($name) ?></div>
-                <?php endforeach; ?>
-            </div>
-        </section>
-
         <!-- Event terpopuler -->
         <section class="section popular" id="explore">
             <div class="section-header">
@@ -281,7 +271,7 @@ $featured = $dashboardController->recentEvent();
                                 <p>Lokasi: <?= e($ev['lokasi']) ?></p>
                             </div>
                             <div class="event-footer">
-                                <span class="price">Rp.<?= e($ev['harga']) ?></span>
+                                <span class="price">Rp.<?= e(number_format((float) $ev['harga'], 0, ',', '.')) ?></span>
                                 <a class="btn btn-primary" href="<?= e($routes['detail']) ?>">Daftar</a>
                             </div>
                         </div>

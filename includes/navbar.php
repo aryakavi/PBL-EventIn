@@ -2,6 +2,11 @@
 require_once __DIR__ . '/data.php';
 $activeNav = $activeNav ?? 'home';
 $user = $_SESSION['user'] ?? null;
+
+// Di landing page anchor cukup '#explore'; di halaman lain perlu 'index.php#explore'.
+$pageSekarang = $_GET['page'] ?? 'home';
+$diLanding = $pageSekarang === 'home';
+$anchor = static fn (string $id): string => $diLanding ? '#' . $id : 'index.php#' . $id;
 ?>
 <header class="navbar">
     <a class="brand" href="<?= e($routes['home']) ?>">
@@ -11,8 +16,8 @@ $user = $_SESSION['user'] ?? null;
 
     <nav class="menu" aria-label="Menu utama">
         <a class="<?= $activeNav === 'home' ? 'is-active' : '' ?>" href="<?= e($routes['home']) ?>">Beranda</a>
-        <a class="<?= $activeNav === 'explore' ? 'is-active' : '' ?>" href="<?= e($routes['explore']) ?>">Jelajah Event</a>
-        <a class="<?= $activeNav === 'partners' ? 'is-active' : '' ?>" href="<?= e($routes['partners']) ?>">Mitra</a>
+        <a class="<?= $activeNav === 'explore' ? 'is-active' : '' ?>" href="<?= e($anchor('explore')) ?>">Jelajah Event</a>
+        <a class="<?= $activeNav === 'partners' ? 'is-active' : '' ?>" href="<?= e($anchor('partners')) ?>">Mitra</a>
         <?php if ($user && $user['role'] === 'pengguna'): ?>
             <a class="<?= $activeNav === 'tiket' ? 'is-active' : '' ?>" href="?page=tiket">Tiket Saya</a>
         <?php endif; ?>

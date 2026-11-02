@@ -24,9 +24,9 @@ class User
 
     public function getUkms(): array
     {
-        $sql = "SELECT id_ukm, nama, singkatan, deskripsi
+        $sql = "SELECT id_ukm, nama_ukm AS nama, singkatan, deskripsi
                 FROM ukm
-                ORDER BY nama ASC";
+                ORDER BY nama_ukm ASC";
 
         $stmt = $this->pdo->query($sql);
 

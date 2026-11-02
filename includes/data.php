@@ -5,10 +5,10 @@
  * Semua konten dipisah di sini supaya index.php tetap bersih.
  */
 
-/** Escape output HTML. */
-function e(string $text): string
+/** Escape output HTML. Nilai null/angka tetap aman dicetak. */
+function e(string|int|float|null $text): string
 {
-    return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+    return htmlspecialchars((string) $text, ENT_QUOTES, 'UTF-8');
 }
 
 
@@ -42,10 +42,11 @@ function event_image(int $n): ?string
 
 $routes = [
     'home'      => 'index.php',
-    'explore'   => '#explore',   // explore-events.php
+    'explore'   => '#explore',
     'partners'  => '#partners',
     'login' => '?page=login',
     'register' => '?page=register',
+    'register_admin' => 'register-admin.php',
     'detail'    => '#',   // event-detail.php
 ];
 

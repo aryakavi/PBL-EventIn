@@ -1,4 +1,16 @@
-<?php require_once __DIR__ . '/data.php'; ?>
+<?php
+require_once __DIR__ . '/data.php';
+
+// Anchor di footer: di landing cukup '#id', di halaman lain perlu 'index.php#id'.
+$diLanding = ($_GET['page'] ?? 'home') === 'home';
+$tautan = static fn (string $id): string => $diLanding ? '#' . $id : 'index.php#' . $id;
+
+$footerNavLinks = [
+    'Beranda' => $routes['home'],
+    'Jelajah Event' => $tautan('explore'),
+    'Mitra Kampus' => $tautan('partners'),
+];
+?>
 <footer class="footer">
     <div class="footer-grid">
         <div class="footer-col footer-brand">
@@ -11,8 +23,8 @@
 
         <div class="footer-col footer-links">
             <h4>Navigasi</h4>
-            <?php foreach ($footerNav as $label): ?>
-                <a href="#"><?= e($label) ?></a>
+            <?php foreach ($footerNavLinks as $label => $href): ?>
+                <a href="<?= e($href) ?>"><?= e($label) ?></a>
             <?php endforeach; ?>
         </div>
 
