@@ -15,6 +15,7 @@ $menu = [
     ['label' => 'Pembayaran', 'href' => 'pembayaran.php',  'key' => 'pembayaran'],
     ['label' => 'Qr-Checker', 'href' => 'qr.php',          'key' => 'qr'],
     ['label' => 'Laporan',    'href' => 'laporan.php',     'key' => 'laporan'],
+    ['label' => 'Admin',      'href' => 'admin.php',       'key' => 'admin'],
 ];
 
 $kpi = [
@@ -47,4 +48,18 @@ $daftarPembayaran = [
     ['id' => 'TX-100295', 'peserta' => 'Dewi Kurniasari','event' => 'Workshop No-Code App',  'jumlah' => 'Rp 75.000', 'status' => 'Menunggu',     'metode' => 'Virtual Account BCA',          'waktu' => '22 April 2026, 20:47 WIB', 'berkas' => 'bca-transfer.jpg'],
     ['id' => 'TX-100296', 'peserta' => 'Dewi Lestari',   'event' => 'Simposium Nasional AI', 'jumlah' => 'Rp 75.000', 'status' => 'Diverifikasi', 'metode' => 'Virtual Account Bank Mandiri', 'waktu' => '21 April 2026, 11:05 WIB', 'berkas' => 'mandiri-transfer.png'],
     ['id' => 'TX-100297', 'peserta' => 'Ahmad Dani',     'event' => 'Simposium Nasional AI', 'jumlah' => 'Rp 75.000', 'status' => 'Ditolak',      'metode' => 'QRIS',                         'waktu' => '20 April 2026, 16:23 WIB', 'berkas' => 'qris-bukti.jpg'],
+];
+
+$presensiTerkini = [
+    ['inisial' => 'DA', 'nama' => 'Dani Alamsyah', 'waktu' => '10:45 WIB', 'status' => 'Hadir'],
+    ['inisial' => 'SA', 'nama' => 'Siska Amelia',  'waktu' => '10:44 WIB', 'status' => 'Hadir'],
+    ['inisial' => 'RG', 'nama' => 'Rony Gunawan',  'waktu' => '10:42 WIB', 'status' => 'Hadir'],
+    ['inisial' => 'FA', 'nama' => 'Farah Adiba',   'waktu' => '10:39 WIB', 'status' => 'Hadir'],
+    ['inisial' => 'BS', 'nama' => 'Bayu Saputra',  'waktu' => '10:35 WIB', 'status' => 'Hadir'],
+];
+
+$kpiQr = [
+    ['label' => 'Total Hadir',          'nilai' => '150',   'tren' => '75% tingkat kehadiran',        'arah' => 'up'],
+    ['label' => 'Belum Hadir',          'nilai' => '50',    'tren' => '25% sisa kuota hadir',         'arah' => 'down'],
+    ['label' => 'Persentase Kehadiran', 'nilai' => '75.0%', 'tren' => 'Standar target minimal terpenuhi', 'arah' => 'up'],
 ];

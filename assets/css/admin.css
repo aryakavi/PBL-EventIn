@@ -29,6 +29,19 @@ body {
 a { color: inherit; text-decoration: none; }
 ul { list-style: none; }
 
+/* Utilitas aksesibilitas: sembunyikan visual, tetap dibaca screen reader */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 /* ===== Navbar ===== */
 .navbar {
     position: sticky;
@@ -582,6 +595,152 @@ ul { list-style: none; }
 }
 .detail-actions .btn-outline {
     border: 1px solid var(--border);
+}
+
+/* ===== Halaman QR Check-in Loket ===== */
+.qr-empty {
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.qr-grid {
+    display: grid;
+    grid-template-columns: 1.65fr 1fr;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.qr-section-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+/* Kotak Pemindai Kamera */
+.scanner-box {
+    height: 360px;
+    background: var(--navy);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(10, 26, 48, .12);
+}
+
+.scanner-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--orange);
+    color: var(--white);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.scanner-title {
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.scanner-sub {
+    color: #94a3b8;
+    font-size: 12px;
+    max-width: 440px;
+}
+
+/* Live Feed Presensi */
+.feed-card {
+    height: 360px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 8px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.feed-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.feed-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+}
+.feed-item:last-child {
+    border-bottom: none;
+}
+
+.feed-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.feed-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+    min-width: 0;
+}
+
+.feed-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.feed-time {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+.badge-small {
+    min-width: 54px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 10px;
+}
+
+/* Grid 3 Kolom untuk Statistik QR */
+.kpi-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+    margin-bottom: 0;
+}
+
+@media (max-width: 960px) {
+    .qr-grid { grid-template-columns: 1fr; }
+    .feed-card { height: auto; padding: 12px 20px; }
+    .kpi-cols-3 { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 760px) {
