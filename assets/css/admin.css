@@ -236,6 +236,8 @@ ul { list-style: none; }
     font-weight: 700;
 }
 .badge-success { background: var(--success-bg); color: var(--success-text); }
+.badge-warning { background: #fef3c7; color: #b45309; border-radius: 6px; }
+.badge-danger { background: #fee2e2; color: #b91c1c; border-radius: 6px; }
 
 .actions { font-size: 12px; white-space: nowrap; }
 .actions-detail { font-weight: 700; }
@@ -502,17 +504,6 @@ ul { list-style: none; }
     color: var(--muted);
 }
 
-.badge-warning {
-    background: #fef3c7;
-    color: #b45309;
-    border-radius: 6px;
-}
-.badge-danger {
-    background: #fee2e2;
-    color: #b91c1c;
-    border-radius: 6px;
-}
-
 /* Detail Transaksi Card */
 .detail-body {
     display: flex;
@@ -737,6 +728,41 @@ ul { list-style: none; }
     margin-bottom: 0;
 }
 
+/* ===== Halaman Laporan & Analitik ===== */
+.report-filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+.section-header h2 {
+    margin-bottom: 0;
+}
+
+.export-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mono-email {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+}
+
+/* ===== Responsif ===== */
+@media (max-width: 1100px) {
+    .kpi { grid-template-columns: repeat(2, 1fr); }
+}
+
 @media (max-width: 960px) {
     .qr-grid { grid-template-columns: 1fr; }
     .feed-card { height: auto; padding: 12px 20px; }
@@ -744,6 +770,15 @@ ul { list-style: none; }
 }
 
 @media (max-width: 760px) {
+    .layout { flex-direction: column; min-height: 0; }
+    .content { padding: 24px 16px; }
+    .welcome { flex-direction: column; }
+    .kpi { grid-template-columns: 1fr; }
+
+    .report-filters { width: 100%; }
+    .report-filters .filter-select { flex: 1; }
+    .section-header { flex-direction: column; align-items: flex-start; }
+
     .detail-body { flex-direction: column; }
     .proof-col { width: 100%; }
     .info-col { padding-top: 0; }
@@ -752,17 +787,6 @@ ul { list-style: none; }
     .filter-search { width: 100%; flex: none; }
     .form-grid { grid-template-columns: 1fr; }
     .form-control, .form-control-md, .form-control-sm { max-width: 100%; }
-}
-
-/* ===== Responsif ===== */
-@media (max-width: 1100px) {
-    .kpi { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 760px) {
-    .layout { flex-direction: column; min-height: 0; }
-    .content { padding: 24px 16px; }
-    .welcome { flex-direction: column; }
-    .kpi { grid-template-columns: 1fr; }
 
     .navbar-toggle { display: flex; }
 
