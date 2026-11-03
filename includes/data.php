@@ -46,6 +46,7 @@ $routes = [
     'partners'  => '#partners',
     'login' => '?page=login',
     'register' => '?page=register',
+    'register-admin' => 'register-admin.php',
     'detail'    => '#',   // event-detail.php
 ];
 
