@@ -147,7 +147,6 @@ if ($page === 'home') {
 
     $eventsDb = $eventController->index();
     $orgs = $dashboardController->getUkm();
-    var_dump($orgs);
     $stats = $dashboardController->index();
     $featured = $dashboardController->recentEvent();
     $categories = $eventController->getCategory();
