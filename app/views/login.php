@@ -19,6 +19,13 @@ $activeNav = '';
 <body class="page-auth">
 
     <?php require __DIR__ . '/../../includes/navbar.php'; ?>
+    <?php
+    if (isset($_SESSION['registerMessage'])) { ?>
+        <script>
+            alert('Registrasi berhasil, silahkan login')
+        </script>
+    <?php unset($_SESSION['registerMessage']);
+    }  ?>
 
     <main class="auth-page">
         <div class="auth-container auth-container--login">
@@ -141,6 +148,7 @@ $activeNav = '';
     <?php require __DIR__ . '/../../includes/footer.php'; ?>
 
     <script src="../../assets/js/main.js"></script>
+
 </body>
 
 </html>

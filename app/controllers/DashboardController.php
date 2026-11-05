@@ -6,7 +6,7 @@ class DashboardController
 {
     private Ukm $ukmModel;
     private User $pesertaModel;
-    private Event $eventModel;
+    private Event $eventModel; 
 
     public function __construct(PDO $pdo)
     {
@@ -22,8 +22,8 @@ class DashboardController
         $totalUKM = $this->ukmModel->countUKM();
 
         return [
-            [$totalPeserta, 'Event Terdaftar'],
-            [$totalEvent, 'Peserta Aktif'],
+            [$totalPeserta, 'Peserta Aktif'],
+            [$totalEvent, 'Event Terdaftar'],
             [$totalUKM, 'Organisasi Kampus'],
         ];
     }
@@ -31,5 +31,10 @@ class DashboardController
     public function recentEvent():array|null
     {
         return $this->eventModel->mostRecentEvent();
+    }
+
+    public function getUkm():array|null
+    {
+        return $this->ukmModel->getUkmEvent();
     }
 }

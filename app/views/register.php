@@ -30,8 +30,12 @@ $activeNav = '';
             <section class="auth-card auth-card--wide">
                 <h1 class="auth-title">Daftar sebagai Peserta</h1>
                 <p class="auth-subtitle">Kelola tiket event kampus, sertifikat SKPI, dan pendaftaran kegiatan akademik Anda.</p>
-
                 <form class="auth-form" action="?page=register" method="post">
+                    <?php if (isset($registerResult) && !$registerResult['success']): ?>
+                        <p class="register-error">
+                            <?= e($registerResult['message']) ?>
+                        </p>
+                    <?php endif; ?>
                     <div class="field">
                         <label for="nama">Nama Lengkap</label>
                         <div class="input-wrap">
@@ -40,7 +44,7 @@ $activeNav = '';
                                 <path d="M5 21a7 7 0 0 1 14 0"></path>
                             </svg>
                             <input type="text" id="nama" name="nama"
-                                placeholder="Raditya Arya Maulana" autocomplete="name">
+                                placeholder="Raditya Arya Maulana" autocomplete="name" required>
                         </div>
                     </div>
 
@@ -66,7 +70,7 @@ $activeNav = '';
                             </svg>
                             <input type="email" id="email" name="email"
                                 placeholder="mahasiswa@polinema.ac.id"
-                                autocomplete="email">
+                                autocomplete="email" required>
                         </div>
                     </div>
 
@@ -77,7 +81,7 @@ $activeNav = '';
                                 <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.4 2.1L8.1 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.6 1.9Z"></path>
                             </svg>
                             <input type="tel" id="no_hp" name="no_hp"
-                                placeholder="08123456789" autocomplete="tel">
+                                placeholder="08123456789" autocomplete="tel" required>
                         </div>
                     </div>
 
@@ -89,7 +93,7 @@ $activeNav = '';
                                 <path d="m11 12 9-9M17 6l2 2M14 9l2 2"></path>
                             </svg>
                             <input type="password" id="password" name="password" placeholder="Masukkan minimal 8 karakter"
-                                autocomplete="new-password">
+                                autocomplete="new-password" required>
                             <button class="password-toggle" type="button" data-toggle-password="password"
                                 aria-label="Tampilkan kata sandi">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
@@ -108,7 +112,7 @@ $activeNav = '';
                                 <path d="m11 12 9-9M17 6l2 2M14 9l2 2"></path>
                             </svg>
                             <input type="password" id="konfirmasi_password" name="konfirmasi_password"
-                                placeholder="Masukkan ulang minimal 8 karakter" autocomplete="new-password">
+                                placeholder="Masukkan ulang minimal 8 karakter" autocomplete="new-password" required>
                             <button class="password-toggle" type="button" data-toggle-password="konfirmasi_password"
                                 aria-label="Tampilkan ulangi kata sandi">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">

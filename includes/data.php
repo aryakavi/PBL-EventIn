@@ -41,9 +41,9 @@ function event_image(int $n): ?string
 }
 
 $routes = [
-    'home'      => 'index.php',
-    'explore'   => '#explore',   // explore-events.php
-    'partners'  => '#partners',
+    'home'      => '?page=home#hero',
+    'explore'   => '?page=home#explore',   // explore-events.php
+    'partners'  => '?page=home#partners',
     'login' => '?page=login',
     'register' => '?page=register',
     'register-admin' => 'register-admin.php',
@@ -75,7 +75,7 @@ $categories = [
     'Webinar'  => 'Webinar',
 ];
 
-$cardCategories = ['semua', 'Workshop', 'Kompetisi', 'Webinar', 'Seminar', 'Workshop'];
+$cardCategories = ['Semua', 'Workshop', 'Kompetisi', 'Webinar', 'Seminar', 'Workshop'];
 $events = [];
 foreach ($cardCategories as $i => $cat) {
     $n = $i + 1;
