@@ -10,12 +10,11 @@ $organizer = [
 ];
 
 $menu = [
-    ['label' => 'Dashboard',  'href' => 'admin',       'key' => 'dashboard'],
-    ['label' => 'Event Saya', 'href' => 'admin/event',       'key' => 'event'],
-    ['label' => 'Pembayaran', 'href' => 'admin/pembayaran',  'key' => 'pembayaran'],
-    ['label' => 'Qr-Checker', 'href' => 'admin/qr',          'key' => 'qr'],
-    ['label' => 'Laporan',    'href' => 'admin/laporan',     'key' => 'laporan'],
-    ['label' => 'Admin',      'href' => 'admin',       'key' => 'admin'],
+    ['label' => 'Dashboard',  'href' => 'index.php',       'key' => 'dashboard'],
+    ['label' => 'Event Saya', 'href' => 'event.php',       'key' => 'event'],
+    ['label' => 'Pembayaran', 'href' => 'pembayaran.php',  'key' => 'pembayaran'],
+    ['label' => 'Qr-Checker', 'href' => 'qr.php',          'key' => 'qr'],
+    ['label' => 'Laporan',    'href' => 'laporan.php',     'key' => 'laporan'],
 ];
 
 $kpi = [
@@ -62,4 +61,19 @@ $kpiQr = [
     ['label' => 'Total Hadir',          'nilai' => '150',   'tren' => '75% tingkat kehadiran',        'arah' => 'up'],
     ['label' => 'Belum Hadir',          'nilai' => '50',    'tren' => '25% sisa kuota hadir',         'arah' => 'down'],
     ['label' => 'Persentase Kehadiran', 'nilai' => '75.0%', 'tren' => 'Standar target minimal terpenuhi', 'arah' => 'up'],
+];
+
+$kpiLaporan = [
+    ['label' => 'Total Pendaftar',   'nilai' => '3.245',         'tren' => 'Seluruh event semester ini',    'arah' => 'up'],
+    ['label' => 'Total Hadir',       'nilai' => '2.890',         'tren' => '89% konversi kehadiran',        'arah' => 'up'],
+    ['label' => 'Total Pendapatan',  'nilai' => 'Rp 48.250.000', 'tren' => 'Lunas terverifikasi bank',      'arah' => 'up'],
+    ['label' => 'Tingkat Kehadiran', 'nilai' => '89.1%',         'tren' => '+2.4% peningkatan semester lalu', 'arah' => 'up'],
+];
+
+$rincianLaporan = [
+    ['nama' => 'Shin Ryujin',  'email' => 'ryujin@mahasiswa.ac.id', 'status' => 'Lunas',    'kehadiran' => 'Hadir',       'sertifikat' => 'Sudah Dikirim', 'kategori' => 'Seminar',    'tanggal' => '2026-03-12'],
+    ['nama' => 'Siti Rahma',   'email' => 'siti@mahasiswa.ac.id',   'status' => 'Lunas',    'kehadiran' => 'Hadir',       'sertifikat' => 'Sudah Dikirim', 'kategori' => 'Workshop',   'tanggal' => '2026-04-08'],
+    ['nama' => 'Rian Pratama', 'email' => 'rian@mahasiswa.ac.id',   'status' => 'Tertunda', 'kehadiran' => 'Tidak Hadir', 'sertifikat' => 'Ditangguhkan',  'kategori' => 'Kompetisi',  'tanggal' => '2026-04-25'],
+    ['nama' => 'Dewi Lestari', 'email' => 'dewi@mahasiswa.ac.id',   'status' => 'Lunas',    'kehadiran' => 'Hadir',       'sertifikat' => 'Sudah Dikirim', 'kategori' => 'Seminar',    'tanggal' => '2026-02-19'],
+    ['nama' => 'Ahmad Dani',   'email' => 'ahmad@mahasiswa.ac.id',  'status' => 'Ditolak',  'kehadiran' => 'Tidak Hadir', 'sertifikat' => 'Ditangguhkan',  'kategori' => 'Workshop',   'tanggal' => '2026-01-30'],
 ];
