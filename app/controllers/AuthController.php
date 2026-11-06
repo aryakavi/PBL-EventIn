@@ -1,14 +1,18 @@
 
 <?php
 require_once __DIR__ . '/../models/User.php';
+require_once __DIR__ . '/../models/Event.php';
+
 
 class AuthController
 {
     private User $userModel;
+    private Event $eventModel;
 
     public function __construct(PDO $pdo)
     {
         $this->userModel = new User($pdo);
+        $this->eventModel = new Event($pdo);
 
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -249,5 +253,13 @@ class AuthController
         }
 
         session_destroy();
+    }
+
+    public function cardStatistic():array|null
+    {
+        return [
+            "jumlah_peserta"=>$this->userModel->countPeserta(),
+            "jumlah_event"=>$this->eventModel->countEvent()
+        ];
     }
 }

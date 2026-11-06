@@ -10,11 +10,11 @@ $organizer = [
 ];
 
 $menu = [
-    ['label' => 'Dashboard',  'href' => 'index.php',       'key' => 'dashboard'],
-    ['label' => 'Event Saya', 'href' => 'event.php',       'key' => 'event'],
-    ['label' => 'Pembayaran', 'href' => 'pembayaran.php',  'key' => 'pembayaran'],
-    ['label' => 'Qr-Checker', 'href' => 'qr.php',          'key' => 'qr'],
-    ['label' => 'Laporan',    'href' => 'laporan.php',     'key' => 'laporan'],
+    ['label' => 'Dashboard',  'href' => 'admin',       'key' => 'dashboard'],
+    ['label' => 'Event Saya', 'href' => 'admin/event',       'key' => 'event'],
+    ['label' => 'Pembayaran', 'href' => 'admin/pembayaran',  'key' => 'pembayaran'],
+    ['label' => 'Qr-Checker', 'href' => 'admin/qr',          'key' => 'qr'],
+    ['label' => 'Laporan',    'href' => 'admin/laporan',     'key' => 'laporan'],
 ];
 
 $kpi = [

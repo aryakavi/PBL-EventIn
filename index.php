@@ -39,7 +39,7 @@ if ($page === 'login') {
         }
     }
 
-
+    $cardData= $authController->cardStatistic();
     require __DIR__ . '/app/views/login.php';
     exit;
 }
@@ -108,7 +108,6 @@ if ($page === 'admin/event') {
         exit;
     }
 
-    define('APP_ROUTED', true);
 
     require __DIR__ . '/app/views/admin/event.php';
     exit;
@@ -126,9 +125,38 @@ if ($page === 'admin/pembayaran') {
         exit;
     }
 
-    define('APP_ROUTED', true);
 
     require __DIR__ . '/app/views/admin/pembayaran.php';
+    exit;
+}
+
+if ($page === 'admin/qr') {
+    if (!isset($_SESSION['user'])) {
+        header('Location: ?page=login');
+        exit;
+    }
+
+    if ($_SESSION['user']['role'] !== 'admin') {
+        http_response_code(403);
+        header('Location: ./');
+        exit;
+    }
+    require __DIR__ . '/app/views/admin/qr.php';
+    exit;
+}
+
+if ($page === 'admin/laporan') {
+    if (!isset($_SESSION['user'])) {
+        header('Location: ?page=login');
+        exit;
+    }
+
+    if ($_SESSION['user']['role'] !== 'admin') {
+        http_response_code(403);
+        header('Location: ./');
+        exit;
+    }
+    require __DIR__ . '/app/views/admin/laporan.php';
     exit;
 }
 

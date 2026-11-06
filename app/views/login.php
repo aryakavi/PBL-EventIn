@@ -112,7 +112,7 @@ $activeNav = '';
                                     <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path>
                                 </svg>
                             </span>
-                            <strong>10.000+</strong>
+                            <strong><?= isset($cardData) ? $cardData['jumlah_peserta'] : '' ?></strong>
                             <span>Mahasiswa Aktif Terdaftar</span>
                         </div>
 
@@ -123,7 +123,7 @@ $activeNav = '';
                                     <path d="M16 2v4M8 2v4M3 10h18"></path>
                                 </svg>
                             </span>
-                            <strong>500+</strong>
+                            <strong><?= isset($cardData) ? $cardData['jumlah_event'] : '' ?></strong>
                             <span>Event &amp; Seminar Kampus</span>
                         </div>
                     </div>
