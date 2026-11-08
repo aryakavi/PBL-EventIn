@@ -43,9 +43,10 @@ $routes = [
     'home'      => 'index.php',
     'explore'   => '#',   // explore-events.php
     'partners'  => '#partners',
-    'login'     => 'login.php',
-    'register'  => 'register.php',
-    'register-admin' => 'register-admin.php',
+    'login'     => 'app/views/login.php',
+    'register'  => 'app/views/register.php',
+    'register-admin' => 'app/views/register-admin.php',
+    'tiket'     => 'app/views/tiket-saya.php',
     'detail'    => '#',   // event-detail.php
 ];
 
@@ -115,10 +116,7 @@ $orgs = [
     ['Unit Kegiatan Mahasiswa 6',    '242 Anggota Terdaftar'],
 ];
 
-/*
- * Desain Figma hanya menampilkan pertanyaan (versi tertutup).
- * Isi 'a' di bawah ini masih placeholder, ganti sesuai kebutuhan tugas.
- */
+
 $faqs = [
     ['Apakah platform ini gratis bagi seluruh mahasiswa?',               'bayar.'],
     ['Bagaimana cara melakukan verifikasi e-sertifikat yang sah?',       'kepo amat.'],
@@ -130,3 +128,146 @@ $faqs = [
 $footerNav     = ['Beranda', 'Jelajah Event', 'Mitra Kampus'];
 $footerSupport = ['Pusat Bantuan', 'Syarat & Ketentuan', 'Kebijakan Privasi'];
 $socials       = ['Fb', 'Ig', 'X', 'In'];
+
+$pembayaranPeserta = [
+    'nama'    => 'Aryakavi',
+    'role'    => 'PESERTA',
+    'inisial' => 'A',
+];
+
+$ringkasanPesanan = [
+    'judul'    => 'Workshop Pembuatan Aplikasi Seluler Tanpa Kode (No-Code App)',
+    'tiket'    => '1x Tiket Akses Mandiri Utama',
+    'subtotal' => 'Rp 75.000',
+    'admin'    => 'Rp 2.500',
+    'total'    => 'Rp 77.500',
+];
+
+$daftarTiket = [
+    [
+        'id'           => 'tiket-1',
+        'kategori'     => 'WORKSHOP',
+        'status_tiket' => 'TERKONFIRMASI',
+        'status'       => 'aktif',
+        'judul'        => 'Workshop Pembuatan Aplikasi Seluler Tanpa Kode',
+        'tanggal'      => 'Sabtu, 28 April 2026',
+        'lokasi'       => 'Gedung D Lab Multimedia',
+        'gambar'       => 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=300&q=80',
+        'kode'         => 'EVIN-9872109-APP',
+        'pemilik'      => 'Shin Ryujin (Aryakavi)',
+        'nim'          => '240910291',
+        'akses'        => 'Akses Penuh + Sertifikat Utama',
+        'meja'         => 'Lab Multimedia 2 - Meja 14',
+        'sesi'         => 'Pagi (08:30 - 15:30 WIB)',
+        'terbuka'      => false,
+    ],
+    [
+        'id'           => 'tiket-2',
+        'kategori'     => 'SEMINAR',
+        'status_tiket' => 'TERKONFIRMASI',
+        'status'       => 'aktif',
+        'judul'        => 'Simposium Nasional Masa Depan Teknologi Blockchain',
+        'tanggal'      => 'Selasa, 12 Mei 2026',
+        'lokasi'       => 'Rektorat Lt. 4 Polinema',
+        'gambar'       => 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=300&q=80',
+        'kode'         => 'EVIN-5541023-BLK',
+        'pemilik'      => 'Shin Ryujin (Aryakavi)',
+        'nim'          => '240910291',
+        'akses'        => 'Peserta Reguler + E-Sertifikat SKPI',
+        'meja'         => 'Auditorium Lt. 4 - Kursi B12',
+        'sesi'         => 'Pagi (09:00 - 13:00 WIB)',
+        'terbuka'      => false,
+    ],
+    [
+        'id'           => 'tiket-3',
+        'kategori'     => 'SEMINAR',
+        'status_tiket' => 'SELESAI',
+        'status'       => 'selesai',
+        'judul'        => 'Webinar Kewirausahaan Startup Digital',
+        'tanggal'      => 'Kamis, 10 April 2026',
+        'lokasi'       => 'Online Zoom Meeting',
+        'gambar'       => 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=300&q=80',
+        'kode'         => 'EVIN-2210847-WEB',
+        'pemilik'      => 'Shin Ryujin (Aryakavi)',
+        'nim'          => '240910291',
+        'akses'        => 'Peserta Reguler + E-Sertifikat SKPI',
+        'meja'         => 'Online - Ruang Utama',
+        'sesi'         => 'Siang (13:00 - 16:00 WIB)',
+        'terbuka'      => false,
+    ],
+    [
+        'id'           => 'tiket-4',
+        'kategori'     => 'WORKSHOP',
+        'status_tiket' => 'DIBATALKAN',
+        'status'       => 'batal',
+        'judul'        => 'Workshop UI/UX Design Thinking',
+        'tanggal'      => 'Jumat, 3 April 2026',
+        'lokasi'       => 'Lab Multimedia D',
+        'gambar'       => 'https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?auto=format&fit=crop&w=300&q=80',
+        'kode'         => 'EVIN-3390412-UIX',
+        'pemilik'      => 'Shin Ryujin (Aryakavi)',
+        'nim'          => '240910291',
+        'akses'        => 'Akses Penuh',
+        'meja'         => '-',
+        'sesi'         => 'Pagi (08:00 - 12:00 WIB)',
+        'terbuka'      => false,
+    ],
+];
+
+$daftarPembayaran = [
+    [
+        'id'      => 'TX-100293',
+        'peserta' => 'Shin Ryujin',
+        'event'   => 'Simposium Nasional AI',
+        'event_lengkap' => 'Simposium Nasional AI & Masa Depan Pendidikan Tinggi',
+        'jumlah'  => 'Rp 75.000',
+        'status'  => 'Menunggu',
+        'metode'  => 'Virtual Account Bank Mandiri',
+        'waktu'   => '24 April 2026, 14:32 WIB',
+        'berkas'  => 'bni-transfer.png',
+    ],
+    [
+        'id'      => 'TX-100294',
+        'peserta' => 'Park Jinyoung',
+        'event'   => 'Workshop No-Code App',
+        'event_lengkap' => 'Workshop No-Code App Maker untuk Mahasiswa',
+        'jumlah'  => 'Rp 75.000',
+        'status'  => 'Diverifikasi',
+        'metode'  => 'QRIS Kampus',
+        'waktu'   => '24 April 2026, 15:10 WIB',
+        'berkas'  => 'qris-jinyoung.png',
+    ],
+    [
+        'id'      => 'TX-100295',
+        'peserta' => 'Dewi Kurniasari',
+        'event'   => 'Workshop No-Code App',
+        'event_lengkap' => 'Workshop No-Code App Maker untuk Mahasiswa',
+        'jumlah'  => 'Rp 75.000',
+        'status'  => 'Menunggu',
+        'metode'  => 'Transfer Bank BCA',
+        'waktu'   => '25 April 2026, 09:15 WIB',
+        'berkas'  => 'bca-dewi.jpg',
+    ],
+    [
+        'id'      => 'TX-100296',
+        'peserta' => 'Dewi Lestari',
+        'event'   => 'Simposium Nasional AI',
+        'event_lengkap' => 'Simposium Nasional AI & Masa Depan Pendidikan Tinggi',
+        'jumlah'  => 'Rp 75.000',
+        'status'  => 'Diverifikasi',
+        'metode'  => 'Virtual Account Bank BNI',
+        'waktu'   => '25 April 2026, 11:40 WIB',
+        'berkas'  => 'bni-lestari.png',
+    ],
+    [
+        'id'      => 'TX-100297',
+        'peserta' => 'Ahmad Dani',
+        'event'   => 'Simposium Nasional AI',
+        'event_lengkap' => 'Simposium Nasional AI & Masa Depan Pendidikan Tinggi',
+        'jumlah'  => 'Rp 75.000',
+        'status'  => 'Ditolak',
+        'metode'  => 'Transfer Bank BRI',
+        'waktu'   => '25 April 2026, 13:05 WIB',
+        'berkas'  => 'bri-ahmad.png',
+    ],
+];

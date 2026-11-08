@@ -1,4 +1,11 @@
-<?php require_once __DIR__ . '/data.php'; ?>
+<?php
+require_once __DIR__ . '/data.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$login = isset($_SESSION['user']);
+$base = $base ?? '';
+?>
 <footer class="footer">
     <div class="footer-grid">
         <div class="footer-col footer-brand">
@@ -14,6 +21,9 @@
             <?php foreach ($footerNav as $label): ?>
                 <a href="#"><?= e($label) ?></a>
             <?php endforeach; ?>
+            <?php if ($login): ?>
+                <a href="<?= e($base . $routes['tiket']) ?>">Tiket Saya</a>
+            <?php endif; ?>
         </div>
 
         <div class="footer-col footer-links">

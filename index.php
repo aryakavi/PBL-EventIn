@@ -1,5 +1,8 @@
 <?php
 
+$activeNav = 'home';
+$base = '';
+
 require __DIR__ . '/includes/data.php';
 require __DIR__ . '/includes/koneksi.php';
 require __DIR__ . '/app/models/Event.php';
@@ -16,13 +19,12 @@ $eventsDb = $eventController->index();
 <html lang="id">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>EventIn - Temukan Event Kampus Terbaik</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css">
+<?php
+$pageTitle  = 'Temukan Event Kampus Terbaik';
+$assetBase  = 'assets';
+$pageStyles = ['style.css'];
+require __DIR__ . '/includes/head.php';
+?>
 </head>
 
 <body>
