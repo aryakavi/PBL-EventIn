@@ -1,19 +1,18 @@
 <?php
 $activeNav = '';
+$base = '../../';
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Daftar sebagai Admin Organisasi - EventIn</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../assets/css/style.css">
-    <link rel="stylesheet" href="../../assets/css/auth.css">
+    <?php
+    $pageTitle  = 'Daftar sebagai Admin Organisasi';
+    $assetBase  = '../../assets';
+    $pageStyles = ['style.css', 'auth.css'];
+    require __DIR__ . '/../../includes/head.php';
+    ?>
 </head>
 
 <body class="page-auth">
@@ -32,6 +31,11 @@ $activeNav = '';
                 <p class="auth-subtitle">Kelola tiket event kampus, sertifikat SKPI, dan pendaftaran kegiatan akademik Anda.</p>
 
                 <form class="auth-form" action="?page=register-admin" method="post">
+                    <?php if (isset($registerResult) && !$registerResult['success']): ?>
+                        <p class="register-error">
+                            <?= e($registerResult['message']) ?>
+                        </p>
+                    <?php endif; ?>
                     <div class="field">
                         <label for="nama">Nama Lengkap</label>
                         <div class="input-wrap">
@@ -96,7 +100,7 @@ $activeNav = '';
                                 <?php
                                 if (isset($ukm)) {
                                     foreach ($ukm as $ukms) { ?>
-                                        <option value="<?= $ukms["id_ukm"]?>"><?= $ukms["nama_ukm"]?></option>
+                                        <option value="<?= $ukms["id_ukm"] ?>"><?= $ukms["nama_ukm"] ?></option>
                                 <?php }
                                 } ?>
 
@@ -174,7 +178,7 @@ $activeNav = '';
                             <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path>
                         </svg>
                     </span>
-                    <strong>10.000+</strong>
+                    <strong><?= isset($cardData) ? $cardData['jumlah_peserta'] : '' ?></strong>
                     <span>Mahasiswa Aktif Terdaftar</span>
                 </div>
 
@@ -185,7 +189,7 @@ $activeNav = '';
                             <path d="M16 2v4M8 2v4M3 10h18"></path>
                         </svg>
                     </span>
-                    <strong>500+</strong>
+                    <strong><?= isset($cardData) ? $cardData['jumlah_event'] : '' ?></strong>
                     <span>Event &amp; Seminar Kampus</span>
                 </div>
             </div>

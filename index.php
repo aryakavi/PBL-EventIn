@@ -1,5 +1,8 @@
 <?php
 
+$activeNav = 'home';
+$base = '';
+
 ob_start();
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -122,6 +125,18 @@ if ($page === 'admin') {
         require __DIR__ . '/app/views/admin/' . $adminPages[$page];
         exit;
     }
+}
+
+if ($page === 'tiket') {
+   require __DIR__.'/app/views/tiket-saya.php';
+}
+
+if ($page === 'daftar_event') {
+    require __DIR__.'/app/views/pembayaran.php';
+}
+
+if ($page=== 'konfirmasi_pembayaran') {
+    require __DIR__.'/app/views/konfirmasi-pembayaran.php';
 }
 
 if ($page === 'admin/event') {

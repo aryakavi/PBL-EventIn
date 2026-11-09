@@ -121,7 +121,7 @@
                             </div>
                             <div class="event-footer">
                                 <span class="price">Rp.<?= e($ev['harga']) ?></span>
-                                <a class="btn btn-primary" href="<?= e($routes['detail']) ?>">Daftar</a>
+                                <a class="btn btn-primary" href="<?= e($routes['daftar_event']) ?>">Daftar</a>
                             </div>
                         </div>
                     </article>
