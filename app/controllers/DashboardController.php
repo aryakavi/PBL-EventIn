@@ -17,7 +17,7 @@ class DashboardController
 
     public function index(): array|null
     {
-        $totalPeserta = $this->pesertaModel->countPeserta();
+        $totalPeserta = $this->pesertaModel->countPesertaMhs();
         $totalEvent = $this->eventModel->countEvent();
         $totalUKM = $this->ukmModel->countUKM();
 

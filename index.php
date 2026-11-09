@@ -39,15 +39,15 @@ if ($page === 'login') {
         }
     }
 
-    $cardData= $authController->cardStatistic();
+    $cardData = $authController->cardStatistic();
     require __DIR__ . '/app/views/login.php';
     exit;
 }
 
 if ($page === 'register') {
+    require_once __DIR__ . '/app/controllers/AuthController.php';
+    $authController = new AuthController($pdo);
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        require_once __DIR__ . '/app/controllers/AuthController.php';
-        $authController = new AuthController($pdo);
         $registerResult = $authController->registerPengguna([
             'nama' => $_POST['nama'],
             'email' => $_POST['email'],
@@ -64,7 +64,35 @@ if ($page === 'register') {
         }
     }
 
+    $cardData = $authController->cardStatistic();
+
     require __DIR__ . '/app/views/register.php';
+    exit;
+}
+
+if ($page === 'register-admin') {
+    require_once __DIR__ . '/app/controllers/AuthController.php';
+    $authController = new AuthController($pdo);
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $registerResult = $authController->registerAdmin([
+            'nama' => $_POST['nama'],
+            'email' => $_POST['email'],
+            'no_hp' => $_POST['no_hp'] ?? '',
+            'nim' => $_POST['nim'],
+            'password' => $_POST['password'],
+            'konfirmasi_password' => $_POST['konfirmasi_password'],
+            'id_ukm' => $_POST['organisasi']
+        ]);
+        if ($registerResult['success']) {
+            $_SESSION['registerMessage'] = $registerResult['message'];
+            header('Location:?page=login');
+            exit;
+        }
+    }
+    $ukm = $authController->getUkms();
+    $cardData = $authController->cardStatistic();
+    require __DIR__ . '/app/views/register-admin.php';
     exit;
 }
 

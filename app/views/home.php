@@ -40,7 +40,7 @@
                 <p>Pusat penemuan kegiatan akademik, seminar nasional, kompetisi mahasiswa, dan workshop sertifikasi profesional terpadu dalam satu platform digital eksklusif.</p>
                 <div class="hero-actions">
                     <a class="btn btn-primary" href="<?= e($routes['explore']) ?>">Jelajah Sekarang</a>
-                    <a class="btn btn-white" href="<?= e($routes['register']) ?>">Daftar Organisasi</a>
+                    <a class="btn btn-white" href="<?= e($routes['register-admin']) ?>">Daftar Admin</a>
                 </div>
             </div>
             <div class="hero-stats">
@@ -168,7 +168,7 @@
                 <?php endforeach; ?>
             </div>
             <div class="organizers-cta">
-                <a class="btn btn-primary" href="<?= e($routes['register']) ?>">Daftar Sebagai Penyelenggara</a>
+                <a class="btn btn-primary" href="<?= e($routes['register-admin']) ?>">Daftar Sebagai Penyelenggara</a>
             </div>
         </section>
 

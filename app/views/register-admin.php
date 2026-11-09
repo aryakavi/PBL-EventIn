@@ -1,5 +1,4 @@
 <?php
-require __DIR__ . '/../../includes/data.php';
 $activeNav = '';
 ?>
 
@@ -32,7 +31,7 @@ $activeNav = '';
                 <h1 class="auth-title">Daftar sebagai Admin Organisasi</h1>
                 <p class="auth-subtitle">Kelola tiket event kampus, sertifikat SKPI, dan pendaftaran kegiatan akademik Anda.</p>
 
-                <form class="auth-form">
+                <form class="auth-form" action="?page=register-admin" method="post">
                     <div class="field">
                         <label for="nama">Nama Lengkap</label>
                         <div class="input-wrap">
@@ -94,12 +93,15 @@ $activeNav = '';
                             </svg>
                             <select id="organisasi" name="organisasi">
                                 <option value="" selected disabled>Pilih organisasi..</option>
-                                <option value="BEM">BEM (Badan Eksekutif Mahasiswa)</option>
-                                <option value="DPM">DPM (Dewan Perwakilan Mahasiswa)</option>
-                                <option value="HIMA">HIMA (Himpunan Mahasiswa Jurusan)</option>
-                                <option value="UKM">UKM (Unit Kegiatan Mahasiswa)</option>
-                                <option value="Komunitas">Komunitas / Club</option>
-                                <option value="Lainnya">Lainnya</option>
+                                <?php
+                                if (isset($ukm)) {
+                                    foreach ($ukm as $ukms) { ?>
+                                        <option value="<?= $ukms["id_ukm"]?>"><?= $ukms["nama_ukm"]?></option>
+                                <?php }
+                                } ?>
+
+
+                                <option value="Lainnya">Lainnya</option>]
                             </select>
                         </div>
                     </div>

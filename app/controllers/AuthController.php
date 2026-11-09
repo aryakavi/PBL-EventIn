@@ -2,17 +2,20 @@
 <?php
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Event.php';
+require_once __DIR__ . '/../models/Ukm.php';
 
 
 class AuthController
 {
     private User $userModel;
     private Event $eventModel;
+    private Ukm $ukmModel;
 
     public function __construct(PDO $pdo)
     {
         $this->userModel = new User($pdo);
         $this->eventModel = new Event($pdo);
+        $this->ukmModel = new Ukm($pdo);
 
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -21,7 +24,7 @@ class AuthController
 
     public function getUkms(): array
     {
-        return $this->userModel->getUkms();
+        return $this->ukmModel->getUkms();
     }
 
     public function registerPengguna(array $data): array
@@ -159,7 +162,7 @@ class AuthController
             ];
         }
 
-        $ukms = $this->userModel->getUkms();
+        $ukms = $this->ukmModel->getUkms();
         $idUkms = array_column($ukms, 'id_ukm');
 
         if (!in_array($idUkm, $idUkms)) {
@@ -258,8 +261,10 @@ class AuthController
     public function cardStatistic():array|null
     {
         return [
-            "jumlah_peserta"=>$this->userModel->countPeserta(),
+            "jumlah_peserta"=>$this->userModel->countPesertaMhs(),
             "jumlah_event"=>$this->eventModel->countEvent()
         ];
     }
+
+
 }

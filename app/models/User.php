@@ -22,25 +22,13 @@ class User
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getUkms(): array
+    public function countPesertaMhs(): int
     {
-        $sql = "SELECT id_ukm, nama, singkatan, deskripsi
-                FROM ukm
-                ORDER BY nama ASC";
-
-        $stmt = $this->pdo->query($sql);
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function countPeserta(): int
-    {
-        $sql = "SELECT COUNT(*) FROM pengguna WHERE role = 'pengguna'";
+        $sql = "SELECT COUNT(*) FROM pengguna WHERE role = 'pengguna' AND nim is not null";
         $stmt = $this->pdo->query($sql);
 
         return (int) $stmt->fetchColumn();
     }
-
 
     public function registerPengguna(
         string $nama,
@@ -94,7 +82,7 @@ class User
                 'no_hp' => $noHp,
                 'nim' => $nim,
                 'password_hash' => $passwordHash,
-                'role' => 'admin_ukm'
+                'role' => 'admin'
             ]);
 
             $idPengguna = (int) $stmt->fetchColumn();
