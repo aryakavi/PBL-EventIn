@@ -163,6 +163,6 @@ require __DIR__ . '/../../includes/head.php';
 
 <?php include __DIR__ . '/../../includes/footer.php'; ?>
 
-<script src="../../assets/js/main.js"></script>
+<script src="../../assets/js/main.js?v=<?= e(asset_version('assets/js/main.js')) ?>"></script>
 </body>
 </html>

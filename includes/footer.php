@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 $login = isset($_SESSION['user']);
+$isAdmin = $login && is_admin_role($_SESSION['user']['role'] ?? '');
 $base = $base ?? '';
 
 $footerSupportHref = [
@@ -38,7 +39,7 @@ $footerNavHref = [
             <?php foreach ($footerNav as $label): ?>
                 <a href="<?= e($base . ($footerNavHref[$label] ?? $routes['home'])) ?>"><?= e($label) ?></a>
             <?php endforeach; ?>
-            <?php if ($login): ?>
+            <?php if ($login && !$isAdmin): ?>
                 <a href="<?= e($base . $routes['tiket']) ?>">Tiket Saya</a>
             <?php endif; ?>
         </div>

@@ -105,6 +105,6 @@ require __DIR__ . '/../../../includes/head.php';
 
 <div class="sidebar-overlay" data-sidebar-close></div>
 
-<script src="../../../assets/js/admin.js"></script>
+<script src="../../../assets/js/admin.js?v=<?= e(asset_version('assets/js/admin.js')) ?>"></script>
 </body>
 </html>

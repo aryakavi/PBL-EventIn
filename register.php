@@ -107,10 +107,7 @@ require __DIR__ . '/includes/auth-header.php';
                 </div>
 
                 <div class="field">
-                    <div class="label-row">
-                        <label for="password">Kata Sandi</label>
-                        <a class="link-orange" href="#">Lupa Kata Sandi?</a>
-                    </div>
+                    <label for="password">Kata Sandi</label>
                     <div class="input-wrap input-wrap--toggle">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                             <circle cx="8" cy="15" r="4"></circle>
@@ -129,10 +126,7 @@ require __DIR__ . '/includes/auth-header.php';
                 </div>
 
                 <div class="field">
-                    <div class="label-row">
-                        <label for="konfirmasi_password">Ulangi Kata Sandi</label>
-                        <a class="link-orange" href="#">Lupa Kata Sandi?</a>
-                    </div>
+                    <label for="konfirmasi_password">Ulangi Kata Sandi</label>
                     <div class="input-wrap input-wrap--toggle">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                             <circle cx="8" cy="15" r="4"></circle>

@@ -14,5 +14,5 @@ $assetBase  = $assetBase ?? 'assets';
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <?php foreach ($pageStyles as $css): ?>
-<link rel="stylesheet" href="<?= e($assetBase) ?>/css/<?= e($css) ?>">
+<link rel="stylesheet" href="<?= e($assetBase) ?>/css/<?= e($css) ?>?v=<?= e(asset_version('assets/css/' . $css)) ?>">
 <?php endforeach; ?>

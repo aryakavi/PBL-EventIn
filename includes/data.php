@@ -14,6 +14,25 @@ function e($text): string
     return htmlspecialchars((string) $text, ENT_QUOTES, 'UTF-8');
 }
 
+/**
+ * Versi aset berdasarkan waktu ubah file, dipakai sebagai query string
+ * supaya browser tidak memakai CSS/JS lama dari cache.
+ *
+ * @param string $path Path aset relatif terhadap root proyek, mis. "assets/css/style.css".
+ */
+function asset_version(string $path): string
+{
+    $file = __DIR__ . '/../' . ltrim($path, '/');
+
+    return is_file($file) ? (string) filemtime($file) : '1';
+}
+
+/** URL aset lengkap dengan versi cache-busting. */
+function asset_url(string $path): string
+{
+    return ltrim($path, '/') . '?v=' . asset_version($path);
+}
+
 
 /** Cek apakah role termasuk admin/penyelenggara. */
 function is_admin_role(?string $role): bool
@@ -89,6 +108,7 @@ $routes = [
     'home'              => 'index.php',
     'explore'           => 'index.php#explore',
     'partners'          => 'index.php#partners',
+    'faq'               => 'index.php#faq',
     'login'             => 'login.php',
     'register'          => 'register.php',
     'register-admin'    => 'register-admin.php',

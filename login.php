@@ -99,7 +99,7 @@ require __DIR__ . '/includes/auth-header.php';
                     <div class="field">
                         <div class="label-row">
                             <label for="password">Kata Sandi</label>
-                            <a class="link-orange" href="#">Lupa Kata Sandi?</a>
+                            <a class="link-orange" href="<?= e($routes['faq']) ?>">Lupa Kata Sandi?</a>
                         </div>
                         <div class="input-wrap input-wrap--toggle">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">

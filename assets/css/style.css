@@ -349,15 +349,6 @@ button { font-family: inherit; }
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.user-menu-nav {
-    display: none;
-    margin-top: 4px;
-    padding-top: 4px;
-    border-top: 1px solid var(--border);
-}
-@media (max-width: 760px) {
-    .user-menu-nav { display: block; }
-}
 @media (max-width: 700px) {
     .user-navbar {
         padding: 0 16px;
@@ -661,8 +652,19 @@ button { font-family: inherit; }
 }
 
 @media (max-width: 760px) {
-    .user-navbar { padding: 0 16px; }
-    .user-nav { display: none; }
+    .user-navbar {
+        height: auto;
+        padding: 12px 16px;
+        row-gap: 10px;
+        flex-wrap: wrap;
+    }
+    .user-navbar > .user-nav {
+        order: 3;
+        flex-basis: 100%;
+        gap: 18px;
+        overflow-x: auto;
+        padding-bottom: 2px;
+    }
     .checkout-grid { grid-template-columns: 1fr; }
     .pay-step-line { width: 48px; }
 }

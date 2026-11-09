@@ -32,7 +32,7 @@ $logoutHref    = $base . $routes['logout'];
         <a href="<?= e($base . $routes['home']) ?>" class="user-nav-link<?= $aktif('home') ?>">Beranda</a>
         <a href="<?= e($base . $routes['explore']) ?>" class="user-nav-link<?= $aktif('explore') ?>">Jelajah Event</a>
         <a href="<?= e($base . $routes['partners']) ?>" class="user-nav-link<?= $aktif('partners') ?>">Mitra</a>
-        <?php if ($login): ?>
+        <?php if ($login && !$isAdmin): ?>
             <a href="<?= e($base . $routes['tiket']) ?>" class="user-nav-link<?= $aktif('tiket') ?>">Tiket Saya</a>
         <?php endif; ?>
         <?php if ($isAdmin): ?>
@@ -57,13 +57,6 @@ $logoutHref    = $base . $routes['logout'];
                     <?php endif; ?>
                     <a href="<?= e($profilHref) ?>" class="user-menu-item">Edit Profil</a>
                     <a href="<?= e($logoutHref) ?>" class="user-menu-item user-menu-item--danger">Logout</a>
-
-                    <div class="user-menu-nav">
-                        <a href="<?= e($base . $routes['home']) ?>" class="user-menu-item">Beranda</a>
-                        <a href="<?= e($base . $routes['explore']) ?>" class="user-menu-item">Jelajah Event</a>
-                        <a href="<?= e($base . $routes['partners']) ?>" class="user-menu-item">Mitra</a>
-                        <a href="<?= e($base . $routes['tiket']) ?>" class="user-menu-item">Tiket Saya</a>
-                    </div>
                 </div>
             </div>
         <?php else: ?>

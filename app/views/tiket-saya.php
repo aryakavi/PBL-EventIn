@@ -3,6 +3,12 @@ $activeNav = 'tiket';
 $base = '../../';
 require __DIR__ . '/../../includes/data.php';
 
+// Halaman ini khusus peserta. Admin diarahkan ke dashboard penyelenggara.
+if (is_admin_role($_SESSION['user']['role'] ?? '')) {
+    header('Location: ' . $base . $routes['admin-dashboard']);
+    exit;
+}
+
 $peserta = $pembayaranPeserta;
 
 // Anggap pengguna sudah login (auth asli belum tersambung) agar navbar menampilkan profil.
@@ -176,6 +182,6 @@ require __DIR__ . '/../../includes/head.php';
 
 <?php include __DIR__ . '/../../includes/footer.php'; ?>
 
-<script src="../../assets/js/main.js"></script>
+<script src="../../assets/js/main.js?v=<?= e(asset_version('assets/js/main.js')) ?>"></script>
 </body>
 </html>
