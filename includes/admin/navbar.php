@@ -24,5 +24,12 @@ $organizer = $organizer ?? ['nama' => 'HMTI', 'role' => 'ORGANIZER', 'inisial' =
             <span class="profile-role"><?= e($organizer['role']) ?></span>
         </div>
         <span class="avatar"><?= e($organizer['inisial']) ?></span>
+        <div class="user-menu-wrap">
+            <button class="user-menu-btn" type="button" aria-label="Menu akun" aria-expanded="false">&#9776;</button>
+            <div class="user-menu-dropdown" hidden>
+                <a href="#" class="user-menu-item">Edit Profil</a>
+                <a href="#" class="user-menu-item user-menu-item--danger">Logout</a>
+            </div>
+        </div>
     </div>
 </header>

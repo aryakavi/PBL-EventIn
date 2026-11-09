@@ -156,9 +156,9 @@ require __DIR__ . '/../../includes/head.php';
 
                 <div class="auth-switch">
                     Sudah memiliki akun?
-                    <a class="link-blue" href="<?= e($routes['login'] ?? '#') ?>">Masuk di sini</a>
+                    <a class="link-blue" href="<?= e($base . ($routes['login'] ?? '#')) ?>">Masuk di sini</a>
                     <span class="dot" aria-hidden="true">&bull;</span>
-                    <a class="link-orange" href="<?= e($routes['register'] ?? '#') ?>">Daftar sebagai Peserta</a>
+                    <a class="link-orange" href="<?= e($base . ($routes['register'] ?? '#')) ?>">Daftar sebagai Peserta</a>
                 </div>
             </section>
 

@@ -79,9 +79,9 @@ require __DIR__ . '/../../includes/head.php';
 
                     <div class="auth-switch">
                         Belum memiliki akun?
-                        <a class="link-orange" href="<?= e($routes['register'] ?? '#') ?>">Daftar sebagai Peserta</a>
+                        <a class="link-orange" href="<?= e($base . ($routes['register'] ?? '#')) ?>">Daftar sebagai Peserta</a>
                         <span class="dot" aria-hidden="true">&bull;</span>
-                        <a class="link-blue" href="#">Daftarkan Organisasi</a>
+                        <a class="link-blue" href="<?= e($base . ($routes['register-admin'] ?? '#')) ?>">Daftarkan Organisasi</a>
                     </div>
                 </section>
 
