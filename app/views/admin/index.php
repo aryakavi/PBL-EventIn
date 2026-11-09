@@ -25,7 +25,7 @@ require __DIR__ . '/../../../includes/head.php';
                 <h1>Selamat Datang</h1>
                 <p>Berikut aktivitas pendaftaran, pendapatan, dan partisipasi event kemahasiswaan Anda.</p>
             </div>
-            <a href="#" class="btn btn-primary">Buat Event Baru</a>
+            <a href="event.php#form-event" class="btn btn-primary">Buat Event Baru</a>
         </div>
 
         <section class="kpi">
@@ -62,9 +62,9 @@ require __DIR__ . '/../../../includes/head.php';
                                 <td><?= e($row['peserta']) ?></td>
                                 <td><span class="badge badge-success"><?= e($row['status']) ?></span></td>
                                 <td class="actions">
-                                    <a href="#" class="actions-detail">Detail</a>
+                                    <a href="pembayaran.php?transaksi=<?= e($row['id'] ?? '') ?>" class="actions-detail">Detail</a>
                                     <span class="actions-sep">|</span>
-                                    <a href="#" class="actions-verify">Verifikasi</a>
+                                    <a href="pembayaran.php?status=menunggu" class="actions-verify">Verifikasi</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

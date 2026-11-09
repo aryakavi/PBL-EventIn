@@ -1,0 +1,1 @@
+INSERT INTO public.admin_ukm (id_admin_ukm, id_pengguna, id_ukm, peran) VALUES (7, 17, 7, 'Ketua'), (8, 18, 8, 'Ketua'), (9, 19, 9, 'Ketua');

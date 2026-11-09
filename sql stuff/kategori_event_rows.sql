@@ -1,0 +1,1 @@
+INSERT INTO public.kategori_event (id_kategori, nama_kategori) VALUES (1, 'Seminar'), (2, 'Workshop'), (3, 'Kompetisi'), (4, 'Webinar');

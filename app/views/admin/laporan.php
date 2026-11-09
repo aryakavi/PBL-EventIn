@@ -71,8 +71,8 @@ require __DIR__ . '/../../../includes/head.php';
             <div class="section-header">
                 <h2>Rincian Data Pendaftar Terverifikasi</h2>
                 <div class="export-actions">
-                    <a href="#" class="btn btn-outline">Export CSV</a>
-                    <a href="#" class="btn btn-primary">Export PDF</a>
+                    <a href="export-csv.php?<?= e(http_build_query(array_filter(['tanggal' => $tanggal, 'kategori' => $kategori]))) ?>" class="btn btn-outline">Export CSV</a>
+                    <a href="laporan.php" class="btn btn-primary" onclick="window.print();return false;">Export PDF</a>
                 </div>
             </div>
 

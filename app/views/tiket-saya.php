@@ -154,9 +154,9 @@ require __DIR__ . '/../../includes/head.php';
                         </div>
 
                         <div class="ticket-actions">
-                            <a href="#" class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg> Unduh E-Tiket (PDF)</a>
-                            <a href="#" class="btn btn-outline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg> Simpan ke Google Calendar</a>
-                            <a href="#" class="btn btn-outline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 4-6 2v14l6-2 6 2 6-2V4l-6 2-6-2Z"></path><path d="M9 4v14M15 6v14"></path></svg> Panduan Lokasi Gedung</a>
+                            <a href="#" class="btn btn-primary" data-print-tiket><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg> Unduh E-Tiket (PDF)</a>
+                            <a href="https://calendar.google.com/calendar/r/eventedit?text=<?= rawurlencode($t['judul']) ?>&location=<?= rawurlencode($t['lokasi']) ?>" target="_blank" rel="noopener" class="btn btn-outline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg> Simpan ke Google Calendar</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=<?= rawurlencode($t['lokasi'] . ', Politeknik Negeri Malang') ?>" target="_blank" rel="noopener" class="btn btn-outline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 4-6 2v14l6-2 6 2 6-2V4l-6 2-6-2Z"></path><path d="M9 4v14M15 6v14"></path></svg> Panduan Lokasi Gedung</a>
                         </div>
                     </div>
                 </div>

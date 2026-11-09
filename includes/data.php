@@ -9,9 +9,51 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 /** Escape output HTML. */
-function e(string $text): string
+function e($text): string
 {
-    return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+    return htmlspecialchars((string) $text, ENT_QUOTES, 'UTF-8');
+}
+
+
+/** Cek apakah role termasuk admin/penyelenggara. */
+function is_admin_role(?string $role): bool
+{
+    return in_array(strtolower((string) $role), ['admin', 'admin_ukm', 'organizer'], true);
+}
+
+/** Label role yang ramah dibaca. */
+function role_label(?string $role): string
+{
+    return match (strtolower((string) $role)) {
+        'admin_ukm', 'admin', 'organizer' => 'ADMIN ORGANISASI',
+        'pengguna', 'peserta' => 'PESERTA',
+        default => strtoupper((string) $role) !== '' ? strtoupper((string) $role) : 'PESERTA',
+    };
+}
+
+/** Ambil inisial dari nama (maksimal 2 huruf). */
+function user_initials(string $nama): string
+{
+    $kata = preg_split('/\s+/', trim($nama)) ?: [];
+    $inisial = '';
+
+    foreach ($kata as $k) {
+        if ($k === '') {
+            continue;
+        }
+        $inisial .= mb_strtoupper(mb_substr($k, 0, 1));
+        if (mb_strlen($inisial) >= 2) {
+            break;
+        }
+    }
+
+    return $inisial !== '' ? $inisial : 'U';
+}
+
+/** Format angka menjadi rupiah sederhana. */
+function format_rupiah($angka): string
+{
+    return 'Rp ' . number_format((float) $angka, 0, ',', '.');
 }
 
 
@@ -44,14 +86,22 @@ function event_image(int $n): ?string
 }
 
 $routes = [
-    'home'      => 'index.php',
-    'explore'   => '#',   // explore-events.php
-    'partners'  => '#partners',
-    'login'     => 'app/views/login.php',
-    'register'  => 'app/views/register.php',
-    'register-admin' => 'app/views/register-admin.php',
-    'tiket'     => 'app/views/tiket-saya.php',
-    'detail'    => '#',   // event-detail.php
+    'home'              => 'index.php',
+    'explore'           => 'index.php#explore',
+    'partners'          => 'index.php#partners',
+    'login'             => 'login.php',
+    'register'          => 'register.php',
+    'register-admin'    => 'register-admin.php',
+    'register_admin'    => 'register-admin.php',
+    'tiket'             => 'app/views/tiket-saya.php',
+    'detail'            => 'app/views/event-detail.php',
+    'pembayaran'        => 'app/views/pembayaran.php',
+    'profil'            => 'app/views/profil.php',
+    'edit-profil'       => 'app/views/edit-profil.php',
+    'logout'            => 'logout.php',
+    'admin-dashboard'   => 'app/views/admin/index.php',
+    'admin-profil'      => 'app/views/admin/profil.php',
+    'admin-edit-profil' => 'app/views/admin/edit-profil.php',
 ];
 
 $stats = [

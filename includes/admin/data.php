@@ -3,10 +3,19 @@
 
 require_once __DIR__ . '/../data.php';
 
+$adminSession = $_SESSION['user'] ?? null;
+$isAdminUser  = is_array($adminSession) && is_admin_role($adminSession['role'] ?? '');
+$adminNama    = $isAdminUser ? (string) $adminSession['nama'] : 'HMTI';
+
 $organizer = [
-    'nama'  => 'HMTI',
-    'role'  => 'ORGANIZER',
-    'inisial' => 'H',
+    'nama'      => $adminNama,
+    'role'      => $isAdminUser ? role_label($adminSession['role'] ?? '') : 'ADMIN ORGANISASI',
+    'inisial'   => user_initials($adminNama),
+    'email'     => $isAdminUser ? (string) ($adminSession['email'] ?? '') : 'hmti@polinema.ac.id',
+    'nim'       => $isAdminUser ? (string) ($adminSession['nim'] ?? '') : '240910291',
+    'no_hp'     => $isAdminUser ? (string) ($adminSession['no_hp'] ?? '') : '081234567890',
+    'organisasi' => 'HMTI Politeknik Negeri Malang',
+    'id_pengguna' => $isAdminUser ? (int) ($adminSession['id_pengguna'] ?? 0) : 0,
 ];
 
 $menu = [

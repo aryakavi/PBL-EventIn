@@ -6,8 +6,9 @@ if (session_status() === PHP_SESSION_NONE) {
 
 $login   = isset($_SESSION['user']);
 $nama    = $login ? $_SESSION['user']['nama'] : '';
-$role    = $login ? $_SESSION['user']['role'] : '';
-$inisial = $login ? mb_strtoupper(mb_substr($nama, 0, 1)) : '';
+$role    = $login ? ($_SESSION['user']['role'] ?? '') : '';
+$inisial = $login ? user_initials($nama) : '';
+$isAdmin = $login && is_admin_role($role);
 
 $activeNav = $activeNav ?? '';
 $aktif = function ($key) use ($activeNav) {
@@ -15,19 +16,27 @@ $aktif = function ($key) use ($activeNav) {
 };
 
 $base = $base ?? '';
+
+// Tujuan menu akun mengikuti role pengguna.
+$profilHref    = $base . ($isAdmin ? $routes['admin-edit-profil'] : $routes['edit-profil']);
+$dashboardHref = $base . $routes['admin-dashboard'];
+$logoutHref    = $base . $routes['logout'];
 ?>
 <header class="navbar user-navbar">
-    <div class="navbar-left">
+    <a class="navbar-left brand-link" href="<?= e($base . $routes['home']) ?>" aria-label="EventIn - Beranda">
         <span class="logo-box">EI</span>
         <strong class="brand-name">EventIn</strong>
-    </div>
+    </a>
 
     <nav class="user-nav" aria-label="Menu utama">
         <a href="<?= e($base . $routes['home']) ?>" class="user-nav-link<?= $aktif('home') ?>">Beranda</a>
-        <a href="<?= e($routes['explore']) ?>" class="user-nav-link<?= $aktif('explore') ?>">Jelajah Event</a>
-        <a href="<?= e($routes['partners']) ?>" class="user-nav-link<?= $aktif('partners') ?>">Mitra</a>
+        <a href="<?= e($base . $routes['explore']) ?>" class="user-nav-link<?= $aktif('explore') ?>">Jelajah Event</a>
+        <a href="<?= e($base . $routes['partners']) ?>" class="user-nav-link<?= $aktif('partners') ?>">Mitra</a>
         <?php if ($login): ?>
             <a href="<?= e($base . $routes['tiket']) ?>" class="user-nav-link<?= $aktif('tiket') ?>">Tiket Saya</a>
+        <?php endif; ?>
+        <?php if ($isAdmin): ?>
+            <a href="<?= e($dashboardHref) ?>" class="user-nav-link<?= $aktif('admin') ?>">Dashboard</a>
         <?php endif; ?>
     </nav>
 
@@ -35,14 +44,26 @@ $base = $base ?? '';
         <?php if ($login): ?>
             <div class="profile">
                 <span class="profile-name"><?= e($nama) ?></span>
-                <span class="profile-role"><?= e($role) ?></span>
+                <span class="profile-role"><?= e(role_label($role)) ?></span>
             </div>
             <span class="avatar"><?= e($inisial) ?></span>
             <div class="user-menu-wrap">
-                <button class="user-menu-btn" type="button" aria-label="Menu akun" aria-expanded="false">&#9776;</button>
+                <button class="user-menu-btn" type="button" aria-label="Menu akun <?= e($nama) ?>"
+                        aria-expanded="false" aria-haspopup="true">&#9776;</button>
                 <div class="user-menu-dropdown" hidden>
-                    <a href="#" class="user-menu-item">Edit Profil</a>
-                    <a href="#" class="user-menu-item user-menu-item--danger">Logout</a>
+                    <p class="user-menu-head"><?= e($nama) ?></p>
+                    <?php if ($isAdmin): ?>
+                        <a href="<?= e($dashboardHref) ?>" class="user-menu-item">Dashboard</a>
+                    <?php endif; ?>
+                    <a href="<?= e($profilHref) ?>" class="user-menu-item">Edit Profil</a>
+                    <a href="<?= e($logoutHref) ?>" class="user-menu-item user-menu-item--danger">Logout</a>
+
+                    <div class="user-menu-nav">
+                        <a href="<?= e($base . $routes['home']) ?>" class="user-menu-item">Beranda</a>
+                        <a href="<?= e($base . $routes['explore']) ?>" class="user-menu-item">Jelajah Event</a>
+                        <a href="<?= e($base . $routes['partners']) ?>" class="user-menu-item">Mitra</a>
+                        <a href="<?= e($base . $routes['tiket']) ?>" class="user-menu-item">Tiket Saya</a>
+                    </div>
                 </div>
             </div>
         <?php else: ?>

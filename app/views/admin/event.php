@@ -113,9 +113,9 @@ require __DIR__ . '/../../../includes/head.php';
                                 <td><strong><?= e($ev['peserta']) ?></strong></td>
                                 <td><span class="badge <?= $badgeClass ?>"><?= e($ev['status']) ?></span></td>
                                 <td class="actions-icon">
-                                    <a href="#" class="icon-btn" title="Edit">&#9998;</a>
-                                    <a href="#" class="icon-btn" title="Lihat">&#128065;</a>
-                                    <a href="#" class="icon-btn" title="Hapus">&times;</a>
+                                    <a href="event.php#form-event" class="icon-btn" title="Edit">&#9998;</a>
+                                    <a href="../../../app/views/event-detail.php" class="icon-btn" title="Lihat">&#128065;</a>
+                                    <a href="event.php" class="icon-btn" title="Hapus">&times;</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

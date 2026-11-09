@@ -20,4 +20,11 @@ $halamanAktif = $halamanAktif ?? '';
             <?php endforeach; ?>
         </ul>
     </nav>
+
+    <div class="sidebar-footer">
+        <a href="../../../logout.php" class="sidebar-logout">
+            <span aria-hidden="true">&rarr;</span>
+            Keluar
+        </a>
+    </div>
 </aside>

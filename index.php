@@ -41,7 +41,7 @@ require __DIR__ . '/includes/head.php';
                 <p>Pusat penemuan kegiatan akademik, seminar nasional, kompetisi mahasiswa, dan workshop sertifikasi profesional terpadu dalam satu platform digital eksklusif.</p>
                 <div class="hero-actions">
                     <a class="btn btn-primary" href="<?= e($routes['explore']) ?>">Jelajah Sekarang</a>
-                    <a class="btn btn-white" href="<?= e($routes['register']) ?>">Daftar Organisasi</a>
+                    <a class="btn btn-white" href="<?= e($routes['register-admin']) ?>">Daftar Organisasi</a>
                 </div>
             </div>
             <div class="hero-stats">
@@ -89,7 +89,7 @@ require __DIR__ . '/includes/head.php';
                             <li>&#10003; <?= e($perk) ?></li>
                         <?php endforeach; ?>
                     </ul>
-                    <a class="btn btn-primary" href="<?= e($routes['detail']) ?>">Lihat Detail Acara</a>
+                    <a class="btn btn-primary" href="<?= e($routes['detail'] . (!empty($eventsDb[0]['id_event']) ? '?id=' . (int) $eventsDb[0]['id_event'] : '')) ?>">Lihat Detail Acara</a>
                 </div>
             </div>
         </section>
@@ -105,9 +105,9 @@ require __DIR__ . '/includes/head.php';
         </section>
 
         <!-- Event terpopuler -->
-        <section class="section popular">
+        <section class="section popular" id="explore">
             <div class="section-header">
-                <h2>hi Event Terpopuler</h2>
+                <h2>Event Terpopuler</h2>
                 <p>Pilih kategori yang paling sesuai dengan minat akademik dan karir Anda</p>
                 <hr>
             </div>
@@ -122,22 +122,25 @@ require __DIR__ . '/includes/head.php';
 
             <div class="event-grid" id="event-grid">
                 <?php foreach ($eventsDb as $ev):
-                    $img = event_image($ev['id_event']); ?>
+                    $img = event_image($ev['id_event']);
+                    $detailHref = $routes['detail'] . '?id=' . (int) $ev['id_event']; ?>
                     <article class="event-card"
                         data-category="<?= e(strtolower(str_replace(' ', '-', $ev['nama_kategori']))) ?>">
-                        <div class="event-cover cover-<?= $ev['id_event'] ?>"
+                        <a class="event-cover cover-<?= $ev['id_event'] ?>"
+                            href="<?= e($detailHref) ?>"
+                            aria-label="Lihat detail <?= e($ev['nama_event']) ?>"
                             <?php if ($img): ?>style="background-image: url('<?= e($img) ?>');" <?php endif; ?>>
                             <span class="event-badge"><?= e(strtoupper($ev['nama_kategori'])) ?></span>
-                        </div>
+                        </a>
                         <div class="event-body">
-                            <h3><?= e($ev['nama_event']) ?></h3>
+                            <h3><a href="<?= e($detailHref) ?>"><?= e($ev['nama_event']) ?></a></h3>
                             <div class="event-meta">
                                 <p>Tanggal: <?= e(date('d M Y : H:i', strtotime($ev['tanggal_mulai']))) ?></p>
                                 <p>Lokasi: <?= e($ev['lokasi']) ?></p>
                             </div>
                             <div class="event-footer">
                                 <span class="price">Rp.<?= e($ev['harga']) ?></span>
-                                <a class="btn btn-primary" href="<?= e($routes['detail']) ?>">Daftar</a>
+                                <a class="btn btn-primary" href="<?= e($detailHref) ?>">Daftar</a>
                             </div>
                         </div>
                     </article>
@@ -184,7 +187,7 @@ require __DIR__ . '/includes/head.php';
                 <?php endforeach; ?>
             </div>
             <div class="organizers-cta">
-                <a class="btn btn-primary" href="<?= e($routes['register']) ?>">Daftar Sebagai Penyelenggara</a>
+                <a class="btn btn-primary" href="<?= e($routes['register-admin']) ?>">Daftar Sebagai Penyelenggara</a>
             </div>
         </section>
 
@@ -209,7 +212,7 @@ require __DIR__ . '/includes/head.php';
         </section>
 
         <!-- FAQ -->
-        <section class="section faq">
+        <section class="section faq" id="faq">
             <div class="section-header">
                 <h2>Pertanyaan Sering Diajukan</h2>
                 <p>Temukan jawaban cepat atas pertanyaan mendasar seputar platform</p>

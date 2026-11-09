@@ -14,7 +14,8 @@
             });
 
             cards.forEach(function (card) {
-                var match = filter === 'semua' || card.getAttribute('data-category') === filter;
+                var match = filter === 'semua'
+                    || card.getAttribute('data-category') === filter.toLowerCase();
                 card.hidden = !match;
             });
         });
