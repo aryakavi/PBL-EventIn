@@ -71,3 +71,60 @@
         });
     });
 })();
+
+// Toggle panel (mis. formulir Buat Event Baru) lewat tombol data-toggle-target.
+(function () {
+    var triggers = document.querySelectorAll('[data-toggle-target]');
+
+    if (!triggers.length) {
+        return;
+    }
+
+    function panelFor(trigger) {
+        var selector = trigger.getAttribute('data-toggle-target');
+        return selector ? document.querySelector(selector) : null;
+    }
+
+    function setOpen(trigger, panel, open) {
+        panel.hidden = !open;
+        trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+
+        if (open) {
+            panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            var field = panel.querySelector('input, select, textarea');
+            if (field) {
+                field.focus({ preventScroll: true });
+            }
+        }
+    }
+
+    triggers.forEach(function (trigger) {
+        var panel = panelFor(trigger);
+
+        if (!panel) {
+            return;
+        }
+
+        trigger.addEventListener('click', function (e) {
+            e.preventDefault();
+            setOpen(trigger, panel, panel.hidden);
+        });
+    });
+
+    // Buka otomatis bila URL memakai hash, mis. event.php#form-event.
+    if (window.location.hash) {
+        var hashId = window.location.hash.slice(1);
+        var target = hashId ? document.getElementById(hashId) : null;
+
+        if (target && target.hidden) {
+            var opener = document.querySelector('[data-toggle-target="#' + hashId + '"]');
+
+            if (opener) {
+                setOpen(opener, target, true);
+            } else {
+                target.hidden = false;
+            }
+        }
+    }
+})();

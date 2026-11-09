@@ -6,6 +6,11 @@ $q        = trim($_GET['q'] ?? '');
 $kategori = $_GET['kategori'] ?? '';
 $status   = $_GET['status'] ?? '';
 
+$formNotice = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $formNotice = 'Mode baca-saja: event belum disimpan karena koneksi database hanya untuk membaca data.';
+}
+
 $filtered = array_values(array_filter($daftarEvent, function ($ev) use ($q, $kategori, $status) {
     if ($q !== '' && stripos($ev['nama'], $q) === false && stripos($ev['lokasi'], $q) === false) {
         return false;
@@ -60,7 +65,8 @@ require __DIR__ . '/../../../includes/head.php';
                 <h1>Kelola Event</h1>
                 <p>Atur publikasi, pantau kuota, saring pendaftaran, dan cetak sertifikat kegiatan mahasiswa.</p>
             </div>
-            <a href="#form-event" class="btn btn-primary">Buat Event Baru</a>
+            <button type="button" class="btn btn-primary" data-toggle-target="#form-event"
+                    aria-controls="form-event" aria-expanded="false">Buat Event Baru</button>
         </div>
 
         <!-- Bar Pencarian & Filter -->
@@ -68,15 +74,13 @@ require __DIR__ . '/../../../includes/head.php';
             <input type="text" name="q" class="filter-search" placeholder="Cari event Anda.." value="<?= e($q) ?>">
             <select name="kategori" class="filter-select">
                 <option value="">Kategori</option>
-                <option value="Seminar"<?= $kategori === 'Seminar' ? ' selected' : '' ?>>Seminar</option>
-                <option value="Workshop"<?= $kategori === 'Workshop' ? ' selected' : '' ?>>Workshop</option>
-                <option value="Webinar"<?= $kategori === 'Webinar' ? ' selected' : '' ?>>Webinar</option>
-                <option value="Kompetisi"<?= $kategori === 'Kompetisi' ? ' selected' : '' ?>>Kompetisi</option>
+                <?php foreach ($kategoriEvent as $k): ?>
+                    <option value="<?= e($k['nama']) ?>"<?= $kategori === $k['nama'] ? ' selected' : '' ?>><?= e($k['nama']) ?></option>
+                <?php endforeach; ?>
             </select>
             <select name="status" class="filter-select">
                 <option value="">Status</option>
                 <option value="Aktif"<?= $status === 'Aktif' ? ' selected' : '' ?>>Aktif</option>
-                <option value="Draft"<?= $status === 'Draft' ? ' selected' : '' ?>>Draft</option>
                 <option value="Selesai"<?= $status === 'Selesai' ? ' selected' : '' ?>>Selesai</option>
             </select>
             <button type="submit" class="btn btn-outline">Saring</button>
@@ -99,23 +103,21 @@ require __DIR__ . '/../../../includes/head.php';
                     <tbody>
                         <?php if (empty($hasil)): ?>
                             <tr>
-                                <td colspan="6" class="muted" style="text-align:center">Tidak ada event yang cocok dengan filter.</td>
+                                <td colspan="6" class="empty-state"><?= e($emptyText) ?></td>
                             </tr>
                         <?php endif; ?>
                         <?php foreach ($hasil as $ev): ?>
-                            <?php
-                            $badgeClass = $ev['status'] === 'Aktif' ? 'badge-info' : 'badge-neutral';
-                            ?>
+                            <?php $badgeClass = $ev['status'] === 'Aktif' ? 'badge-info' : 'badge-neutral'; ?>
                             <tr>
-                                <td><strong><?= e($ev['nama']) ?></strong></td>
+                                <td><strong><?= e($ev['nama'] !== '' ? $ev['nama'] : $emptyText) ?></strong></td>
                                 <td class="muted"><?= e($ev['tanggal']) ?></td>
-                                <td class="muted"><?= e($ev['lokasi']) ?></td>
+                                <td class="muted"><?= e($ev['lokasi'] !== '' ? $ev['lokasi'] : $emptyText) ?></td>
                                 <td><strong><?= e($ev['peserta']) ?></strong></td>
                                 <td><span class="badge <?= $badgeClass ?>"><?= e($ev['status']) ?></span></td>
                                 <td class="actions-icon">
-                                    <a href="event.php#form-event" class="icon-btn" title="Edit">&#9998;</a>
-                                    <a href="../../../app/views/event-detail.php" class="icon-btn" title="Lihat">&#128065;</a>
-                                    <a href="event.php" class="icon-btn" title="Hapus">&times;</a>
+                                    <a href="event-edit.php?id=<?= (int) $ev['id'] ?>" class="icon-btn" title="Edit event">&#9998;</a>
+                                    <a href="event-detail.php?id=<?= (int) $ev['id'] ?>" class="icon-btn" title="Lihat detail event">&#128065;</a>
+                                    <a href="event-hapus.php?id=<?= (int) $ev['id'] ?>" class="icon-btn icon-btn--danger" title="Hapus event">&times;</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -147,19 +149,23 @@ require __DIR__ . '/../../../includes/head.php';
             <?php endif; ?>
         </section>
 
-        <!-- Card Pratinjau Formulir Buat Event Baru -->
-        <section class="form-card" id="form-event">
+        <!-- Formulir Buat Event Baru (disembunyikan sampai tombol diklik) -->
+        <section class="form-card" id="form-event" hidden>
             <div class="form-card-header">
-                <h2>Pratinjau Formulir Buat Event Baru</h2>
-                <p>Contoh layout visual pembuatan pendaftaran event kemahasiswaan.</p>
+                <h2>Formulir Buat Event Baru</h2>
+                <p>Isi data event kemahasiswaan yang akan dipublikasikan.</p>
             </div>
+
+            <?php if ($formNotice !== ''): ?>
+                <p class="form-notice"><?= e($formNotice) ?></p>
+            <?php endif; ?>
 
             <form action="" method="post" enctype="multipart/form-data">
                 <div class="form-grid">
                     <!-- Kolom Kiri -->
                     <div class="form-col">
                         <div class="form-group">
-                            <label for="nama_event">Nama Event </label>
+                            <label for="nama_event">Nama Event</label>
                             <input type="text" id="nama_event" name="nama_event" class="form-control" placeholder="Masukkan nama event resmi.">
                         </div>
 
@@ -167,11 +173,13 @@ require __DIR__ . '/../../../includes/head.php';
                             <label for="kategori_event">Kategori Event</label>
                             <select id="kategori_event" name="kategori" class="form-control form-control-sm">
                                 <option value="" selected disabled>Pilih kategori..</option>
-                                <option value="Seminar">Seminar</option>
-                                <option value="Workshop">Workshop</option>
-                                <option value="Webinar">Webinar</option>
-                                <option value="Kompetisi">Kompetisi</option>
+                                <?php foreach ($kategoriEvent as $k): ?>
+                                    <option value="<?= (int) $k['id'] ?>"><?= e($k['nama']) ?></option>
+                                <?php endforeach; ?>
                             </select>
+                            <?php if (empty($kategoriEvent)): ?>
+                                <span class="field-hint"><?= e($emptyText) ?></span>
+                            <?php endif; ?>
                         </div>
                     </div>
 
@@ -208,10 +216,20 @@ require __DIR__ . '/../../../includes/head.php';
                         <label for="harga">Harga Tiket (Rp)</label>
                         <input type="text" id="harga" name="harga" class="form-control form-control-sm" placeholder="Contoh: 75.000">
                     </div>
+
+                    <div class="form-group form-group--full">
+                        <label for="lokasi">Lokasi Event</label>
+                        <input type="text" id="lokasi" name="lokasi" class="form-control" placeholder="Contoh: Aula Gedung C">
+                    </div>
+
+                    <div class="form-group form-group--full">
+                        <label for="deskripsi">Deskripsi Event</label>
+                        <textarea id="deskripsi" name="deskripsi" class="form-control" rows="4" placeholder="Jelaskan kegiatan yang akan diselenggarakan."></textarea>
+                    </div>
                 </div>
 
                 <div class="form-actions">
-                    <button type="reset" class="btn btn-outline">Batal</button>
+                    <button type="button" class="btn btn-outline" data-toggle-target="#form-event">Batal</button>
                     <button type="submit" class="btn btn-primary">Simpan Event</button>
                 </div>
             </form>

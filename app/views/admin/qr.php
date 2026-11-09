@@ -2,18 +2,17 @@
 require __DIR__ . '/../../../includes/admin/data.php';
 $halamanAktif = 'qr';
 
-$daftarQrEvent = [
-    'simposium-ai'     => 'Simposium Nasional AI',
-    'workshop-nocode'  => 'Workshop No-Code App',
-    'kompetisi-uiux'   => 'Kompetisi UI/UX Nasional',
-];
-
-$eventDipilih = $_GET['event'] ?? '';
-if (!array_key_exists($eventDipilih, $daftarQrEvent)) {
-    $eventDipilih = null;
+$daftarQrEvent = [];
+foreach ($daftarEvent as $ev) {
+    $daftarQrEvent[(string) $ev['id']] = $ev['nama'] !== '' ? $ev['nama'] : $emptyText;
 }
 
-$qrAktif = $eventDipilih !== null;
+$eventDipilih = (string) ($_GET['event'] ?? '');
+if ($eventDipilih !== '' && !array_key_exists($eventDipilih, $daftarQrEvent)) {
+    $eventDipilih = '';
+}
+
+$qrAktif = $eventDipilih !== '';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -43,8 +42,8 @@ require __DIR__ . '/../../../includes/head.php';
                     <label for="event_qr" class="sr-only">Pilih event</label>
                     <select name="event" id="event_qr" class="filter-select" onchange="this.form.submit()">
                         <option value=""<?= $qrAktif ? '' : ' selected' ?> disabled>Pilih Event..</option>
-                        <?php foreach ($daftarQrEvent as $slug => $nama): ?>
-                            <option value="<?= e($slug) ?>"<?= $eventDipilih === $slug ? ' selected' : '' ?>><?= e($nama) ?></option>
+                        <?php foreach ($daftarQrEvent as $idEventQr => $namaEventQr): ?>
+                            <option value="<?= e($idEventQr) ?>"<?= $eventDipilih === (string) $idEventQr ? ' selected' : '' ?>><?= e($namaEventQr) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </form>
@@ -69,12 +68,17 @@ require __DIR__ . '/../../../includes/head.php';
                 <h2 class="qr-section-title">Presensi Terkini (Live Feed)</h2>
                 <div class="feed-card">
                     <ul class="feed-list" aria-label="Presensi terkini">
+                        <?php if (empty($presensiTerkini)): ?>
+                            <li class="feed-item">
+                                <span class="muted"><?= e($emptyText) ?></span>
+                            </li>
+                        <?php endif; ?>
                         <?php foreach ($presensiTerkini as $p): ?>
                             <li class="feed-item">
                                 <span class="feed-avatar"><?= e($p['inisial']) ?></span>
                                 <div class="feed-info">
-                                    <strong class="feed-name"><?= e($p['nama']) ?></strong>
-                                    <span class="feed-time"><?= e($p['waktu']) ?></span>
+                                    <strong class="feed-name"><?= e($p['nama'] !== '' ? $p['nama'] : $emptyText) ?></strong>
+                                    <span class="feed-time"><?= e($p['event'] !== '' ? $p['event'] : $p['waktu']) ?></span>
                                 </div>
                                 <span class="badge badge-success badge-small"><?= e($p['status']) ?></span>
                             </li>
@@ -98,7 +102,7 @@ require __DIR__ . '/../../../includes/head.php';
             <?php endforeach; ?>
         </section>
         <?php else: ?>
-            <p class="qr-empty">Silakan pilih event terlebih dahulu untuk memulai pemindaian.</p>
+            <p class="qr-empty"><?= e(empty($daftarQrEvent) ? $emptyText : 'Silakan pilih event terlebih dahulu untuk memulai pemindaian.') ?></p>
         <?php endif; ?>
     </main>
 </div>

@@ -4,7 +4,7 @@ $halamanAktif = 'profil';
 
 $profil = $organizer;
 
-// Ambil data terbaru dari Supabase (read-only). Jika koneksi gagal, pakai data sesi/contoh.
+// Ambil data terbaru dari Supabase (read-only). Jika koneksi gagal, pakai data sesi.
 ob_start();
 require_once __DIR__ . '/../../../includes/koneksi.php';
 ob_end_clean();
@@ -36,7 +36,7 @@ if (isset($pdo) && !empty($organizer['id_pengguna'])) {
                 : $ukm['nama_ukm'];
         }
     } catch (Throwable $e) {
-        // Biarkan data sesi/contoh dipakai.
+        // Biarkan data sesi dipakai.
     }
 }
 

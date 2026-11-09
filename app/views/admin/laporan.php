@@ -45,9 +45,9 @@ require __DIR__ . '/../../../includes/head.php';
                 <label for="kategori" class="sr-only">Kategori</label>
                 <select name="kategori" id="kategori" class="filter-select" onchange="this.form.submit()">
                     <option value="">Kategori</option>
-                    <option value="Seminar"<?= $kategori === 'Seminar' ? ' selected' : '' ?>>Seminar</option>
-                    <option value="Workshop"<?= $kategori === 'Workshop' ? ' selected' : '' ?>>Workshop</option>
-                    <option value="Kompetisi"<?= $kategori === 'Kompetisi' ? ' selected' : '' ?>>Kompetisi</option>
+                    <?php foreach ($kategoriEvent as $k): ?>
+                        <option value="<?= e($k['nama']) ?>"<?= $kategori === $k['nama'] ? ' selected' : '' ?>><?= e($k['nama']) ?></option>
+                    <?php endforeach; ?>
                 </select>
             </form>
         </div>
@@ -90,7 +90,7 @@ require __DIR__ . '/../../../includes/head.php';
                     <tbody>
                         <?php if (empty($rincianFiltered)): ?>
                             <tr>
-                                <td colspan="5" class="muted" style="text-align:center">Tidak ada data yang cocok dengan filter.</td>
+                                <td colspan="5" class="empty-state"><?= e($emptyText) ?></td>
                             </tr>
                         <?php endif; ?>
                         <?php foreach ($rincianFiltered as $row): ?>

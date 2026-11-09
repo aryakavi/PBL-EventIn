@@ -22,18 +22,6 @@ $pembayaranFiltered = $statusFilter === null
         $daftarPembayaran,
         static fn($p) => $p['status'] === $statusFilter
     ));
-
-$idTransaksi = $_GET['transaksi'] ?? null;
-$transaksiAktif = null;
-
-if ($idTransaksi !== null) {
-    foreach ($daftarPembayaran as $p) {
-        if ($p['id'] === $idTransaksi) {
-            $transaksiAktif = $p;
-            break;
-        }
-    }
-}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -90,28 +78,37 @@ require __DIR__ . '/../../../includes/head.php';
                     <tbody>
                         <?php if (empty($pembayaranFiltered)): ?>
                             <tr>
-                                <td colspan="7" class="muted" style="text-align:center">Tidak ada transaksi dengan status ini.</td>
+                                <td colspan="7" class="empty-state"><?= e($emptyText) ?></td>
                             </tr>
                         <?php endif; ?>
                         <?php foreach ($pembayaranFiltered as $p): ?>
                             <?php
-                            if ($p['status'] === 'Diverifikasi') {
-                                $badgeClass = 'badge-success';
-                            } elseif ($p['status'] === 'Menunggu') {
-                                $badgeClass = 'badge-warning';
-                            } else {
-                                $badgeClass = 'badge-danger';
-                            }
+                            $badgeClass = match ($p['status']) {
+                                'Diverifikasi' => 'badge-success',
+                                'Menunggu' => 'badge-warning',
+                                'Ditolak' => 'badge-danger',
+                                default => 'badge-neutral',
+                            };
                             ?>
                             <tr>
-                                <td class="mono-id"><?= e($p['id']) ?></td>
-                                <td><?= e($p['peserta']) ?></td>
-                                <td class="muted"><?= e($p['event']) ?></td>
+                                <td class="mono-id"><?= e($p['id'] !== '' ? $p['id'] : $emptyText) ?></td>
+                                <td><?= e($p['peserta'] !== '' ? $p['peserta'] : $emptyText) ?></td>
+                                <td class="muted"><?= e($p['event'] !== '' ? $p['event'] : $emptyText) ?></td>
                                 <td><?= e($p['jumlah']) ?></td>
-                                <td><span class="proof-tag">IMG</span></td>
-                                <td><span class="badge <?= $badgeClass ?>"><?= e($p['status']) ?></span></td>
+                                <td>
+                                    <?php if ($p['berkas'] !== ''): ?>
+                                        <span class="proof-tag" title="<?= e($p['berkas']) ?>">IMG</span>
+                                    <?php else: ?>
+                                        <span class="muted"><?= e($emptyText) ?></span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <span class="badge <?= $badgeClass ?>">
+                                        <?= e($p['status'] !== '' ? $p['status'] : $emptyText) ?>
+                                    </span>
+                                </td>
                                 <td class="actions">
-                                    <a href="?status=<?= e($statusTab) ?>&transaksi=<?= e($p['id']) ?>#detail-transaksi" class="actions-detail">Periksa</a>
+                                    <a href="pembayaran-verifikasi.php?id=<?= (int) $p['id'] ?>" class="actions-detail">Periksa</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -119,55 +116,6 @@ require __DIR__ . '/../../../includes/head.php';
                 </table>
             </div>
         </section>
-
-        <!-- Card Detail Transaksi -->
-        <?php if ($transaksiAktif): ?>
-            <section class="form-card" id="detail-transaksi">
-                <div class="form-card-header">
-                    <h2>Detail Transaksi: <?= e($transaksiAktif['id']) ?></h2>
-                </div>
-
-                <div class="detail-body">
-                    <!-- Kolom Bukti Transfer -->
-                    <div class="proof-col">
-                        <span class="proof-title">Lampiran Bukti Transfer</span>
-                        <div class="proof-preview">
-                            <span class="proof-icon">&#128196;</span>
-                            <span>Lampiran Bukti Transfer</span>
-                        </div>
-                        <span class="proof-filename"><?= e($transaksiAktif['berkas']) ?></span>
-                    </div>
-
-                    <!-- Kolom Informasi Transaksi -->
-                    <div class="info-col">
-                        <div class="info-item">
-                            <span class="info-label">NAMA PESERTA</span>
-                            <strong class="info-value"><?= e($transaksiAktif['peserta']) ?></strong>
-                        </div>
-
-                        <div class="info-item">
-                            <span class="info-label">EVENT DIIKUTI</span>
-                            <strong class="info-value"><?= e($transaksiAktif['event']) ?></strong>
-                        </div>
-
-                        <div class="info-item">
-                            <span class="info-label">METODE PEMBAYARAN</span>
-                            <span class="info-text"><?= e($transaksiAktif['metode']) ?></span>
-                        </div>
-
-                        <div class="info-item">
-                            <span class="info-label">WAKTU TRANSFER</span>
-                            <span class="info-text"><?= e($transaksiAktif['waktu']) ?></span>
-                        </div>
-
-                        <div class="detail-actions">
-                            <button type="button" class="btn btn-outline">Tolak Transaksi</button>
-                            <button type="button" class="btn btn-primary">Verifikasi Pembayaran</button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        <?php endif; ?>
     </main>
 </div>
 

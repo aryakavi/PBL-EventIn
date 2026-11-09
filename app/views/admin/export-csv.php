@@ -1,7 +1,7 @@
 <?php
 /**
  * Export rincian pendaftar ke berkas CSV.
- * Hanya membaca data contoh pada includes/admin/data.php (tanpa mengubah Supabase).
+ * Membaca data langsung dari Supabase lewat includes/admin/data.php (baca-saja).
  */
 require __DIR__ . '/../../../includes/admin/data.php';
 

@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' && !empty($organizer['id_pengguna'])) 
                 $profil['nim']   = $row['nim'] ?: $profil['nim'];
             }
         } catch (Throwable $e) {
-            // Pakai data sesi/contoh.
+            // Pakai data sesi.
         }
     }
 }

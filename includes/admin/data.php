@@ -1,20 +1,44 @@
 <?php
-// Data contoh (nanti bisa diganti query database)
+/**
+ * Data dashboard penyelenggara.
+ *
+ * Semua data diambil langsung dari Supabase (tabel events, tiket, pembayaran,
+ * pengguna, kehadiran, kategori_event, ukm, admin_ukm) dalam mode baca-saja.
+ * Bila sebuah kolom/relasi belum terisi, tampilkan $emptyText.
+ */
 
 require_once __DIR__ . '/../data.php';
+require_once __DIR__ . '/../../app/models/AdminRepository.php';
+
+/** Teks pengganti saat data belum tersedia di database. */
+$emptyText = 'kosong, masih kurang';
+
+// Koneksi database; pesan error disembunyikan supaya tidak merusak halaman.
+if (!isset($pdo)) {
+    ob_start();
+    require_once __DIR__ . '/../koneksi.php';
+    ob_end_clean();
+}
+
+$adminRepo = isset($pdo) && $pdo instanceof PDO ? new AdminRepository($pdo) : null;
 
 $adminSession = $_SESSION['user'] ?? null;
 $isAdminUser  = is_array($adminSession) && is_admin_role($adminSession['role'] ?? '');
-$adminNama    = $isAdminUser ? (string) $adminSession['nama'] : 'HMTI';
+$adminNama    = $isAdminUser ? (string) $adminSession['nama'] : 'Admin Organisasi';
+
+$ukmAdmin = [];
+if ($adminRepo !== null && $isAdminUser) {
+    $ukmAdmin = $adminRepo->organizer((int) ($adminSession['id_pengguna'] ?? 0));
+}
 
 $organizer = [
-    'nama'      => $adminNama,
-    'role'      => $isAdminUser ? role_label($adminSession['role'] ?? '') : 'ADMIN ORGANISASI',
-    'inisial'   => user_initials($adminNama),
-    'email'     => $isAdminUser ? (string) ($adminSession['email'] ?? '') : 'hmti@polinema.ac.id',
-    'nim'       => $isAdminUser ? (string) ($adminSession['nim'] ?? '') : '240910291',
-    'no_hp'     => $isAdminUser ? (string) ($adminSession['no_hp'] ?? '') : '081234567890',
-    'organisasi' => 'HMTI Politeknik Negeri Malang',
+    'nama'       => $adminNama,
+    'role'       => $isAdminUser ? role_label($adminSession['role'] ?? '') : 'ADMIN ORGANISASI',
+    'inisial'    => user_initials($adminNama),
+    'email'      => $isAdminUser ? (string) ($adminSession['email'] ?? '') : '',
+    'nim'        => $isAdminUser ? (string) ($adminSession['nim'] ?? '') : '',
+    'no_hp'      => $isAdminUser ? (string) ($adminSession['no_hp'] ?? '') : '',
+    'organisasi' => $ukmAdmin['nama_ukm'] ?? $emptyText,
     'id_pengguna' => $isAdminUser ? (int) ($adminSession['id_pengguna'] ?? 0) : 0,
 ];
 
@@ -26,63 +50,235 @@ $menu = [
     ['label' => 'Laporan',    'href' => 'laporan.php',     'key' => 'laporan'],
 ];
 
+$tanggalId = static function (?string $nilai, string $format = 'd M Y'): string {
+    if ($nilai === null || $nilai === '' || str_starts_with($nilai, '0000')) {
+        return '';
+    }
+
+    $time = strtotime($nilai);
+
+    return $time === false ? '' : date($format, $time);
+};
+
+$statusPembayaran = static function (?string $status): string {
+    return match (strtolower((string) $status)) {
+        'lunas', 'diverifikasi', 'sukses' => 'Diverifikasi',
+        'menunggu', 'tertunda', 'pending' => 'Menunggu',
+        'ditolak', 'gagal', 'batal' => 'Ditolak',
+        default => '',
+    };
+};
+
+/* ---------- Kategori ---------- */
+$kategoriEvent = [];
+if ($adminRepo !== null) {
+    foreach ($adminRepo->kategori() as $k) {
+        $kategoriEvent[] = [
+            'id'   => (int) $k['id_kategori'],
+            'nama' => (string) $k['nama_kategori'],
+        ];
+    }
+}
+
+/* ---------- Event ---------- */
+$daftarEvent = [];
+$eventRows = $adminRepo !== null ? $adminRepo->events() : [];
+
+foreach ($eventRows as $ev) {
+    $mulai   = $ev['tanggal_mulai'] ?? null;
+    $selesai = $ev['tanggal_selesai'] ?? null;
+    $status  = 'Aktif';
+
+    if ($selesai !== null && $selesai !== '' && strtotime((string) $selesai) < time()) {
+        $status = 'Selesai';
+    }
+
+    $peserta = (int) ($ev['jumlah_peserta'] ?? 0);
+    $kuota   = $ev['kuota'] !== null ? (int) $ev['kuota'] : 0;
+
+    $daftarEvent[] = [
+        'id'             => (int) $ev['id_event'],
+        'nama'           => (string) ($ev['nama_event'] ?? ''),
+        'tanggal'        => $tanggalId($mulai) ?: $emptyText,
+        'tanggal_mulai'  => $mulai,
+        'tanggal_selesai' => $selesai,
+        'lokasi'         => (string) ($ev['lokasi'] ?? ''),
+        'peserta'        => $peserta . '/' . ($kuota > 0 ? $kuota : '?'),
+        'jumlah_peserta' => $peserta,
+        'kuota'          => $kuota,
+        'status'         => $status,
+        'kategori'       => (string) ($ev['nama_kategori'] ?? ''),
+        'id_kategori'    => (int) ($ev['id_kategori'] ?? 0),
+        'penyelenggara'  => (string) ($ev['nama_ukm'] ?? ''),
+        'singkatan'      => (string) ($ev['singkatan'] ?? ''),
+        'pembuat'        => (string) ($ev['pembuat_nama'] ?? ''),
+        'pembuat_email'  => (string) ($ev['pembuat_email'] ?? ''),
+        'pembuat_hp'     => (string) ($ev['pembuat_hp'] ?? ''),
+        'deskripsi'      => (string) ($ev['deskripsi'] ?? ''),
+        'harga'          => (float) ($ev['harga'] ?? 0),
+        'poster'         => (string) ($ev['poster'] ?? ''),
+    ];
+}
+
+/* ---------- Pembayaran ---------- */
+$daftarPembayaran = [];
+$paymentRows = $adminRepo !== null ? $adminRepo->payments() : [];
+
+foreach ($paymentRows as $p) {
+    $daftarPembayaran[] = [
+        'id'         => (string) ($p['id_pembayaran'] ?? ''),
+        'id_tiket'   => (int) ($p['id_tiket'] ?? 0),
+        'id_event'   => (int) ($p['id_event'] ?? 0),
+        'peserta'    => (string) ($p['peserta'] ?? ''),
+        'email'      => (string) ($p['email'] ?? ''),
+        'nim'        => (string) ($p['nim'] ?? ''),
+        'event'      => (string) ($p['nama_event'] ?? ''),
+        'kategori'   => (string) ($p['nama_kategori'] ?? ''),
+        'jumlah'     => format_rupiah($p['nominal'] ?? 0),
+        'nominal'    => (float) ($p['nominal'] ?? 0),
+        'status'     => $statusPembayaran($p['status_bayar'] ?? ''),
+        'status_raw' => (string) ($p['status_bayar'] ?? ''),
+        'kode_qr'    => (string) ($p['kode_qr'] ?? ''),
+        'metode'     => (string) ($p['metode'] ?? ''),
+        'waktu'      => $tanggalId($p['waktu_unggah'] ?? null, 'd M Y, H:i') . ' WIB',
+        'berkas'     => (string) ($p['bukti_pembayaran'] ?? ''),
+        'daftar'     => $tanggalId($p['tanggal_daftar'] ?? null),
+        'check_in'   => $tanggalId($p['waktu_checkin'] ?? null, 'd M Y, H:i'),
+        'sertifikat' => (string) ($p['status_sertifikat'] ?? ''),
+    ];
+}
+
+/* ---------- Statistik dashboard ---------- */
+$total = $adminRepo !== null
+    ? $adminRepo->totals()
+    : ['total_event' => 0, 'event_aktif' => 0, 'total_tiket' => 0, 'total_peserta' => 0,
+       'pendapatan' => 0.0, 'total_hadir' => 0, 'belum_hadir' => 0, 'persen_hadir' => 0.0];
+
 $kpi = [
-    ['label' => 'Total Event',       'nilai' => '24',           'tren' => '+4 event baru bulan ini',     'arah' => 'up'],
-    ['label' => 'Total Peserta',     'nilai' => '1.240',        'tren' => '+12% pendaftar baru',         'arah' => 'up'],
-    ['label' => 'Pendapatan Bersih', 'nilai' => 'Rp 1.676.767', 'tren' => '+8.4% vs target',             'arah' => 'up'],
-    ['label' => 'Event Aktif',       'nilai' => '8',            'tren' => '3 memerlukan absensi hari ini', 'arah' => 'down'],
+    [
+        'label' => 'Total Event',
+        'nilai' => (string) $total['total_event'],
+        'tren'  => $total['event_aktif'] . ' event masih berjalan',
+        'arah'  => 'up',
+    ],
+    [
+        'label' => 'Total Peserta',
+        'nilai' => (string) $total['total_peserta'],
+        'tren'  => $total['total_tiket'] . ' tiket terdaftar',
+        'arah'  => 'up',
+    ],
+    [
+        'label' => 'Pendapatan Bersih',
+        'nilai' => format_rupiah($total['pendapatan']),
+        'tren'  => 'dari tiket berstatus Lunas',
+        'arah'  => 'up',
+    ],
+    [
+        'label' => 'Event Aktif',
+        'nilai' => (string) $total['event_aktif'],
+        'tren'  => $total['belum_hadir'] . ' peserta belum check-in',
+        'arah'  => $total['belum_hadir'] > 0 ? 'down' : 'up',
+    ],
 ];
 
-$aktivitas = [
-    ['event' => 'Simposium Nasional AI',  'tanggal' => '24 Apr 2026', 'peserta' => 'Budi Gunawan',  'status' => 'Lunas'],
-    ['event' => 'Workshop No-Code App',   'tanggal' => '22 Apr 2026', 'peserta' => 'Ahmad Dani',    'status' => 'Lunas'],
-    ['event' => 'Webinar Blockchain',     'tanggal' => '20 Apr 2026', 'peserta' => 'Ayu Tingting',  'status' => 'Lunas'],
-    ['event' => 'Lomba UI/UX Kampus',     'tanggal' => '19 Apr 2026', 'peserta' => 'Gojo Satoru',   'status' => 'Lunas'],
-    ['event' => 'Hackathon Mahasiswa',    'tanggal' => '11 Apr 2026', 'peserta' => 'Leif Ashbourn', 'status' => 'Lunas'],
-];
+/* ---------- Aktivitas pendaftaran terbaru ---------- */
+$aktivitas = [];
+$activityRows = $adminRepo !== null ? $adminRepo->activity(5) : [];
 
-$daftarEvent = [
-    ['nama' => 'Simposium Nasional AI 2026',    'tanggal' => '25 April 2026', 'lokasi' => 'Gedung Rektorat',     'peserta' => '120/150', 'status' => 'Aktif',   'kategori' => 'Seminar'],
-    ['nama' => 'Workshop No-Code App Maker',    'tanggal' => '28 April 2026', 'lokasi' => 'Lab Multimedia D',    'peserta' => '35/50',   'status' => 'Aktif',   'kategori' => 'Workshop'],
-    ['nama' => 'Webinar Kewirausahaan Startup', 'tanggal' => '02 Mei 2026',   'lokasi' => 'Online Zoom Meeting', 'peserta' => '250/300', 'status' => 'Draft',   'kategori' => 'Webinar'],
-    ['nama' => 'Kompetisi UI/UX Nasional',      'tanggal' => '15 Mei 2026',   'lokasi' => 'Gedung Teater Utama', 'peserta' => '80/100',  'status' => 'Aktif',   'kategori' => 'Kompetisi'],
-    ['nama' => 'Coding Camp Mahasiswa 2026',    'tanggal' => '01 Juni 2026',  'lokasi' => 'Aula Gedung C',       'peserta' => '12/40',   'status' => 'Draft',   'kategori' => 'Workshop'],
-    ['nama' => 'Pelepasan Alumni & Job Fair',   'tanggal' => '10 Juni 2026',  'lokasi' => 'Plaza Kampus Utama',  'peserta' => '500/500', 'status' => 'Selesai', 'kategori' => 'Seminar'],
-];
+foreach ($activityRows as $a) {
+    $aktivitas[] = [
+        'id'      => (string) ($a['id_pembayaran'] ?? ''),
+        'id_tiket' => (int) ($a['id_tiket'] ?? 0),
+        'event'   => (string) ($a['nama_event'] ?? ''),
+        'tanggal' => $tanggalId($a['tanggal_daftar'] ?? null),
+        'peserta' => (string) ($a['peserta'] ?? ''),
+        'status'  => $statusPembayaran($a['status_bayar'] ?? ''),
+    ];
+}
 
-$daftarPembayaran = [
-    ['id' => 'TX-100293', 'peserta' => 'Shin Ryujin',    'event' => 'Simposium Nasional AI', 'jumlah' => 'Rp 75.000', 'status' => 'Menunggu',     'metode' => 'Virtual Account Bank Mandiri', 'waktu' => '24 April 2026, 14:32 WIB', 'berkas' => 'mandiri-transfer.png'],
-    ['id' => 'TX-100294', 'peserta' => 'Park Jinyoung',  'event' => 'Workshop No-Code App',  'jumlah' => 'Rp 75.000', 'status' => 'Diverifikasi', 'metode' => 'Virtual Account BNI',          'waktu' => '23 April 2026, 09:15 WIB', 'berkas' => 'bni-transfer.png'],
-    ['id' => 'TX-100295', 'peserta' => 'Dewi Kurniasari','event' => 'Workshop No-Code App',  'jumlah' => 'Rp 75.000', 'status' => 'Menunggu',     'metode' => 'Virtual Account BCA',          'waktu' => '22 April 2026, 20:47 WIB', 'berkas' => 'bca-transfer.jpg'],
-    ['id' => 'TX-100296', 'peserta' => 'Dewi Lestari',   'event' => 'Simposium Nasional AI', 'jumlah' => 'Rp 75.000', 'status' => 'Diverifikasi', 'metode' => 'Virtual Account Bank Mandiri', 'waktu' => '21 April 2026, 11:05 WIB', 'berkas' => 'mandiri-transfer.png'],
-    ['id' => 'TX-100297', 'peserta' => 'Ahmad Dani',     'event' => 'Simposium Nasional AI', 'jumlah' => 'Rp 75.000', 'status' => 'Ditolak',      'metode' => 'QRIS',                         'waktu' => '20 April 2026, 16:23 WIB', 'berkas' => 'qris-bukti.jpg'],
-];
+/* ---------- Presensi & statistik QR ---------- */
+$presensiTerkini = [];
+$attendanceRows = $adminRepo !== null ? $adminRepo->attendance(5) : [];
 
-$presensiTerkini = [
-    ['inisial' => 'DA', 'nama' => 'Dani Alamsyah', 'waktu' => '10:45 WIB', 'status' => 'Hadir'],
-    ['inisial' => 'SA', 'nama' => 'Siska Amelia',  'waktu' => '10:44 WIB', 'status' => 'Hadir'],
-    ['inisial' => 'RG', 'nama' => 'Rony Gunawan',  'waktu' => '10:42 WIB', 'status' => 'Hadir'],
-    ['inisial' => 'FA', 'nama' => 'Farah Adiba',   'waktu' => '10:39 WIB', 'status' => 'Hadir'],
-    ['inisial' => 'BS', 'nama' => 'Bayu Saputra',  'waktu' => '10:35 WIB', 'status' => 'Hadir'],
-];
+foreach ($attendanceRows as $h) {
+    $nama = (string) ($h['peserta'] ?? '');
+    $presensiTerkini[] = [
+        'inisial' => $nama !== '' ? user_initials($nama) : '-',
+        'nama'    => $nama,
+        'event'   => (string) ($h['nama_event'] ?? ''),
+        'waktu'   => $tanggalId($h['waktu_checkin'] ?? null, 'H:i') . ' WIB',
+        'status'  => 'Hadir',
+    ];
+}
 
 $kpiQr = [
-    ['label' => 'Total Hadir',          'nilai' => '150',   'tren' => '75% tingkat kehadiran',        'arah' => 'up'],
-    ['label' => 'Belum Hadir',          'nilai' => '50',    'tren' => '25% sisa kuota hadir',         'arah' => 'down'],
-    ['label' => 'Persentase Kehadiran', 'nilai' => '75.0%', 'tren' => 'Standar target minimal terpenuhi', 'arah' => 'up'],
+    [
+        'label' => 'Total Hadir',
+        'nilai' => (string) $total['total_hadir'],
+        'tren'  => 'peserta sudah check-in',
+        'arah'  => 'up',
+    ],
+    [
+        'label' => 'Belum Hadir',
+        'nilai' => (string) $total['belum_hadir'],
+        'tren'  => 'peserta belum check-in',
+        'arah'  => 'down',
+    ],
+    [
+        'label' => 'Persentase Kehadiran',
+        'nilai' => number_format($total['persen_hadir'], 1, ',', '.') . '%',
+        'tren'  => 'dari ' . $total['total_tiket'] . ' tiket terdaftar',
+        'arah'  => $total['persen_hadir'] >= 50 ? 'up' : 'down',
+    ],
 ];
+
+/* ---------- Laporan ---------- */
+$rincianLaporan = [];
+$reportRows = $adminRepo !== null ? $adminRepo->reportRows() : [];
+
+foreach ($reportRows as $r) {
+    $status = match (strtolower((string) ($r['status_bayar'] ?? ''))) {
+        'lunas' => 'Lunas',
+        'menunggu' => 'Tertunda',
+        default => 'Ditolak',
+    };
+
+    $hadir = !empty($r['waktu_checkin']);
+
+    $rincianLaporan[] = [
+        'nama'       => (string) ($r['nama'] ?? ''),
+        'email'      => (string) ($r['email'] ?? ''),
+        'status'     => $status,
+        'kehadiran'  => $hadir ? 'Hadir' : 'Tidak Hadir',
+        'sertifikat' => (string) ($r['status_sertifikat'] ?? ''),
+        'kategori'   => (string) ($r['nama_kategori'] ?? ''),
+        'tanggal'    => $tanggalId($r['tanggal_daftar'] ?? null, 'Y-m-d'),
+    ];
+}
 
 $kpiLaporan = [
-    ['label' => 'Total Pendaftar',   'nilai' => '3.245',         'tren' => 'Seluruh event semester ini',    'arah' => 'up'],
-    ['label' => 'Total Hadir',       'nilai' => '2.890',         'tren' => '89% konversi kehadiran',        'arah' => 'up'],
-    ['label' => 'Total Pendapatan',  'nilai' => 'Rp 48.250.000', 'tren' => 'Lunas terverifikasi bank',      'arah' => 'up'],
-    ['label' => 'Tingkat Kehadiran', 'nilai' => '89.1%',         'tren' => '+2.4% peningkatan semester lalu', 'arah' => 'up'],
-];
-
-$rincianLaporan = [
-    ['nama' => 'Shin Ryujin',  'email' => 'ryujin@mahasiswa.ac.id', 'status' => 'Lunas',    'kehadiran' => 'Hadir',       'sertifikat' => 'Sudah Dikirim', 'kategori' => 'Seminar',    'tanggal' => '2026-03-12'],
-    ['nama' => 'Siti Rahma',   'email' => 'siti@mahasiswa.ac.id',   'status' => 'Lunas',    'kehadiran' => 'Hadir',       'sertifikat' => 'Sudah Dikirim', 'kategori' => 'Workshop',   'tanggal' => '2026-04-08'],
-    ['nama' => 'Rian Pratama', 'email' => 'rian@mahasiswa.ac.id',   'status' => 'Tertunda', 'kehadiran' => 'Tidak Hadir', 'sertifikat' => 'Ditangguhkan',  'kategori' => 'Kompetisi',  'tanggal' => '2026-04-25'],
-    ['nama' => 'Dewi Lestari', 'email' => 'dewi@mahasiswa.ac.id',   'status' => 'Lunas',    'kehadiran' => 'Hadir',       'sertifikat' => 'Sudah Dikirim', 'kategori' => 'Seminar',    'tanggal' => '2026-02-19'],
-    ['nama' => 'Ahmad Dani',   'email' => 'ahmad@mahasiswa.ac.id',  'status' => 'Ditolak',  'kehadiran' => 'Tidak Hadir', 'sertifikat' => 'Ditangguhkan',  'kategori' => 'Workshop',   'tanggal' => '2026-01-30'],
+    [
+        'label' => 'Total Pendaftar',
+        'nilai' => (string) $total['total_tiket'],
+        'tren'  => 'seluruh tiket terdaftar',
+        'arah'  => 'up',
+    ],
+    [
+        'label' => 'Total Hadir',
+        'nilai' => (string) $total['total_hadir'],
+        'tren'  => 'peserta hadir di lokasi',
+        'arah'  => 'up',
+    ],
+    [
+        'label' => 'Total Pendapatan',
+        'nilai' => format_rupiah($total['pendapatan']),
+        'tren'  => 'dari tiket berstatus Lunas',
+        'arah'  => 'up',
+    ],
+    [
+        'label' => 'Tingkat Kehadiran',
+        'nilai' => number_format($total['persen_hadir'], 1, ',', '.') . '%',
+        'tren'  => 'dihitung dari tiket & kehadiran',
+        'arah'  => $total['persen_hadir'] >= 50 ? 'up' : 'down',
+    ],
 ];

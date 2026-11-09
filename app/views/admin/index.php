@@ -55,14 +55,27 @@ require __DIR__ . '/../../../includes/head.php';
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($aktivitas as $row): ?>
+                        <?php if (empty($aktivitas)): ?>
                             <tr>
-                                <td><?= e($row['event']) ?></td>
-                                <td class="muted"><?= e($row['tanggal']) ?></td>
-                                <td><?= e($row['peserta']) ?></td>
-                                <td><span class="badge badge-success"><?= e($row['status']) ?></span></td>
+                                <td colspan="5" class="empty-state"><?= e($emptyText) ?></td>
+                            </tr>
+                        <?php endif; ?>
+                        <?php foreach ($aktivitas as $row): ?>
+                            <?php
+                            $badgeAktivitas = match ($row['status']) {
+                                'Diverifikasi' => 'badge-success',
+                                'Menunggu' => 'badge-warning',
+                                'Ditolak' => 'badge-danger',
+                                default => 'badge-neutral',
+                            };
+                            ?>
+                            <tr>
+                                <td><?= e($row['event'] !== '' ? $row['event'] : $emptyText) ?></td>
+                                <td class="muted"><?= e($row['tanggal'] !== '' ? $row['tanggal'] : $emptyText) ?></td>
+                                <td><?= e($row['peserta'] !== '' ? $row['peserta'] : $emptyText) ?></td>
+                                <td><span class="badge <?= $badgeAktivitas ?>"><?= e($row['status'] !== '' ? $row['status'] : $emptyText) ?></span></td>
                                 <td class="actions">
-                                    <a href="pembayaran.php?transaksi=<?= e($row['id'] ?? '') ?>" class="actions-detail">Detail</a>
+                                    <a href="pembayaran-verifikasi.php?id=<?= (int) $row['id'] ?>" class="actions-detail">Detail</a>
                                     <span class="actions-sep">|</span>
                                     <a href="pembayaran.php?status=menunggu" class="actions-verify">Verifikasi</a>
                                 </td>
