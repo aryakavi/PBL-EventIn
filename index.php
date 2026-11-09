@@ -86,7 +86,7 @@ require __DIR__ . '/includes/head.php';
                     <p><?= e($featured['desc']) ?></p>
                     <ul class="perks">
                         <?php foreach ($featured['perks'] as $perk): ?>
-                            <li>&#10003; <?= e($perk) ?></li>
+                            <li><?= icon('check') ?> <?= e($perk) ?></li>
                         <?php endforeach; ?>
                     </ul>
                     <a class="btn btn-primary" href="<?= e($routes['detail']) ?>">Lihat Detail Acara</a>

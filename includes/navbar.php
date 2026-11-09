@@ -39,7 +39,7 @@ $base = $base ?? '';
             </div>
             <span class="avatar"><?= e($inisial) ?></span>
             <div class="user-menu-wrap">
-                <button class="user-menu-btn" type="button" aria-label="Menu akun" aria-expanded="false">&#9776;</button>
+                <button class="user-menu-btn" type="button" aria-label="Menu akun" aria-expanded="false"><?= icon('menu') ?></button>
                 <div class="user-menu-dropdown" hidden>
                     <a href="#" class="user-menu-item">Edit Profil</a>
                     <a href="#" class="user-menu-item user-menu-item--danger">Logout</a>

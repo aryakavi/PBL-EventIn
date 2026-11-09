@@ -447,6 +447,20 @@ ul { list-style: none; }
 .form-control-md { max-width: 160px; }
 .form-control-sm { max-width: 130px; }
 
+.form-group--full { grid-column: 1 / -1; }
+.form-grid .form-control,
+.form-grid .form-control-md,
+.form-grid .form-control-sm {
+    max-width: 100%;
+}
+.form-control-textarea {
+    height: auto;
+    padding: 10px 14px;
+    max-width: 100%;
+    min-height: 96px;
+    resize: vertical;
+}
+
 .upload-box {
     height: 112px;
     background: var(--bg);
@@ -822,6 +836,7 @@ ul { list-style: none; }
     .filter-search { width: 100%; flex: none; }
     .form-grid { grid-template-columns: 1fr; }
     .form-control, .form-control-md, .form-control-sm { max-width: 100%; }
+    .form-group--full { grid-column: auto; }
 
     .navbar-toggle { display: flex; }
 

@@ -8,6 +8,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once __DIR__ . '/icons.php';
+
 /** Escape output HTML. */
 function e(string $text): string
 {
@@ -320,22 +322,3 @@ $konfigurasiStatus = [
     ],
 ];
 
-// Peta ikon SVG untuk halaman konfirmasi pembayaran
-$ikonStatus = [
-    'times' => '<path d="M18 6 6 18M6 6l12 12"></path>',
-    'clock' => '<circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path>',
-    'check' => '<path d="m5 12 4 4 10-10"></path>',
-];
-
-$ikonTombol = [
-    'refresh'  => '<path d="M21 12a9 9 0 1 1-3-6.7L21 8"></path><path d="M21 3v5h-5"></path>',
-    'chat'     => '<path d="M21 12a8 8 0 0 1-11.5 7.2L4 21l1.8-5.5A8 8 0 1 1 21 12Z"></path>',
-    'download' => '<path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path>',
-    'ticket'   => '<path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4Z"></path><path d="M14 6v12"></path>',
-];
-
-$ikonTrust = [
-    'shield'  => '<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"></path><path d="m9 12 2 2 4-4"></path>',
-    'lock'    => '<rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path>',
-    'headset' => '<path d="M4 14v-2a8 8 0 0 1 16 0v2"></path><rect x="2" y="14" width="4" height="6" rx="1"></rect><rect x="18" y="14" width="4" height="6" rx="1"></rect><path d="M20 20a3 3 0 0 1-3 2h-3"></path>',
-];

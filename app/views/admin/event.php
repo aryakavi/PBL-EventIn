@@ -113,9 +113,9 @@ require __DIR__ . '/../../../includes/head.php';
                                 <td><strong><?= e($ev['peserta']) ?></strong></td>
                                 <td><span class="badge <?= $badgeClass ?>"><?= e($ev['status']) ?></span></td>
                                 <td class="actions-icon">
-                                    <a href="#" class="icon-btn" title="Edit">&#9998;</a>
-                                    <a href="#" class="icon-btn" title="Lihat">&#128065;</a>
-                                    <a href="#" class="icon-btn" title="Hapus">&times;</a>
+                                    <a href="#" class="icon-btn" title="Edit"><?= icon('edit') ?></a>
+                                    <a href="#" class="icon-btn" title="Lihat"><?= icon('eye-open') ?></a>
+                                    <a href="#" class="icon-btn" title="Hapus"><?= icon('trash') ?></a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -156,57 +156,88 @@ require __DIR__ . '/../../../includes/head.php';
 
             <form action="" method="post" enctype="multipart/form-data">
                 <div class="form-grid">
-                    <!-- Kolom Kiri -->
-                    <div class="form-col">
-                        <div class="form-group">
-                            <label for="nama_event">Nama Event </label>
-                            <input type="text" id="nama_event" name="nama_event" class="form-control" placeholder="Masukkan nama event resmi.">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="kategori_event">Kategori Event</label>
-                            <select id="kategori_event" name="kategori" class="form-control form-control-sm">
-                                <option value="" selected disabled>Pilih kategori..</option>
-                                <option value="Seminar">Seminar</option>
-                                <option value="Workshop">Workshop</option>
-                                <option value="Webinar">Webinar</option>
-                                <option value="Kompetisi">Kompetisi</option>
-                            </select>
-                        </div>
+                    <!-- Nama Event -->
+                    <div class="form-group">
+                        <label for="nama_event">Nama Event</label>
+                        <input type="text" id="nama_event" name="nama_event" class="form-control" placeholder="Masukkan nama event resmi.">
                     </div>
 
-                    <!-- Kolom Kanan (Banner) -->
-                    <div class="form-col">
-                        <div class="form-group">
-                            <span class="form-label">Banner Event *</span>
-                            <label for="banner" class="upload-box">
-                                <span class="upload-icon">&uarr;</span>
-                                <span>Pilih berkas gambar banner event..</span>
-                                <input type="file" id="banner" name="banner" accept="image/*" hidden>
-                            </label>
-                        </div>
+                    <!-- Kategori -->
+                    <div class="form-group">
+                        <label for="kategori_event">Kategori Event</label>
+                        <select id="kategori_event" name="kategori" class="form-control">
+                            <option value="" selected disabled>Pilih kategori..</option>
+                            <option value="Seminar">Seminar</option>
+                            <option value="Workshop">Workshop</option>
+                            <option value="Webinar">Webinar</option>
+                            <option value="Kompetisi">Kompetisi</option>
+                        </select>
                     </div>
 
-                    <!-- Baris Tanggal -->
+                    <!-- Deskripsi Event (lebar penuh) -->
+                    <div class="form-group form-group--full">
+                        <label for="deskripsi">Deskripsi Event</label>
+                        <textarea id="deskripsi" name="deskripsi" class="form-control form-control-textarea" rows="4" placeholder="Jelaskan detail event.."></textarea>
+                    </div>
+
+                    <!-- Tanggal Mulai & Selesai -->
                     <div class="form-group">
                         <label for="tgl_mulai">Tanggal Mulai</label>
-                        <input type="date" id="tgl_mulai" name="tgl_mulai" class="form-control form-control-md">
+                        <input type="date" id="tgl_mulai" name="tgl_mulai" class="form-control">
                     </div>
 
                     <div class="form-group">
                         <label for="tgl_selesai">Tanggal Selesai</label>
-                        <input type="date" id="tgl_selesai" name="tgl_selesai" class="form-control form-control-md">
+                        <input type="date" id="tgl_selesai" name="tgl_selesai" class="form-control">
                     </div>
 
-                    <!-- Baris Kapasitas & Harga -->
+                    <!-- Jam Mulai & Berakhir -->
+                    <div class="form-group">
+                        <label for="jam_mulai">Jam Mulai</label>
+                        <input type="time" id="jam_mulai" name="jam_mulai" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="jam_berakhir">Jam Berakhir</label>
+                        <input type="time" id="jam_berakhir" name="jam_berakhir" class="form-control">
+                    </div>
+
+                    <!-- Lokasi & Metode Pembayaran -->
+                    <div class="form-group">
+                        <label for="lokasi">Lokasi</label>
+                        <input type="text" id="lokasi" name="lokasi" class="form-control" placeholder="Contoh: Aula Gedung C">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="metode">Metode Pembayaran</label>
+                        <select id="metode" name="metode" class="form-control">
+                            <option value="" selected disabled>Pilih metode..</option>
+                            <option value="bank">Transfer Bank</option>
+                            <option value="wallet">E-Wallet</option>
+                            <option value="qris">QRIS</option>
+                            <option value="gratis">Gratis</option>
+                        </select>
+                    </div>
+
+                    <!-- Kapasitas & Harga -->
                     <div class="form-group">
                         <label for="kapasitas">Kapasitas Kursi</label>
-                        <input type="number" id="kapasitas" name="kapasitas" class="form-control form-control-sm" placeholder="Contoh: 150">
+                        <input type="number" id="kapasitas" name="kapasitas" class="form-control" placeholder="Contoh: 150">
                     </div>
 
                     <div class="form-group">
                         <label for="harga">Harga Tiket (Rp)</label>
-                        <input type="text" id="harga" name="harga" class="form-control form-control-sm" placeholder="Contoh: 75.000">
+                        <input type="text" id="harga" name="harga" class="form-control" placeholder="Contoh: 75.000">
+                    </div>
+
+                    <!-- Banner Event (lebar penuh) -->
+                    <div class="form-group form-group--full">
+                        <span class="form-label">Banner Event *</span>
+                        <label for="banner" class="upload-box">
+                            <span class="upload-icon">&uarr;</span>
+                            <span>Pilih berkas gambar banner event..</span>
+                            <input type="file" id="banner" name="banner" accept="image/*" hidden>
+                        </label>
                     </div>
                 </div>
 

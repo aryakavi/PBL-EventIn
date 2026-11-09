@@ -2,11 +2,6 @@
 require __DIR__ . '/../../../includes/admin/data.php';
 $halamanAktif = 'qr';
 
-$daftarQrEvent = [
-    'simposium-ai'     => 'Simposium Nasional AI',
-    'workshop-nocode'  => 'Workshop No-Code App',
-    'kompetisi-uiux'   => 'Kompetisi UI/UX Nasional',
-];
 
 $eventDipilih = $_GET['event'] ?? '';
 if (!array_key_exists($eventDipilih, $daftarQrEvent)) {
