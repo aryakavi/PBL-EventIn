@@ -4,6 +4,10 @@
  * Semua konten dipisah di sini supaya index.php tetap bersih.
  */
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 /** Escape output HTML. */
 function e(string $text): string
 {
