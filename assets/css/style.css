@@ -991,6 +991,341 @@ button { font-family: inherit; }
     height: 15px;
 }
 
+/* ===== Halaman Konfirmasi Status Pembayaran ===== */
+.confirm-container {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 48px 20px 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Stepper Selesai (Hijau) */
+.step-item.is-done .step-circle {
+    background: #10b981;
+    border-color: #10b981;
+    color: var(--white);
+}
+.step-item.is-done .step-circle svg {
+    width: 13px;
+    height: 13px;
+}
+
+/* Switcher Simulasi */
+.sim-switcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px;
+    background: #f1f5f9;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.sim-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    transition: all .15s;
+}
+.sim-tab:hover {
+    color: var(--text);
+}
+.sim-tab.is-active {
+    background: var(--white);
+    color: var(--text);
+    font-weight: 700;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, .08);
+}
+.sim-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+.dot-danger { background: #ef4444; }
+.dot-warning { background: #f59e0b; }
+.dot-success { background: #10b981; }
+
+/* Kartu Utama Konfirmasi */
+.confirm-card {
+    width: 70%;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-top-width: 5px;
+    border-radius: 12px;
+    padding: 36px 36px 28px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, .08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.confirm-card.theme-danger  { border-top-color: #dc2626; }
+.confirm-card.theme-warning { border-top-color: #f59e0b; }
+.confirm-card.theme-success { border-top-color: #10b981; }
+
+/* Ikon Status Bulat */
+.confirm-icon-ring {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+}
+.confirm-icon-inner {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+}
+.confirm-icon-inner svg {
+    width: 18px;
+    height: 18px;
+}
+.theme-danger .confirm-icon-ring  { background: #fee2e2; border: 2px solid #fecaca; }
+.theme-danger .confirm-icon-inner { background: #dc2626; }
+
+.theme-warning .confirm-icon-ring  { background: #fef3c7; border: 2px solid #fde68a; }
+.theme-warning .confirm-icon-inner { background: transparent; color: #b45309; }
+
+.theme-success .confirm-icon-ring  { background: #d1fae5; border: 2px solid #a7f3d0; }
+.theme-success .confirm-icon-inner { background: #10b981; }
+
+/* Pill Subjudul & Judul */
+.confirm-pill {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+}
+.theme-danger .confirm-pill  { background: #fee2e2; color: #b91c1c; }
+.theme-warning .confirm-pill { background: #fef3c7; color: #b45309; }
+.theme-success .confirm-pill { background: #d1fae5; color: #047857; }
+
+.confirm-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 8px;
+}
+.confirm-desc {
+    font-size: 12px;
+    color: var(--muted);
+    max-width: 460px;
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+.confirm-desc strong {
+    color: var(--text);
+}
+
+/* Kotak Invoice di Dalam Kartu */
+.invoice-box {
+    width: 100%;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    text-align: left;
+    margin-bottom: 24px;
+}
+.invoice-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+}
+.invoice-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.invoice-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #94a3b8;
+}
+.invoice-number {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text);
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+}
+.status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+.pill-danger  { background: #fee2e2; color: #b91c1c; }
+.pill-danger .status-dot  { background: #dc2626; }
+.pill-warning { background: #fef3c7; color: #b45309; }
+.pill-warning .status-dot { background: #d97706; }
+.pill-success { background: #d1fae5; color: #047857; }
+.pill-success .status-dot { background: #10b981; }
+
+.invoice-section {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+}
+.invoice-event {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text);
+}
+.invoice-sub {
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.invoice-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+}
+.invoice-col {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.invoice-val {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.invoice-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 14px;
+}
+.invoice-total-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+}
+.invoice-total-val {
+    font-size: 16px;
+    font-weight: 800;
+}
+.total-danger  { color: #dc2626; }
+.total-warning { color: var(--orange); }
+.total-success { color: var(--orange); }
+
+/* Tombol Aksi Konfirmasi */
+.confirm-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+}
+.confirm-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-align: center;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+}
+.confirm-btn svg {
+    width: 15px;
+    height: 15px;
+}
+.btn-danger {
+    background: #dc2626;
+    color: var(--white);
+    box-shadow: 0 4px 10px rgba(220, 38, 38, .25);
+}
+.btn-danger:hover {
+    background: #b91c1c;
+}
+
+.back-home-link {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    transition: color .15s;
+}
+.back-home-link:hover {
+    color: var(--text);
+}
+
+/* Badge Keamanan Bawah */
+.trust-badges {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+}
+.trust-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+}
+.trust-icon {
+    display: inline-flex;
+    align-items: center;
+}
+.trust-icon svg {
+    width: 14px;
+    height: 14px;
+}
+.trust-green  { color: #10b981; }
+.trust-blue   { color: #3b82f6; }
+.trust-orange { color: var(--orange); }
+
+@media (max-width: 640px) {
+    .confirm-card { padding: 28px 20px 24px; }
+    .invoice-grid { grid-template-columns: 1fr; }
+    .confirm-actions { grid-template-columns: 1fr; }
+}
+
 /* Kotak Panduan Keamanan */
 .security-notice {
     display: flex;
