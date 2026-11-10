@@ -3,34 +3,67 @@ $activeNav = 'tiket';
 $base = '../../';
 
 require __DIR__ . '/../../includes/data.php';
+require __DIR__ . '/../../includes/koneksi.php';
+require __DIR__ . '/../../app/models/SiteRepository.php';
 
-$peserta   = $pembayaranPeserta;
-$transaksi = $transaksiKonfirmasi;
-$emailPeserta = $transaksi['email'] ?? 'mahasiswa@polinema.ac.id';
+$emptyText = 'kosong, masih kurang';
 
-// Anggap pengguna sudah login (auth asli belum tersambung) agar navbar menampilkan profil.
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-if (!isset($_SESSION['user'])) {
-    $_SESSION['user'] = [
-        'id_pengguna' => 1,
-        'nama'        => $pembayaranPeserta['nama'],
-        'email'       => '',
-        'role'        => $pembayaranPeserta['role'],
-    ];
+$sesi = $_SESSION['user'] ?? null;
+if (!is_array($sesi) || empty($sesi['id_pengguna'])) {
+    header('Location: ' . $base . $routes['login']);
+    exit;
 }
 
-// Status simulasi aktif: 'gagal' | 'menunggu' | 'sukses'
-$status = $_GET['status'] ?? 'sukses';
-if (!in_array($status, ['gagal', 'menunggu', 'sukses'], true)) {
+if (is_admin_role($sesi['role'] ?? '')) {
+    header('Location: ' . $base . $routes['admin-dashboard']);
+    exit;
+}
+
+$siteRepo = isset($pdo) && $pdo instanceof PDO ? new SiteRepository($pdo) : null;
+$idPembayaran = (int) ($_GET['id'] ?? 0);
+$bayar = $siteRepo !== null
+    ? $siteRepo->pembayaranPeserta((int) $sesi['id_pengguna'], $idPembayaran)
+    : [];
+
+$statusBayar = strtolower((string) ($bayar['status_bayar'] ?? ''));
+if (str_starts_with($statusBayar, 'lunas')) {
     $status = 'sukses';
+} elseif (str_starts_with($statusBayar, 'menunggu')) {
+    $status = 'menunggu';
+} else {
+    $status = 'gagal';
 }
 
 $statusAktif = $konfigurasiStatus[$status];
 
-$emailHtml = '<strong>' . e($emailPeserta) . '</strong>';
+$emailPeserta = (string) ($bayar['email'] ?? $sesi['email'] ?? '');
+$emailHtml = '<strong>' . e($emailPeserta !== '' ? $emailPeserta : $emptyText) . '</strong>';
 $statusAktif['deskripsi'] = str_replace('{email}', $emailHtml, $statusAktif['deskripsi']);
+
+$tanggalDaftar = !empty($bayar['tanggal_daftar']) ? strtotime((string) $bayar['tanggal_daftar']) : false;
+$tahunInvoice = $tanggalDaftar !== false ? date('Y', $tanggalDaftar) : date('Y');
+
+$mulai = !empty($bayar['tanggal_mulai']) ? strtotime((string) $bayar['tanggal_mulai']) : false;
+$selesai = !empty($bayar['tanggal_selesai']) ? strtotime((string) $bayar['tanggal_selesai']) : false;
+$waktuEvent = $mulai !== false
+    ? date('d M Y', $mulai) . ' | ' . date('H:i', $mulai) . ' - ' . ($selesai !== false ? date('H:i', $selesai) : '-') . ' WIB'
+    : $emptyText;
+$waktuUnggah = !empty($bayar['waktu_unggah'])
+    ? date('d M Y, H:i', strtotime((string) $bayar['waktu_unggah'])) . ' WIB'
+    : $emptyText;
+
+$transaksi = [
+    'nomor'   => !empty($bayar['id_tiket'])
+        ? '#INV-' . $tahunInvoice . '-EVIN-' . str_pad((string) (int) $bayar['id_tiket'], 6, '0', STR_PAD_LEFT)
+        : $emptyText,
+    'event'   => ($bayar['nama_event'] ?? '') !== '' ? $bayar['nama_event'] : $emptyText,
+    'tiket'   => '1x Tiket ' . (($bayar['nama_kategori'] ?? '') !== '' ? $bayar['nama_kategori'] : $emptyText),
+    'waktu'   => $waktuEvent,
+    'tempat'  => ($bayar['lokasi'] ?? '') !== '' ? $bayar['lokasi'] : $emptyText,
+    'metode'  => ($bayar['metode'] ?? '') !== '' ? $bayar['metode'] : $emptyText,
+    'tanggal' => $waktuUnggah,
+    'total'   => format_rupiah($bayar['nominal'] ?? 0),
+];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -59,22 +92,6 @@ require __DIR__ . '/../../includes/head.php';
             <span class="step-circle">2</span>
             <span class="step-label">Konfirmasi</span>
         </div>
-    </div>
-
-    <!-- Bar Simulasi Status -->
-    <div class="sim-switcher" role="tablist" aria-label="Simulasi Status Pembayaran">
-        <a href="?status=gagal" class="sim-tab<?= $status === 'gagal' ? ' is-active' : '' ?>">
-            <span class="sim-dot dot-danger"></span>
-            Simulasi: Batas Waktu / Gagal
-        </a>
-        <a href="?status=menunggu" class="sim-tab<?= $status === 'menunggu' ? ' is-active' : '' ?>">
-            <span class="sim-dot dot-warning"></span>
-            Simulasi: Menunggu Verifikasi
-        </a>
-        <a href="?status=sukses" class="sim-tab<?= $status === 'sukses' ? ' is-active' : '' ?>">
-            <span class="sim-dot dot-success"></span>
-            Simulasi: Sukses Terverifikasi
-        </a>
     </div>
 
     <!-- Kartu Utama Status Konfirmasi -->

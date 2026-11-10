@@ -2,59 +2,38 @@
 $activeNav = 'explore';
 $base = '../../';
 require __DIR__ . '/../../includes/data.php';
+require __DIR__ . '/../../includes/koneksi.php';
+require __DIR__ . '/../../app/models/SiteRepository.php';
+
+$emptyText = 'kosong, masih kurang';
 
 $idEvent = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+$siteRepo = isset($pdo) && $pdo instanceof PDO ? new SiteRepository($pdo) : null;
 
-// Fallback bila data belum tersedia / koneksi database gagal.
-$acara = [
-    'id_event'       => 0,
-    'nama_event'     => 'Workshop Pembuatan Aplikasi Seluler Tanpa Kode (No-Code App)',
-    'deskripsi'      => 'Pelatihan intensif membangun aplikasi seluler tanpa menulis kode. Peserta akan mempelajari alur kerja no-code, menyusun prototipe, dan mempublikasikan aplikasi pertama dalam satu hari.',
-    'tanggal_mulai'  => '2026-11-15 09:00:00',
-    'tanggal_selesai' => '2026-11-15 15:00:00',
-    'lokasi'         => 'Lab Multimedia Gedung D, Kampus Utama',
-    'kuota'          => 50,
-    'harga'          => 75000,
-    'poster'         => null,
-    'nama_kategori'  => 'Workshop',
-    'nama_ukm'       => 'Unit Kegiatan Mahasiswa Teknologi Informasi',
-    'singkatan'      => 'UKM TI',
-    'pembuat_nama'   => 'Admin UKM TI',
-    'pembuat_email'  => 'admin.ti@gmail.com',
-    'pembuat_hp'     => '081234567895',
-];
+if ($siteRepo === null) {
+    header('Location: ' . $base . $routes['home']);
+    exit;
+}
 
-// Ambil detail event dari Supabase (read-only). Output error koneksi disembunyikan.
-ob_start();
-require_once __DIR__ . '/../../includes/koneksi.php';
-ob_end_clean();
+$acara = $idEvent > 0 ? $siteRepo->event($idEvent) : $siteRepo->sorotan();
 
-if (isset($pdo)) {
-    try {
-        $sql = "SELECT e.id_event, e.nama_event, e.deskripsi, e.tanggal_mulai, e.tanggal_selesai,
-                       e.lokasi, e.kuota, e.harga, e.poster,
-                       k.nama_kategori,
-                       p.nama AS pembuat_nama, p.email AS pembuat_email, p.no_hp AS pembuat_hp,
-                       u.nama_ukm, u.singkatan
-                FROM events e
-                LEFT JOIN kategori_event k ON k.id_kategori = e.id_kategori
-                LEFT JOIN pengguna p ON p.id_pengguna = e.id_pembuat
-                LEFT JOIN admin_ukm a ON a.id_pengguna = e.id_pembuat
-                LEFT JOIN ukm u ON u.id_ukm = a.id_ukm
-                " . ($idEvent > 0 ? 'WHERE e.id_event = :id' : '') . "
-                ORDER BY e.tanggal_mulai ASC
-                LIMIT 1";
+// Event tidak ditemukan: kembali ke daftar event.
+if (empty($acara)) {
+    header('Location: ' . $base . $routes['home']);
+    exit;
+}
 
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute($idEvent > 0 ? ['id' => $idEvent] : []);
-        $row = $stmt->fetch();
-
-        if ($row) {
-            $acara = array_merge($acara, array_filter($row, static fn($v) => $v !== null && $v !== ''));
-        }
-    } catch (Throwable $e) {
-        // Pakai data fallback.
+foreach (['nama_event', 'deskripsi', 'lokasi', 'nama_kategori', 'nama_ukm', 'singkatan', 'pembuat_nama', 'pembuat_email', 'pembuat_hp'] as $kunci) {
+    if (!isset($acara[$kunci]) || trim((string) $acara[$kunci]) === '') {
+        $acara[$kunci] = $emptyText;
     }
+}
+
+if (empty($acara['tanggal_mulai'])) {
+    $acara['tanggal_mulai'] = date('Y-m-d H:i:s');
+}
+if (empty($acara['tanggal_selesai'])) {
+    $acara['tanggal_selesai'] = $acara['tanggal_mulai'];
 }
 
 $mulai   = new DateTime($acara['tanggal_mulai']);
@@ -64,17 +43,7 @@ if ($selesai <= $mulai) {
     $selesai = (clone $mulai)->modify('+2 hours');
 }
 
-$durasiMenit = max(60, (int) (($selesai->getTimestamp() - $mulai->getTimestamp()) / 60));
-$titik = static fn(float $rasio): DateTime => (clone $mulai)->modify('+' . (int) round($durasiMenit * $rasio) . ' minutes');
-
-$sesi = [
-    ['Registrasi & Check-in Peserta', $titik(0), $titik(0.15), 'Verifikasi e-tiket dan pengambilan name tag di meja registrasi.'],
-    ['Pembukaan & Sambutan', $titik(0.15), $titik(0.3), 'Sambutan penyelenggara serta penjelasan agenda kegiatan.'],
-    ['Sesi Inti & Praktik', $titik(0.3), $titik(0.85), 'Penyampaian materi utama dan pendampingan praktik peserta.'],
-    ['Penutupan & Sertifikat', $titik(0.85), $selesai, 'Tanya jawab, penutupan, dan informasi unduhan e-sertifikat.'],
-];
-
-$lokasiQuery = rawurlencode($acara['lokasi'] . ', Politeknik Negeri Malang');
+$lokasiQuery = rawurlencode($acara['lokasi']);
 $mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' . $lokasiQuery;
 
 $nomorWa = preg_replace('/\D/', '', (string) $acara['pembuat_hp']);
@@ -83,9 +52,9 @@ if (str_starts_with($nomorWa, '0')) {
 }
 $waUrl = $nomorWa !== '' ? 'https://wa.me/' . $nomorWa : '#';
 
-$penyelenggara = $acara['nama_ukm'] ?: ($acara['singkatan'] ?: 'EventIn Campus');
-$emailKontak   = $acara['pembuat_email'] ?: 'hello@eventin.id';
-$narahubung    = $acara['pembuat_nama'] ?: 'Panitia EventIn';
+$penyelenggara = $acara['nama_ukm'];
+$emailKontak   = $acara['pembuat_email'];
+$narahubung    = $acara['pembuat_nama'];
 
 $login = isset($_SESSION['user']);
 $daftarHref = $base . $routes['pembayaran'] . ($idEvent > 0 ? '?id=' . $idEvent : '');
@@ -160,18 +129,16 @@ require __DIR__ . '/../../includes/head.php';
 
             <section class="acara-section" id="jadwal">
                 <h2>Jadwal Sesi</h2>
-                <?php foreach ($sesi as $i => [$judul, $dari, $sampai, $ket]): ?>
-                    <div class="acara-session">
-                        <span class="acara-session-time">
-                            <?= e($dari->format('H:i')) ?><br>
-                            <?= e($sampai->format('H:i')) ?> WIB
-                        </span>
-                        <div class="acara-session-body">
-                            <strong>Sesi <?= $i + 1 ?> &middot; <?= e($judul) ?></strong>
-                            <span><?= e($ket) ?></span>
-                        </div>
+                <div class="acara-session">
+                    <span class="acara-session-time">
+                        <?= e($mulai->format('H:i')) ?><br>
+                        <?= e($selesai->format('H:i')) ?> WIB
+                    </span>
+                    <div class="acara-session-body">
+                        <strong><?= e($mulai->format('d M Y')) ?></strong>
+                        <span><?= e($emptyText) ?></span>
                     </div>
-                <?php endforeach; ?>
+                </div>
             </section>
 
             <section class="acara-section" id="lokasi">
@@ -185,7 +152,6 @@ require __DIR__ . '/../../includes/head.php';
                     </span>
                     <div>
                         <strong><?= e($acara['lokasi']) ?></strong>
-                        <p>Politeknik Negeri Malang, Jl. Soekarno-Hatta No. 9, Malang</p>
                         <p class="acara-location-note">Peserta disarankan hadir 30 menit sebelum sesi dimulai untuk proses check-in.</p>
                         <a class="acara-map-link" href="<?= e($mapsUrl) ?>" target="_blank" rel="noopener">Buka di Google Maps &rarr;</a>
                     </div>

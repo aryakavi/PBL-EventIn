@@ -26,4 +26,19 @@ class Event
 
         return $this->pdo->query($sql)->fetchAll();
     }
+
+    public function countEvent(): int
+    {
+        return (int) $this->pdo->query('SELECT count(*) FROM events')->fetchColumn();
+    }
+
+    public function mostRecentEvent(): array|false
+    {
+        return $this->pdo->query(
+            'SELECT id_event, nama_event, tanggal_mulai, lokasi
+             FROM events
+             ORDER BY tanggal_mulai DESC
+             LIMIT 1'
+        )->fetch();
+    }
 }

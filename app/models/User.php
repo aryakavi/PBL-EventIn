@@ -36,6 +36,15 @@ class User
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function countPeserta(): int
+    {
+        return (int) $this->db->query(
+            "SELECT count(DISTINCT id_pengguna)
+             FROM tiket
+             WHERE id_pengguna IS NOT NULL"
+        )->fetchColumn();
+    }
+
     public function registerPengguna(
         string $nama,
         string $email,

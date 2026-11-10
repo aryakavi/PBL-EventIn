@@ -23,13 +23,23 @@ if (!isset($pdo)) {
 $adminRepo = isset($pdo) && $pdo instanceof PDO ? new AdminRepository($pdo) : null;
 
 $adminSession = $_SESSION['user'] ?? null;
-$isAdminUser  = is_array($adminSession) && is_admin_role($adminSession['role'] ?? '');
-$adminNama    = $isAdminUser ? (string) $adminSession['nama'] : 'Admin Organisasi';
+$sesiAda      = is_array($adminSession) && !empty($adminSession['id_pengguna']);
 
 $ukmAdmin = [];
-if ($adminRepo !== null && $isAdminUser) {
-    $ukmAdmin = $adminRepo->organizer((int) ($adminSession['id_pengguna'] ?? 0));
+if ($adminRepo !== null && $sesiAda) {
+    $ukmAdmin = $adminRepo->organizer((int) $adminSession['id_pengguna']);
 }
+
+// Penyelenggara = role admin ATAU terdaftar sebagai admin UKM.
+$isAdminUser = $sesiAda && (is_admin_role($adminSession['role'] ?? '') || $ukmAdmin !== []);
+
+// Halaman penyelenggara tidak boleh dibuka peserta atau pengunjung tanpa login.
+if (!$isAdminUser) {
+    header('Location: ' . ($sesiAda ? '../../../index.php' : '../../../login.php'));
+    exit;
+}
+
+$adminNama = (string) $adminSession['nama'];
 
 $organizer = [
     'nama'       => $adminNama,

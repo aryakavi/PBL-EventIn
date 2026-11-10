@@ -2,32 +2,88 @@
 $activeNav = 'tiket';
 $base = '../../';
 require __DIR__ . '/../../includes/data.php';
+require __DIR__ . '/../../includes/koneksi.php';
+require __DIR__ . '/../../app/controllers/TiketController.php';
+require __DIR__ . '/../../app/models/SiteRepository.php';
 
-// Halaman ini khusus peserta. Admin diarahkan ke dashboard penyelenggara.
-if (is_admin_role($_SESSION['user']['role'] ?? '')) {
+$emptyText = 'kosong, masih kurang';
+
+// Halaman ini khusus peserta yang sudah login.
+$sesi = $_SESSION['user'] ?? null;
+if (!is_array($sesi) || empty($sesi['id_pengguna'])) {
+    header('Location: ' . $base . $routes['login']);
+    exit;
+}
+
+if (is_admin_role($sesi['role'] ?? '')) {
     header('Location: ' . $base . $routes['admin-dashboard']);
     exit;
 }
 
-$peserta = $pembayaranPeserta;
+$idPengguna = (int) $sesi['id_pengguna'];
 
-// Anggap pengguna sudah login (auth asli belum tersambung) agar navbar menampilkan profil.
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+$tiketController = isset($pdo) && $pdo instanceof PDO ? new TiketController($pdo) : null;
+$siteRepo = isset($pdo) && $pdo instanceof PDO ? new SiteRepository($pdo) : null;
+$profilDb = $siteRepo !== null ? $siteRepo->pengguna($idPengguna) : [];
+
+$tabMap = [
+    'aktif'  => 'aktif',
+    'selesai' => 'tidak-tersedia',
+    'batal'  => 'dibatalkan',
+];
+
+$tab = (string) ($_GET['tab'] ?? 'aktif');
+if (!array_key_exists($tab, $tabMap)) {
+    $tab = 'aktif';
 }
-if (!isset($_SESSION['user'])) {
-    $_SESSION['user'] = [
-        'id_pengguna' => 1,
-        'nama'        => $pembayaranPeserta['nama'],
-        'email'       => '',
-        'role'        => $pembayaranPeserta['role'],
+
+$jmlStatus = $tiketController !== null
+    ? $tiketController->jumlahPerStatus($idPengguna)
+    : ['aktif' => 0, 'tidak-tersedia' => 0, 'dibatalkan' => 0];
+
+$daftarKategori = $tiketController !== null ? $tiketController->daftarKategori($idPengguna) : [];
+$tiketDb = $tiketController !== null ? $tiketController->index($idPengguna, $tabMap[$tab]) : [];
+
+$pemilik = (string) ($profilDb['nama'] ?? $sesi['nama'] ?? '');
+$nim = (string) ($profilDb['nim'] ?? $sesi['nim'] ?? '');
+if (trim($nim) === '') {
+    $nim = $emptyText;
+}
+
+$daftarTiket = [];
+foreach ($tiketDb as $t) {
+    $statusBayar = strtolower((string) ($t['status_bayar'] ?? ''));
+
+    if (str_starts_with($statusBayar, 'batal')) {
+        $statusKartu = 'batal';
+    } elseif (str_starts_with($statusBayar, 'lunas') && strtotime((string) $t['tanggal_selesai']) >= time()) {
+        $statusKartu = 'aktif';
+    } else {
+        $statusKartu = 'selesai';
+    }
+
+    $poster = $tiketController->posterUrl($t);
+
+    $daftarTiket[] = [
+        'id'           => 'tiket-' . (int) $t['id_tiket'],
+        'kategori'     => (string) ($t['nama_kategori'] ?? ''),
+        'status_tiket' => $tiketController->labelStatusBayar((string) ($t['status_bayar'] ?? '')),
+        'status'       => $statusKartu,
+        'judul'        => ($t['nama_event'] ?? '') !== '' ? $t['nama_event'] : $emptyText,
+        'tanggal'      => $tiketController->formatTanggalSingkat($t),
+        'lokasi'       => ($t['lokasi'] ?? '') !== '' ? $t['lokasi'] : $emptyText,
+        'gambar'       => $poster !== null ? $base . $poster : '',
+        'kode'         => ($t['kode_qr'] ?? '') !== '' ? $t['kode_qr'] : $emptyText,
+        'pemilik'      => $pemilik !== '' ? $pemilik : $emptyText,
+        'nim'          => $nim,
+        'akses'        => ($t['nama_kategori'] ?? '') !== '' ? $t['nama_kategori'] : $emptyText,
+        'meja'         => $emptyText,
+        'sesi'         => $tiketController->formatWaktu($t),
+        'terbuka'      => false,
     ];
 }
 
-$jmlStatus = ['aktif' => 0, 'selesai' => 0, 'batal' => 0];
-foreach ($daftarTiket as $t) {
-    $jmlStatus[$t['status']]++;
-}
+$tabHref = static fn(string $kunci): string => '?' . http_build_query(['tab' => $kunci]);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -61,9 +117,9 @@ require __DIR__ . '/../../includes/head.php';
     <!-- Bar Tab Status & Pencarian -->
     <div class="ticket-toolbar">
         <div class="ticket-tabs">
-            <button type="button" class="ticket-tab is-active" data-status-tab="aktif">Aktif (<?= $jmlStatus['aktif'] ?>)</button>
-            <button type="button" class="ticket-tab" data-status-tab="selesai">Telah Selesai (<?= $jmlStatus['selesai'] ?>)</button>
-            <button type="button" class="ticket-tab" data-status-tab="batal">Dibatalkan (<?= $jmlStatus['batal'] ?>)</button>
+            <a href="<?= e($tabHref('aktif')) ?>" class="ticket-tab<?= $tab === 'aktif' ? ' is-active' : '' ?>">Aktif (<?= (int) $jmlStatus['aktif'] ?>)</a>
+            <a href="<?= e($tabHref('selesai')) ?>" class="ticket-tab<?= $tab === 'selesai' ? ' is-active' : '' ?>">Tidak Aktif (<?= (int) $jmlStatus['tidak-tersedia'] ?>)</a>
+            <a href="<?= e($tabHref('batal')) ?>" class="ticket-tab<?= $tab === 'batal' ? ' is-active' : '' ?>">Dibatalkan (<?= (int) $jmlStatus['dibatalkan'] ?>)</a>
         </div>
 
         <div class="ticket-filters">
@@ -75,19 +131,27 @@ require __DIR__ . '/../../includes/head.php';
             </div>
             <select class="filter-select ticket-cat-select" aria-label="Filter Kategori" data-ticket-cat>
                 <option value="">Semua Kategori</option>
-                <option value="workshop">Workshop</option>
-                <option value="seminar">Seminar</option>
+                <?php foreach ($daftarKategori as $namaKategori): ?>
+                    <option value="<?= e(mb_strtolower($namaKategori)) ?>"><?= e($namaKategori) ?></option>
+                <?php endforeach; ?>
             </select>
         </div>
     </div>
 
     <!-- Daftar Kartu Tiket -->
     <section class="ticket-list">
+        <?php if (empty($daftarTiket)): ?>
+            <p class="ticket-empty"><?= e($emptyText) ?></p>
+        <?php endif; ?>
         <?php foreach ($daftarTiket as $t): ?>
             <article class="ticket-card<?= $t['terbuka'] ? ' is-open' : '' ?>" id="<?= e($t['id']) ?>" data-nama="<?= e(mb_strtolower($t['judul'])) ?>" data-kategori="<?= e(mb_strtolower($t['kategori'])) ?>" data-status="<?= e($t['status']) ?>">
                 <!-- Bagian Atas (Ringkasan Event) -->
                 <div class="ticket-summary">
-                    <img src="<?= e($t['gambar']) ?>" alt="<?= e($t['judul']) ?>" class="ticket-thumb">
+                    <?php if ($t['gambar'] !== ''): ?>
+                        <img src="<?= e($t['gambar']) ?>" alt="<?= e($t['judul']) ?>" class="ticket-thumb">
+                    <?php else: ?>
+                        <span class="ticket-thumb ticket-thumb--empty" aria-hidden="true">EI</span>
+                    <?php endif; ?>
 
                     <div class="ticket-summary-info">
                         <h2 class="ticket-title"><?= e($t['judul']) ?></h2>

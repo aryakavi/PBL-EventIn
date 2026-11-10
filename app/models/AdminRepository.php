@@ -63,8 +63,8 @@ class AdminRepository
                     (SELECT count(*) FROM tiket t WHERE t.id_event = e.id_event) AS jumlah_peserta
              FROM events e
              LEFT JOIN kategori_event k ON k.id_kategori = e.id_kategori
-             LEFT JOIN pengguna p ON p.id_pengguna = e.id_pembuat
-             LEFT JOIN admin_ukm a ON a.id_pengguna = e.id_pembuat
+             LEFT JOIN admin_ukm a ON a.id_admin_ukm = e.id_pembuat
+             LEFT JOIN pengguna p ON p.id_pengguna = a.id_pengguna
              LEFT JOIN ukm u ON u.id_ukm = a.id_ukm
              ORDER BY e.tanggal_mulai DESC'
         );
@@ -82,8 +82,8 @@ class AdminRepository
                     (SELECT count(*) FROM tiket t WHERE t.id_event = e.id_event) AS jumlah_peserta
              FROM events e
              LEFT JOIN kategori_event k ON k.id_kategori = e.id_kategori
-             LEFT JOIN pengguna p ON p.id_pengguna = e.id_pembuat
-             LEFT JOIN admin_ukm a ON a.id_pengguna = e.id_pembuat
+             LEFT JOIN admin_ukm a ON a.id_admin_ukm = e.id_pembuat
+             LEFT JOIN pengguna p ON p.id_pengguna = a.id_pengguna
              LEFT JOIN ukm u ON u.id_ukm = a.id_ukm
              WHERE e.id_event = :id',
             ['id' => $id]
@@ -139,7 +139,7 @@ class AdminRepository
              LEFT JOIN pengguna p ON p.id_pengguna = t.id_pengguna
              LEFT JOIN events e ON e.id_event = t.id_event
              LEFT JOIN kategori_event k ON k.id_kategori = e.id_kategori
-             LEFT JOIN admin_ukm a ON a.id_pengguna = e.id_pembuat
+             LEFT JOIN admin_ukm a ON a.id_admin_ukm = e.id_pembuat
              LEFT JOIN ukm u ON u.id_ukm = a.id_ukm
              WHERE pb.id_pembayaran = :id',
             ['id' => $id]

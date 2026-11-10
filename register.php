@@ -2,9 +2,11 @@
 
 require __DIR__ . '/includes/data.php';
 require __DIR__ . '/includes/koneksi.php';
+require __DIR__ . '/app/models/SiteRepository.php';
 require __DIR__ . '/app/controllers/AuthController.php';
 
 $auth = new AuthController($pdo);
+$siteTotals = (new SiteRepository($pdo))->totals();
 
 $error = '';
 $old = [];
@@ -174,7 +176,7 @@ require __DIR__ . '/includes/auth-header.php';
                         <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path>
                     </svg>
                 </span>
-                <strong>10.000+</strong>
+                <strong><?= e(number_format($siteTotals['peserta'], 0, ',', '.')) ?></strong>
                 <span>Mahasiswa Aktif Terdaftar</span>
             </div>
 
@@ -185,7 +187,7 @@ require __DIR__ . '/includes/auth-header.php';
                         <path d="M16 2v4M8 2v4M3 10h18"></path>
                     </svg>
                 </span>
-                <strong>500+</strong>
+                <strong><?= e(number_format($siteTotals['event'], 0, ',', '.')) ?></strong>
                 <span>Event &amp; Seminar Kampus</span>
             </div>
         </div>

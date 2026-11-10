@@ -5,12 +5,80 @@ $base = '';
 
 require __DIR__ . '/includes/data.php';
 require __DIR__ . '/includes/koneksi.php';
+require __DIR__ . '/app/models/SiteRepository.php';
 require __DIR__ . '/app/models/Event.php';
 require __DIR__ . '/app/controllers/EventController.php';
+
+$emptyText = 'kosong, masih kurang';
+
+$siteRepo = isset($pdo) && $pdo instanceof PDO ? new SiteRepository($pdo) : null;
+$totals   = $siteRepo !== null
+    ? $siteRepo->totals()
+    : ['event' => 0, 'peserta' => 0, 'organisasi' => 0];
+
+$stats = [
+    [number_format($totals['event'], 0, ',', '.'), 'Event Terdaftar'],
+    [number_format($totals['peserta'], 0, ',', '.'), 'Peserta Aktif'],
+    [number_format($totals['organisasi'], 0, ',', '.'), 'Organisasi Kampus'],
+];
 
 $eventModel = new Event($pdo);
 $eventController = new EventController($eventModel);
 $eventsDb = $eventController->index();
+
+/* Kategori filter diambil dari tabel kategori_event. */
+$categories = ['semua' => 'Semua Kategori'];
+$daftarOrganisasi = $siteRepo !== null ? $siteRepo->organisasi() : [];
+
+foreach ($siteRepo !== null ? $siteRepo->kategori() : [] as $k) {
+    $categories[$k['nama_kategori']] = $k['nama_kategori'];
+}
+
+/* Mitra = UKM yang terdaftar di database. */
+$partners = [];
+foreach ($daftarOrganisasi as $u) {
+    $partners[] = $u['singkatan'] !== '' ? $u['singkatan'] : $u['nama_ukm'];
+}
+if (empty($partners)) {
+    $partners = [$emptyText];
+}
+
+/* Organisasi terdaftar beserta jumlah event yang dijalankan. */
+$orgs = [];
+foreach ($daftarOrganisasi as $u) {
+    $orgs[] = [
+        $u['nama_ukm'] !== '' ? $u['nama_ukm'] : $emptyText,
+        (int) $u['jumlah_event'] . ' event terselenggara',
+    ];
+}
+if (empty($orgs)) {
+    $orgs = [[$emptyText, $emptyText]];
+}
+
+/* Sorotan minggu ini = event dengan pendaftar terbanyak. */
+$sorotan = $siteRepo !== null ? $siteRepo->sorotan() : [];
+
+$featured = [
+    'ticket_title' => ($sorotan['nama_event'] ?? '') !== '' ? $sorotan['nama_event'] : $emptyText,
+    'ticket_meta'  => !empty($sorotan['tanggal_mulai'])
+        ? date('d M Y, H:i', strtotime($sorotan['tanggal_mulai'])) . ' WIB | ' . ($sorotan['lokasi'] ?? '')
+        : $emptyText,
+    'ticket_owner' => ($sorotan['nama_ukm'] ?? '') !== ''
+        ? $sorotan['nama_ukm']
+        : (($sorotan['singkatan'] ?? '') !== '' ? $sorotan['singkatan'] : $emptyText),
+    'title'        => ($sorotan['nama_event'] ?? '') !== '' ? $sorotan['nama_event'] : $emptyText,
+    'desc'         => ($sorotan['deskripsi'] ?? '') !== '' ? $sorotan['deskripsi'] : $emptyText,
+    'perks'        => [
+        'Sertifikat resmi terintegrasi SKPI',
+        'Akses penuh ke seluruh sesi kegiatan',
+        'Konsumsi dan goodie bag peserta',
+    ],
+];
+
+$featuredEventId = (int) ($sorotan['id_event'] ?? 0);
+if ($featuredEventId === 0 && !empty($eventsDb[0]['id_event'])) {
+    $featuredEventId = (int) $eventsDb[0]['id_event'];
+}
 
 ?>
 
@@ -74,7 +142,7 @@ require __DIR__ . '/includes/head.php';
                     </div>
                     <div class="ticket-bottom">
                         <div>
-                            <small>PEMILIK TIKET</small>
+                            <small>PENYELENGGARA</small>
                             <strong><?= e($featured['ticket_owner']) ?></strong>
                         </div>
                         <span class="ticket-qr">QR</span>
@@ -89,7 +157,7 @@ require __DIR__ . '/includes/head.php';
                             <li>&#10003; <?= e($perk) ?></li>
                         <?php endforeach; ?>
                     </ul>
-                    <a class="btn btn-primary" href="<?= e($routes['detail'] . (!empty($eventsDb[0]['id_event']) ? '?id=' . (int) $eventsDb[0]['id_event'] : '')) ?>">Lihat Detail Acara</a>
+                    <a class="btn btn-primary" href="<?= e($routes['detail'] . ($featuredEventId > 0 ? '?id=' . $featuredEventId : '')) ?>">Lihat Detail Acara</a>
                 </div>
             </div>
         </section>
@@ -121,25 +189,29 @@ require __DIR__ . '/includes/head.php';
             </div>
 
             <div class="event-grid" id="event-grid">
+                <?php if (empty($eventsDb)): ?>
+                    <p class="event-empty"><?= e($emptyText) ?></p>
+                <?php endif; ?>
                 <?php foreach ($eventsDb as $ev):
-                    $img = event_image($ev['id_event']);
-                    $detailHref = $routes['detail'] . '?id=' . (int) $ev['id_event']; ?>
+                    $img = event_image((int) $ev['id_event']);
+                    $detailHref = $routes['detail'] . '?id=' . (int) $ev['id_event'];
+                    $namaKategori = (string) ($ev['nama_kategori'] ?? ''); ?>
                     <article class="event-card"
-                        data-category="<?= e(strtolower(str_replace(' ', '-', $ev['nama_kategori']))) ?>">
-                        <a class="event-cover cover-<?= $ev['id_event'] ?>"
+                        data-category="<?= e(strtolower(str_replace(' ', '-', $namaKategori))) ?>">
+                        <a class="event-cover cover-<?= (int) $ev['id_event'] ?>"
                             href="<?= e($detailHref) ?>"
                             aria-label="Lihat detail <?= e($ev['nama_event']) ?>"
                             <?php if ($img): ?>style="background-image: url('<?= e($img) ?>');" <?php endif; ?>>
-                            <span class="event-badge"><?= e(strtoupper($ev['nama_kategori'])) ?></span>
+                            <span class="event-badge"><?= e(strtoupper($namaKategori !== '' ? $namaKategori : $emptyText)) ?></span>
                         </a>
                         <div class="event-body">
-                            <h3><a href="<?= e($detailHref) ?>"><?= e($ev['nama_event']) ?></a></h3>
+                            <h3><a href="<?= e($detailHref) ?>"><?= e($ev['nama_event'] !== '' ? $ev['nama_event'] : $emptyText) ?></a></h3>
                             <div class="event-meta">
-                                <p>Tanggal: <?= e(date('d M Y : H:i', strtotime($ev['tanggal_mulai']))) ?></p>
-                                <p>Lokasi: <?= e($ev['lokasi']) ?></p>
+                                <p>Tanggal: <?= e(!empty($ev['tanggal_mulai']) ? date('d M Y : H:i', strtotime($ev['tanggal_mulai'])) : $emptyText) ?></p>
+                                <p>Lokasi: <?= e(($ev['lokasi'] ?? '') !== '' ? $ev['lokasi'] : $emptyText) ?></p>
                             </div>
                             <div class="event-footer">
-                                <span class="price">Rp.<?= e($ev['harga']) ?></span>
+                                <span class="price"><?= e((float) $ev['harga'] > 0 ? format_rupiah($ev['harga']) : 'Gratis') ?></span>
                                 <a class="btn btn-primary" href="<?= e($detailHref) ?>">Daftar</a>
                             </div>
                         </div>
@@ -234,7 +306,7 @@ require __DIR__ . '/includes/head.php';
         <!-- CTA akhir -->
         <section class="final-cta">
             <h2>Siap Meningkatkan Pengalaman Akademik Anda?</h2>
-            <p>Daftarkan diri secara gratis hari ini dan mulailah mengeksplorasi ribuan peluang berharga di sekitarmu.</p>
+            <p>Daftarkan diri secara gratis hari ini dan mulailah mengeksplorasi berbagai peluang kegiatan kampus di sekitarmu.</p>
             <a class="btn btn-primary" href="<?= e($routes['register']) ?>">Buat Akun Sekarang</a>
         </section>
 

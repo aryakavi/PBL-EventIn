@@ -2103,3 +2103,30 @@ button { font-family: inherit; }
     .profil-row dd { text-align: left; }
     .profil-hero { flex-direction: column; align-items: flex-start; }
 }
+
+/* ===== Empty state & placeholder ===== */
+.event-empty {
+    grid-column: 1 / -1;
+    padding: 32px;
+    text-align: center;
+    color: var(--slate-500);
+    font-size: 14px;
+}
+.ticket-empty {
+    padding: 32px;
+    text-align: center;
+    color: var(--slate-500);
+    background: var(--white);
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    font-size: 14px;
+}
+.ticket-thumb--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 12px;
+    color: #64748b;
+    letter-spacing: .04em;
+}

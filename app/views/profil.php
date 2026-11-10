@@ -2,34 +2,34 @@
 $activeNav = 'profil';
 $base = '../../';
 require __DIR__ . '/../../includes/data.php';
+require __DIR__ . '/../../includes/koneksi.php';
+require __DIR__ . '/../../app/models/SiteRepository.php';
+
+$emptyText = 'kosong, masih kurang';
+
+$sesi = $_SESSION['user'] ?? null;
+if (!is_array($sesi) || empty($sesi['id_pengguna'])) {
+    header('Location: ' . $base . $routes['login']);
+    exit;
+}
 
 $profil = [
-    'nama'  => $_SESSION['user']['nama'] ?? $pembayaranPeserta['nama'],
-    'email' => $_SESSION['user']['email'] ?? 'aryakavi@polinema.ac.id',
-    'nim'   => $_SESSION['user']['nim'] ?? '240910291',
-    'no_hp' => $_SESSION['user']['no_hp'] ?? '081234567890',
-    'role'  => $_SESSION['user']['role'] ?? $pembayaranPeserta['role'],
+    'nama'  => (string) ($sesi['nama'] ?? ''),
+    'email' => (string) ($sesi['email'] ?? ''),
+    'nim'   => (string) ($sesi['nim'] ?? ''),
+    'no_hp' => (string) ($sesi['no_hp'] ?? ''),
+    'role'  => (string) ($sesi['role'] ?? 'pengguna'),
 ];
 
 // Ambil data terbaru dari Supabase (read-only) bila pengguna sudah login.
-ob_start();
-require_once __DIR__ . '/../../includes/koneksi.php';
-ob_end_clean();
+if (isset($pdo) && $pdo instanceof PDO) {
+    $row = (new SiteRepository($pdo))->pengguna((int) $sesi['id_pengguna']);
 
-if (isset($pdo) && !empty($_SESSION['user']['id_pengguna'])) {
-    try {
-        $stmt = $pdo->prepare("SELECT nama, email, no_hp, nim FROM pengguna WHERE id_pengguna = :id LIMIT 1");
-        $stmt->execute(['id' => (int) $_SESSION['user']['id_pengguna']]);
-        $row = $stmt->fetch();
-
-        if ($row) {
-            $profil['nama']  = $row['nama'] !== '' ? $row['nama'] : $profil['nama'];
-            $profil['email'] = $row['email'] ?: $profil['email'];
-            $profil['no_hp'] = $row['no_hp'] ?: $profil['no_hp'];
-            $profil['nim']   = $row['nim'] ?: $profil['nim'];
-        }
-    } catch (Throwable $e) {
-        // Pakai data sesi/contoh bila koneksi gagal.
+    if ($row) {
+        $profil['nama']  = $row['nama'] !== '' ? $row['nama'] : $profil['nama'];
+        $profil['email'] = $row['email'] ?: $profil['email'];
+        $profil['no_hp'] = $row['no_hp'] ?: $profil['no_hp'];
+        $profil['nim']   = $row['nim'] ?: $profil['nim'];
     }
 }
 
@@ -77,19 +77,19 @@ require __DIR__ . '/../../includes/head.php';
         <dl class="profil-rows">
             <div class="profil-row">
                 <dt>Nama Lengkap</dt>
-                <dd><?= e($profil['nama']) ?></dd>
+                <dd><?= e($profil['nama'] !== '' ? $profil['nama'] : $emptyText) ?></dd>
             </div>
             <div class="profil-row">
                 <dt>Nomor Induk (NIM / NIP / NIK)</dt>
-                <dd><?= e($profil['nim'] !== '' ? $profil['nim'] : '-') ?></dd>
+                <dd><?= e($profil['nim'] !== '' ? $profil['nim'] : $emptyText) ?></dd>
             </div>
             <div class="profil-row">
                 <dt>Email Institusi</dt>
-                <dd><?= e($profil['email'] !== '' ? $profil['email'] : '-') ?></dd>
+                <dd><?= e($profil['email'] !== '' ? $profil['email'] : $emptyText) ?></dd>
             </div>
             <div class="profil-row">
                 <dt>Nomor Telepon (WhatsApp)</dt>
-                <dd><?= e($profil['no_hp'] !== '' ? $profil['no_hp'] : '-') ?></dd>
+                <dd><?= e($profil['no_hp'] !== '' ? $profil['no_hp'] : $emptyText) ?></dd>
             </div>
             <div class="profil-row">
                 <dt>Status Akun</dt>

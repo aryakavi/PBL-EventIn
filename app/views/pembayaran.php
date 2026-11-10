@@ -3,25 +3,49 @@ $activeNav = 'tiket';
 $base = '../../';
 
 require __DIR__ . '/../../includes/data.php';
+require __DIR__ . '/../../includes/koneksi.php';
+require __DIR__ . '/../../app/models/SiteRepository.php';
+
+$emptyText = 'kosong, masih kurang';
+
+// Halaman ini khusus peserta yang sudah login.
+$sesi = $_SESSION['user'] ?? null;
+if (!is_array($sesi) || empty($sesi['id_pengguna'])) {
+    header('Location: ' . $base . $routes['login']);
+    exit;
+}
+
+if (is_admin_role($sesi['role'] ?? '')) {
+    header('Location: ' . $base . $routes['admin-dashboard']);
+    exit;
+}
 
 // Gunakan ?mode=midtrans di URL jika ingin melihat tampilan Midtrans (tanpa upload bukti & tanpa QR manual)
 $isMidtrans = isset($_GET['mode']) && $_GET['mode'] === 'midtrans';
 
-$peserta  = $pembayaranPeserta;
-$ringkasan = $ringkasanPesanan;
+$siteRepo = isset($pdo) && $pdo instanceof PDO ? new SiteRepository($pdo) : null;
 
-// Anggap pengguna sudah login (auth asli belum tersambung) agar navbar menampilkan profil.
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+$idEvent = (int) ($_GET['id'] ?? 0);
+$acara = $siteRepo !== null && $idEvent > 0
+    ? $siteRepo->event($idEvent)
+    : ($siteRepo !== null ? $siteRepo->eventBerikutnya() : []);
+
+$notice = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $notice = 'Mode baca-saja: pembayaran belum diproses karena aplikasi tidak menulis ke database.';
 }
-if (!isset($_SESSION['user'])) {
-    $_SESSION['user'] = [
-        'id_pengguna' => 1,
-        'nama'        => $pembayaranPeserta['nama'],
-        'email'       => '',
-        'role'        => $pembayaranPeserta['role'],
-    ];
-}
+
+$harga = (float) ($acara['harga'] ?? 0);
+
+$ringkasan = [
+    'judul'    => ($acara['nama_event'] ?? '') !== '' ? $acara['nama_event'] : $emptyText,
+    'tiket'    => '1x Tiket ' . (($acara['nama_kategori'] ?? '') !== '' ? $acara['nama_kategori'] : $emptyText),
+    'subtotal' => format_rupiah($harga),
+    'admin'    => format_rupiah(0),
+    'total'    => format_rupiah($harga),
+];
+
+$peserta = (string) ($sesi['nama'] ?? '');
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -52,6 +76,10 @@ require __DIR__ . '/../../includes/head.php';
             <span class="step-label">Konfirmasi</span>
         </div>
     </div>
+
+    <?php if ($notice !== ''): ?>
+        <div class="profil-alert profil-alert--success" role="status"><?= e($notice) ?></div>
+    <?php endif; ?>
 
     <!-- Grid 2 Kolom -->
     <form action="" method="post" enctype="multipart/form-data" class="checkout-grid">

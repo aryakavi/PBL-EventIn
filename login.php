@@ -2,9 +2,13 @@
 
 require __DIR__ . '/includes/data.php';
 require __DIR__ . '/includes/koneksi.php';
+require __DIR__ . '/app/models/SiteRepository.php';
 require __DIR__ . '/app/controllers/AuthController.php';
 
 $auth = new AuthController($pdo);
+$siteRepo = new SiteRepository($pdo);
+$siteTotals = $siteRepo->totals();
+$sorotanLogin = $siteRepo->sorotan();
 
 $error = '';
 $notice = '';
@@ -166,8 +170,8 @@ require __DIR__ . '/includes/auth-header.php';
                         <hr class="mini-ticket-line">
                         <div class="mini-ticket-body">
                             <div>
-                                <h3>Simposium Nasional AI &amp; Big Data</h3>
-                                <p>Politeknik Negeri Malang</p>
+                                <h3><?= e(($sorotanLogin['nama_event'] ?? '') !== '' ? $sorotanLogin['nama_event'] : 'kosong, masih kurang') ?></h3>
+                                <p><?= e(($sorotanLogin['lokasi'] ?? '') !== '' ? $sorotanLogin['lokasi'] : 'kosong, masih kurang') ?></p>
                             </div>
                             <span class="mini-qr" aria-hidden="true">
                                 <svg viewBox="0 0 32 32" fill="currentColor">
@@ -187,7 +191,7 @@ require __DIR__ . '/includes/auth-header.php';
                                 <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path>
                             </svg>
                         </span>
-                        <strong>10.000+</strong>
+                        <strong><?= e(number_format($siteTotals['peserta'], 0, ',', '.')) ?></strong>
                         <span>Mahasiswa Aktif Terdaftar</span>
                     </div>
 
@@ -198,7 +202,7 @@ require __DIR__ . '/includes/auth-header.php';
                                 <path d="M16 2v4M8 2v4M3 10h18"></path>
                             </svg>
                         </span>
-                        <strong>500+</strong>
+                        <strong><?= e(number_format($siteTotals['event'], 0, ',', '.')) ?></strong>
                         <span>Event &amp; Seminar Kampus</span>
                     </div>
                 </div>

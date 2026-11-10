@@ -2,16 +2,35 @@
 $activeNav = 'profil';
 $base = '../../';
 require __DIR__ . '/../../includes/data.php';
+require __DIR__ . '/../../includes/koneksi.php';
+require __DIR__ . '/../../app/models/SiteRepository.php';
+
+$sesi = $_SESSION['user'] ?? null;
+if (!is_array($sesi) || empty($sesi['id_pengguna'])) {
+    header('Location: ' . $base . $routes['login']);
+    exit;
+}
 
 $profil = [
-    'nama'  => $_SESSION['user']['nama'] ?? $pembayaranPeserta['nama'],
-    'email' => $_SESSION['user']['email'] ?? 'aryakavi@polinema.ac.id',
-    'nim'   => $_SESSION['user']['nim'] ?? '240910291',
-    'no_hp' => $_SESSION['user']['no_hp'] ?? '081234567890',
-    'role'  => $_SESSION['user']['role'] ?? $pembayaranPeserta['role'],
+    'nama'  => (string) ($sesi['nama'] ?? ''),
+    'email' => (string) ($sesi['email'] ?? ''),
+    'nim'   => (string) ($sesi['nim'] ?? ''),
+    'no_hp' => (string) ($sesi['no_hp'] ?? ''),
+    'role'  => (string) ($sesi['role'] ?? 'pengguna'),
 ];
 
 $error = '';
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($pdo) && $pdo instanceof PDO) {
+    $row = (new SiteRepository($pdo))->pengguna((int) $sesi['id_pengguna']);
+
+    if ($row) {
+        $profil['nama']  = $row['nama'] !== '' ? $row['nama'] : $profil['nama'];
+        $profil['email'] = $row['email'] ?: $profil['email'];
+        $profil['no_hp'] = $row['no_hp'] ?: $profil['no_hp'];
+        $profil['nim']   = $row['nim'] ?: $profil['nim'];
+    }
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama  = trim($_POST['nama'] ?? '');
@@ -27,13 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $profil = array_merge($profil, ['nama' => $nama, 'nim' => $nim, 'email' => $email, 'no_hp' => $noHp]);
     } else {
         // Simpan ke sesi saja: data pada tabel Supabase tidak diubah.
-        if (!isset($_SESSION['user'])) {
-            $_SESSION['user'] = [
-                'id_pengguna' => 1,
-                'role'        => $profil['role'],
-            ];
-        }
-
         $_SESSION['user']['nama']  = $nama;
         $_SESSION['user']['email'] = $email;
         $_SESSION['user']['nim']   = $nim;
