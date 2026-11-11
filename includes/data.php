@@ -335,4 +335,16 @@ $profil = [
     'telepon'      => '081200003454',
 ];
 
-
+$event = [
+    'judul'          => 'Workshop Pembuatan Aplikasi Seluler Tanpa Kode (No-Code App)',
+    'penyelenggara'  => 'Himpunan Mahasiswa Teknologi Informasi (HMTI) - POLINEMA',
+    'inisial_org'    => 'H',
+    'harga'          => 'Rp 75.000',
+    'waktu'          => 'Sabtu, 28 April 2026 | 09:00 - 13:00',
+    'lokasi'         => 'Laboratorium Multimedia Gedung D Lt. 2',
+    'kursi_tersisa'  => 15,
+    'kursi_total'    => 50,
+    'persen_terisi'  => 70,
+    'paragraf_1'     => 'Kegiatan workshop ini dirancang untuk membantu mahasiswa memahami cara membangun aplikasi seluler secara praktis tanpa harus menulis kode pemrograman dari awal. Peserta akan mempelajari perancangan antarmuka, pengelolaan basis data visual, hingga proses publikasi prototipe aplikasi.',
+    'paragraf_2'     => 'Seluruh peserta yang terdaftar akan mendapatkan modul praktik digital, pendampingan langsung bersama praktisi industri, serta sertifikat resmi sebagai bukti partisipasi kegiatan akademik.',
+];
