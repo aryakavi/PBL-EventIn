@@ -32,6 +32,12 @@ mendaftarkan nama variabelnya.
 
 ## Supabase Storage
 
+Upload ditangani kelas `Storage` di `app/models/Storage.php`. Kelas ini
+memvalidasi tipe file (JPG, PNG, WEBP, PDF), batas ukuran, dan memakai
+timeout 45 detik. Kredensial selalu dibaca dari `app_config()`, tidak ditulis
+di dalam kelas. View memakai pembungkus `storage_upload_bukti()` dan
+`storage_public_url()` di `includes/storage.php`.
+
 Bucket `image_event` harus ada dan publik untuk membaca file. Untuk upload
 dengan service role key, RLS Storage dilewati. Kalau memakai anon/publishable
 key, tambahkan policy `INSERT` pada `storage.objects` untuk bucket tersebut.
