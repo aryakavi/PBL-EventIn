@@ -255,6 +255,7 @@ button { font-family: inherit; }
     font-size: 14px;
     font-weight: 700;
 }
+.perks svg { width: 16px; height: 16px; flex: none; color: var(--orange); }
 
 /* ===== Halaman Pembayaran Peserta ===== */
 .user-navbar {
@@ -335,6 +336,7 @@ button { font-family: inherit; }
     cursor: pointer;
     margin-left: 4px;
 }
+.user-menu-btn svg { width: 20px; height: 20px; }
 .user-menu-wrap {
     position: relative;
 }

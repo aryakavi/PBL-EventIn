@@ -98,7 +98,7 @@ require __DIR__ . '/../../includes/head.php';
                             <div class="qris-preview" id="qris-box" hidden>
                                 <div class="qris-code" aria-label="Kode QRIS">
                                     <!-- Ilustrasi SVG QR Code -->
-                                    <e?= $ikonQrKecil ?>
+                                    <?= qr_icon('kecil') ?>
                                 </div>
                             </div>
                         <?php endif; ?>

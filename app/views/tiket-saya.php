@@ -105,7 +105,7 @@ require __DIR__ . '/../../includes/head.php';
                     <!-- Kolom Kiri: QR Code -->
                     <div class="ticket-qr-box">
                         <div class="ticket-qr-frame">
-                            <e?= $ikonQr ?>
+                            <?= qr_icon('besar') ?>
                         </div>
                         <div class="ticket-qr-caption">
                             <strong><span class="qr-mini-icon" aria-hidden="true"><?= icon('shield-check') ?></span> Scan saat tiba di lokasi</strong>

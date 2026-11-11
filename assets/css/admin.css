@@ -128,6 +128,7 @@ ul { list-style: none; }
     cursor: pointer;
     margin-left: 4px;
 }
+.user-menu-btn svg { width: 20px; height: 20px; }
 .user-menu-dropdown {
     position: absolute;
     top: 100%;
@@ -357,6 +358,7 @@ ul { list-style: none; }
     border-color: var(--orange);
     color: var(--orange);
 }
+.icon-btn svg { width: 14px; height: 14px; }
 
 /* Pagination */
 .pagination {
@@ -587,6 +589,7 @@ ul { list-style: none; }
 .proof-icon {
     font-size: 20px;
 }
+.proof-icon svg { width: 24px; height: 24px; }
 .proof-filename {
     font-family: var(--mono);
     font-size: 11px;

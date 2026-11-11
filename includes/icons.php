@@ -1,4 +1,4 @@
-<?php
+    <?php
 // Peta ikon SVG EventIn. Dipakai lewat helper icon('nama').
 // Ikon disimpan sebagai isi <svg> (path/shape), dibungkus otomatis oleh icon().
 
@@ -58,5 +58,14 @@ if (!function_exists('icon')) {
         $path = $ikon[$nama] ?? '';
         $attr = $kelas !== '' ? ' class="' . e($kelas) . '"' : '';
         return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"' . $attr . '>' . $path . '</svg>';
+    }
+}
+
+if (!function_exists('qr_icon')) {
+    /** Tampilkan ikon QR (besar untuk e-tiket, kecil untuk QRIS). */
+    function qr_icon(string $ukuran = 'besar'): string
+    {
+        global $ikonQr, $ikonQrKecil;
+        return $ukuran === 'kecil' ? $ikonQrKecil : $ikonQr;
     }
 }
