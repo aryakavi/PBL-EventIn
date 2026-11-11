@@ -221,6 +221,8 @@ class AuthController
             'id_pengguna' => $user['id_pengguna'],
             'nama' => $user['nama'],
             'email' => $user['email'],
+            'nim' => $user['nim'] ?? '',
+            'no_hp' => $user['no_hp'] ?? '',
             'role' => $user['role']
         ];
 

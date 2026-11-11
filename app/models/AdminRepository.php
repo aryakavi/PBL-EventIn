@@ -192,6 +192,44 @@ class AdminRepository
         );
     }
 
+    public function unpaidTickets(): array
+    {
+        return $this->rows(
+            "SELECT t.id_tiket, t.kode_qr, t.nominal, t.status_bayar, t.tanggal_daftar,
+                    p.nama AS peserta, p.email, p.nim,
+                    e.id_event, e.nama_event,
+                    k.nama_kategori
+             FROM tiket t
+             LEFT JOIN pengguna p ON p.id_pengguna = t.id_pengguna
+             LEFT JOIN events e ON e.id_event = t.id_event
+             LEFT JOIN kategori_event k ON k.id_kategori = e.id_kategori
+             WHERE t.nominal > 0
+               AND NOT EXISTS (SELECT 1 FROM pembayaran pb WHERE pb.id_tiket = t.id_tiket)
+             ORDER BY t.tanggal_daftar DESC"
+        );
+    }
+
+    public function ticket(int $id): array
+    {
+        return $this->row(
+            "SELECT t.id_tiket, t.kode_qr, t.nominal, t.status_bayar, t.status_sertifikat,
+                    t.url_sertifikat, t.tanggal_daftar, t.check_in_at,
+                    p.nama AS peserta, p.email, p.nim, p.no_hp,
+                    e.id_event, e.nama_event, e.lokasi, e.tanggal_mulai, e.tanggal_selesai, e.harga,
+                    k.nama_kategori,
+                    u.nama_ukm, u.singkatan,
+                    (SELECT max(h.waktu_checkin) FROM kehadiran h WHERE h.id_tiket = t.id_tiket) AS waktu_checkin
+             FROM tiket t
+             LEFT JOIN pengguna p ON p.id_pengguna = t.id_pengguna
+             LEFT JOIN events e ON e.id_event = t.id_event
+             LEFT JOIN kategori_event k ON k.id_kategori = e.id_kategori
+             LEFT JOIN admin_ukm a ON a.id_admin_ukm = e.id_pembuat
+             LEFT JOIN ukm u ON u.id_ukm = a.id_ukm
+             WHERE t.id_tiket = :id",
+            ['id' => $id]
+        );
+    }
+
     public function totals(): array
     {
         $row = $this->row(

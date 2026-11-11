@@ -6,6 +6,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY . /var/www/html/
+COPY docker/php.ini /usr/local/etc/php/conf.d/eventin.ini
 
 ENV PORT=10000
 EXPOSE 10000

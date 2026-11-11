@@ -18,3 +18,13 @@ services:
         sync: false
       - key: DB_SSLMODE
         value: require
+      - key: SUPABASE_URL
+        value: https://aypwdgvqcizpsnccrfwc.supabase.co
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_BUCKET
+        value: image_event
+      - key: SUPABASE_BUKTI_FOLDER
+        value: bukti_pembayaran
+      - key: MAX_UPLOAD_BYTES
+        value: "5242880"

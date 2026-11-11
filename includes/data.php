@@ -8,6 +8,26 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+/** Token CSRF untuk form POST. */
+function csrf_token(): string
+{
+    if (empty($_SESSION['_csrf'])) {
+        $_SESSION['_csrf'] = bin2hex(random_bytes(32));
+    }
+
+    return (string) $_SESSION['_csrf'];
+}
+
+/** Validasi token CSRF. */
+function csrf_valid(?string $token): bool
+{
+    $sessionToken = $_SESSION['_csrf'] ?? '';
+
+    return is_string($token)
+        && $sessionToken !== ''
+        && hash_equals((string) $sessionToken, $token);
+}
+
 /** Escape output HTML. */
 function e($text): string
 {

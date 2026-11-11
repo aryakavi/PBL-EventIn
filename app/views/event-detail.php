@@ -4,6 +4,7 @@ $base = '../../';
 require __DIR__ . '/../../includes/data.php';
 require __DIR__ . '/../../includes/koneksi.php';
 require __DIR__ . '/../../app/models/SiteRepository.php';
+require __DIR__ . '/../../app/controllers/PendaftaranController.php';
 
 $emptyText = 'kosong, masih kurang';
 
@@ -13,6 +14,36 @@ $siteRepo = isset($pdo) && $pdo instanceof PDO ? new SiteRepository($pdo) : null
 if ($siteRepo === null) {
     header('Location: ' . $base . $routes['home']);
     exit;
+}
+
+$daftarNotice = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'daftar') {
+    $sesi = $_SESSION['user'] ?? null;
+
+    if (!is_array($sesi) || empty($sesi['id_pengguna'])) {
+        header('Location: ' . $base . $routes['login']);
+        exit;
+    }
+
+    if (!csrf_valid($_POST['csrf_token'] ?? null)) {
+        $daftarNotice = 'Sesi keamanan kedaluwarsa. Muat ulang halaman lalu coba lagi.';
+    } else {
+        $idEventPost = (int) ($_POST['id_event'] ?? $idEvent);
+        $hasil = (new PendaftaranController($pdo))->daftar((int) $sesi['id_pengguna'], $idEventPost);
+
+        if ($hasil['success']) {
+            $status = strtolower((string) ($hasil['status_bayar'] ?? ''));
+            $tujuan = str_starts_with($status, 'lunas')
+                ? $base . $routes['tiket']
+                : $base . $routes['pembayaran'] . '?id_tiket=' . (int) $hasil['id_tiket'];
+
+            header('Location: ' . $tujuan);
+            exit;
+        }
+
+        $daftarNotice = $hasil['message'];
+    }
 }
 
 $acara = $idEvent > 0 ? $siteRepo->event($idEvent) : $siteRepo->sorotan();
@@ -201,9 +232,20 @@ require __DIR__ . '/../../includes/head.php';
                     <span>Kuota <?= e((string) $acara['kuota']) ?> peserta</span>
                 </div>
 
-                <a class="btn btn-primary acara-cta" href="<?= e($login ? $daftarHref : $loginHref) ?>">
-                    <?= $login ? 'Daftar Sekarang' : 'Masuk untuk Mendaftar' ?>
-                </a>
+                <?php if ($daftarNotice !== ''): ?>
+                    <div class="profil-alert profil-alert--error" role="alert"><?= e($daftarNotice) ?></div>
+                <?php endif; ?>
+
+                <?php if ($login): ?>
+                    <form method="post" class="acara-cta-form">
+                        <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                        <input type="hidden" name="action" value="daftar">
+                        <input type="hidden" name="id_event" value="<?= (int) $acara['id_event'] ?>">
+                        <button type="submit" class="btn btn-primary acara-cta">Daftar Sekarang</button>
+                    </form>
+                <?php else: ?>
+                    <a class="btn btn-primary acara-cta" href="<?= e($loginHref) ?>">Masuk untuk Mendaftar</a>
+                <?php endif; ?>
 
                 <button type="button" class="btn btn-outline acara-cta" data-copy="<?= e($bagikanUrl) ?>">
                     Salin Tautan Event

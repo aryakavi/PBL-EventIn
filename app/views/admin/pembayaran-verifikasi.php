@@ -1,13 +1,75 @@
 <?php
 require __DIR__ . '/../../../includes/admin/data.php';
+require __DIR__ . '/../../../app/models/PembayaranRepository.php';
+require __DIR__ . '/../../../includes/storage.php';
+
 $halamanAktif = 'pembayaran';
 
-$idPembayaran = (int) ($_GET['id'] ?? 0);
-$transaksi    = $adminRepo !== null ? $adminRepo->payment($idPembayaran) : [];
+$idPembayaran = (int) ($_GET['id'] ?? $_POST['id_pembayaran'] ?? 0);
+$idTiket      = (int) ($_GET['tiket'] ?? $_POST['id_tiket'] ?? 0);
+
+$transaksi = [];
+if ($idPembayaran > 0 && $adminRepo !== null) {
+    $transaksi = $adminRepo->payment($idPembayaran);
+} elseif ($idTiket > 0 && $adminRepo !== null) {
+    $transaksi = $adminRepo->ticket($idTiket);
+}
 
 $formNotice = '';
+$formError  = '';
+
+$notices = [
+    'verifikasi' => 'Pembayaran berhasil ditandai Lunas.',
+    'tolak'      => 'Transaksi ditandai Gagal / Batal.',
+    'pending'    => 'Transaksi dikembalikan ke status Menunggu.',
+];
+
+$statusParam = (string) ($_GET['status'] ?? '');
+if (isset($notices[$statusParam])) {
+    $formNotice = $notices[$statusParam];
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $formNotice = 'Mode baca-saja: status pembayaran tidak diubah karena koneksi database hanya untuk membaca data.';
+    $aksi = (string) ($_POST['aksi'] ?? '');
+    $statusMap = [
+        'verifikasi' => 'Lunas',
+        'tolak'      => 'Batal',
+        'pending'    => 'Menunggu',
+    ];
+
+    if (!csrf_valid($_POST['csrf_token'] ?? null)) {
+        $formError = 'Sesi keamanan kedaluwarsa. Muat ulang halaman lalu coba lagi.';
+    } elseif (!isset($statusMap[$aksi])) {
+        $formError = 'Aksi verifikasi tidak dikenal.';
+    } elseif (!isset($pdo) || !$pdo instanceof PDO || $adminRepo === null) {
+        $formError = 'Koneksi database gagal. Status tidak diubah.';
+    } elseif ($idPembayaran <= 0 && $idTiket <= 0) {
+        $formError = 'Transaksi tidak ditemukan.';
+    } else {
+        try {
+            $repo = new PembayaranRepository($pdo);
+
+            if ($idPembayaran > 0) {
+                $idTiket = $repo->setStatusByPayment($idPembayaran, $statusMap[$aksi]);
+            } else {
+                $repo->setTicketStatus($idTiket, $statusMap[$aksi]);
+            }
+
+            if ($idTiket === null || $idTiket <= 0) {
+                $formError = 'Transaksi tidak ditemukan.';
+            } else {
+                $query = $idPembayaran > 0
+                    ? 'id=' . $idPembayaran
+                    : 'tiket=' . $idTiket;
+
+                header('Location: pembayaran-verifikasi.php?' . $query . '&status=' . $aksi);
+                exit;
+            }
+        } catch (Throwable $e) {
+            error_log('EventIn verifikasi pembayaran error: ' . $e->getMessage());
+            $formError = 'Status gagal diubah. Coba lagi.';
+        }
+    }
 }
 
 $tampil = static function ($nilai) use ($emptyText): string {
@@ -31,6 +93,7 @@ $statusUi    = match (strtolower($statusBayar)) {
     'lunas' => 'Diverifikasi',
     'menunggu' => 'Menunggu',
     'ditolak', 'gagal', 'batal' => 'Ditolak',
+    'belum bayar' => 'Belum Bayar',
     default => '',
 };
 $badgeStatus = match ($statusUi) {
@@ -39,6 +102,15 @@ $badgeStatus = match ($statusUi) {
     'Ditolak' => 'badge-danger',
     default => 'badge-neutral',
 };
+
+$buktiPath = (string) ($transaksi['bukti_pembayaran'] ?? '');
+$buktiUrl  = $buktiPath !== '' ? storage_public_url($buktiPath) : '';
+$buktiExt  = $buktiUrl !== ''
+    ? strtolower(pathinfo((string) (parse_url($buktiUrl, PHP_URL_PATH) ?: ''), PATHINFO_EXTENSION))
+    : '';
+$buktiGambar = in_array($buktiExt, ['jpg', 'jpeg', 'png', 'webp', 'gif'], true);
+
+$punyaTransaksi = $transaksi !== [];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -68,7 +140,15 @@ require __DIR__ . '/../../../includes/head.php';
             <div class="form-card-header detail-title-row">
                 <div>
                     <h2>Detail Transaksi</h2>
-                    <p><?= e($idPembayaran > 0 ? 'ID Pembayaran: ' . $idPembayaran : $emptyText) ?></p>
+                    <p>
+                        <?php if ($idPembayaran > 0): ?>
+                            <?= e('ID Pembayaran: ' . $idPembayaran) ?>
+                        <?php elseif ($idTiket > 0): ?>
+                            <?= e('ID Tiket: ' . $idTiket . ' (belum upload bukti)') ?>
+                        <?php else: ?>
+                            <?= e($emptyText) ?>
+                        <?php endif; ?>
+                    </p>
                 </div>
                 <span class="badge <?= $badgeStatus ?>"><?= e($statusUi !== '' ? $statusUi : $emptyText) ?></span>
             </div>
@@ -77,76 +157,105 @@ require __DIR__ . '/../../../includes/head.php';
                 <p class="form-notice"><?= e($formNotice) ?></p>
             <?php endif; ?>
 
-            <div class="detail-body">
-                <!-- Kolom Bukti Transfer -->
-                <div class="proof-col">
-                    <span class="proof-title">Lampiran Bukti Transfer</span>
-                    <div class="proof-preview">
-                        <span class="proof-icon">&#128196;</span>
-                        <span>Lampiran Bukti Transfer</span>
-                    </div>
-                    <span class="proof-filename"><?= e($tampil($transaksi['bukti_pembayaran'] ?? '')) ?></span>
-                    <span class="proof-title">METODE</span>
-                    <span class="proof-value"><?= e($tampil($transaksi['metode'] ?? '')) ?></span>
-                </div>
+            <?php if ($formError !== ''): ?>
+                <p class="form-notice form-notice--error"><?= e($formError) ?></p>
+            <?php endif; ?>
 
-                <!-- Kolom Informasi Transaksi -->
-                <div class="info-col">
-                    <div class="info-item">
-                        <span class="info-label">NAMA PESERTA</span>
-                        <strong class="info-value"><?= e($tampil($transaksi['peserta'] ?? '')) ?></strong>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">EMAIL</span>
-                        <span class="info-text"><?= e($tampil($transaksi['email'] ?? '')) ?></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">NIM / NIP</span>
-                        <span class="info-text"><?= e($tampil($transaksi['nim'] ?? '')) ?></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">EVENT DIIKUTI</span>
-                        <strong class="info-value"><?= e($tampil($transaksi['nama_event'] ?? '')) ?></strong>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">KATEGORI</span>
-                        <span class="info-text"><?= e($tampil($transaksi['nama_kategori'] ?? '')) ?></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">PENYELENGGARA</span>
-                        <span class="info-text"><?= e($tampil($transaksi['nama_ukm'] ?? '')) ?></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">NOMINAL</span>
-                        <strong class="info-value"><?= e(format_rupiah($transaksi['nominal'] ?? 0)) ?></strong>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">KODE QR TIKET</span>
-                        <span class="info-text mono-id"><?= e($tampil($transaksi['kode_qr'] ?? '')) ?></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">WAKTU UNGGAH BUKTI</span>
-                        <span class="info-text"><?= e($tampil($tanggal($transaksi['waktu_unggah'] ?? null) . ($transaksi['waktu_unggah'] ? ' WIB' : ''))) ?></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">TANGGAL DAFTAR</span>
-                        <span class="info-text"><?= e($tampil($tanggal($transaksi['tanggal_daftar'] ?? null))) ?></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">CHECK-IN</span>
-                        <span class="info-text"><?= e($tampil($tanggal($transaksi['waktu_checkin'] ?? null))) ?></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">SERTIFIKAT</span>
-                        <span class="info-text"><?= e($tampil($transaksi['status_sertifikat'] ?? '')) ?></span>
+            <?php if (!$punyaTransaksi): ?>
+                <p class="form-notice form-notice--error">Transaksi tidak ditemukan.</p>
+            <?php else: ?>
+                <div class="detail-body">
+                    <!-- Kolom Bukti Transfer -->
+                    <div class="proof-col">
+                        <span class="proof-title">Lampiran Bukti Transfer</span>
+                        <div class="proof-preview">
+                            <?php if ($buktiGambar): ?>
+                                <a href="<?= e($buktiUrl) ?>" target="_blank" rel="noopener">
+                                    <img class="proof-image" src="<?= e($buktiUrl) ?>" alt="Bukti transfer peserta">
+                                </a>
+                            <?php elseif ($buktiUrl !== ''): ?>
+                                <span class="proof-icon">&#128196;</span>
+                                <a class="proof-link" href="<?= e($buktiUrl) ?>" target="_blank" rel="noopener">Buka lampiran</a>
+                            <?php else: ?>
+                                <span class="proof-icon">&#128196;</span>
+                                <span>Belum ada bukti upload</span>
+                            <?php endif; ?>
+                        </div>
+                        <span class="proof-filename"><?= e($tampil($buktiPath)) ?></span>
+                        <span class="proof-title">METODE</span>
+                        <span class="proof-value"><?= e($tampil($transaksi['metode'] ?? '')) ?></span>
                     </div>
 
-                    <form action="" method="post" class="detail-actions">
-                        <button type="submit" name="aksi" value="tolak" class="btn btn-outline">Tolak Transaksi</button>
-                        <button type="submit" name="aksi" value="verifikasi" class="btn btn-primary">Verifikasi Pembayaran</button>
-                    </form>
+                    <!-- Kolom Informasi Transaksi -->
+                    <div class="info-col">
+                        <div class="info-item">
+                            <span class="info-label">NAMA PESERTA</span>
+                            <strong class="info-value"><?= e($tampil($transaksi['peserta'] ?? '')) ?></strong>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">EMAIL</span>
+                            <span class="info-text"><?= e($tampil($transaksi['email'] ?? '')) ?></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">NIM / NIP</span>
+                            <span class="info-text"><?= e($tampil($transaksi['nim'] ?? '')) ?></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">EVENT DIIKUTI</span>
+                            <strong class="info-value"><?= e($tampil($transaksi['nama_event'] ?? '')) ?></strong>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">KATEGORI</span>
+                            <span class="info-text"><?= e($tampil($transaksi['nama_kategori'] ?? '')) ?></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">PENYELENGGARA</span>
+                            <span class="info-text"><?= e($tampil($transaksi['nama_ukm'] ?? '')) ?></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">NOMINAL</span>
+                            <strong class="info-value"><?= e(format_rupiah($transaksi['nominal'] ?? 0)) ?></strong>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">KODE QR TIKET</span>
+                            <span class="info-text mono-id"><?= e($tampil($transaksi['kode_qr'] ?? '')) ?></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">WAKTU UNGGAH BUKTI</span>
+                            <span class="info-text"><?= e($tampil($tanggal($transaksi['waktu_unggah'] ?? null) . (!empty($transaksi['waktu_unggah']) ? ' WIB' : ''))) ?></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">TANGGAL DAFTAR</span>
+                            <span class="info-text"><?= e($tampil($tanggal($transaksi['tanggal_daftar'] ?? null))) ?></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">CHECK-IN</span>
+                            <span class="info-text"><?= e($tampil($tanggal($transaksi['waktu_checkin'] ?? null))) ?></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">SERTIFIKAT</span>
+                            <span class="info-text"><?= e($tampil($transaksi['status_sertifikat'] ?? '')) ?></span>
+                        </div>
+
+                        <form action="" method="post" class="detail-actions">
+                            <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                            <?php if ($idPembayaran > 0): ?>
+                                <input type="hidden" name="id_pembayaran" value="<?= (int) $idPembayaran ?>">
+                            <?php else: ?>
+                                <input type="hidden" name="id_tiket" value="<?= (int) $idTiket ?>">
+                            <?php endif; ?>
+
+                            <button type="submit" name="aksi" value="tolak" class="btn btn-outline">Tolak / Gagal</button>
+                            <button type="submit" name="aksi" value="pending" class="btn btn-outline">Kembalikan ke Menunggu</button>
+                            <button type="submit" name="aksi" value="verifikasi" class="btn btn-primary">Verifikasi / Lunas</button>
+                        </form>
+                        <p class="verify-hint">
+                            Admin bisa mengubah status kapan saja. Gunakan tombol di atas untuk membuat skenario
+                            Menunggu, Gagal, atau Lunas.
+                        </p>
+                    </div>
                 </div>
-            </div>
+            <?php endif; ?>
         </section>
     </main>
 </div>

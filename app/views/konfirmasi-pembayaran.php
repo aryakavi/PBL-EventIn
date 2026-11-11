@@ -36,6 +36,15 @@ if (str_starts_with($statusBayar, 'lunas')) {
 
 $statusAktif = $konfigurasiStatus[$status];
 
+if (!empty($bayar['id_tiket'])) {
+    if ($status === 'gagal') {
+        $statusAktif['btn_utama']['href'] = 'pembayaran.php?id_tiket=' . (int) $bayar['id_tiket'];
+        $statusAktif['btn_utama']['teks'] = 'Upload Ulang Bukti';
+    } elseif ($status === 'menunggu') {
+        $statusAktif['btn_utama']['href'] = '?id=' . (int) $bayar['id_pembayaran'];
+    }
+}
+
 $emailPeserta = (string) ($bayar['email'] ?? $sesi['email'] ?? '');
 $emailHtml = '<strong>' . e($emailPeserta !== '' ? $emailPeserta : $emptyText) . '</strong>';
 $statusAktif['deskripsi'] = str_replace('{email}', $emailHtml, $statusAktif['deskripsi']);

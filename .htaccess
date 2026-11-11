@@ -1,0 +1,8 @@
+# Jangan pernah menyajikan file konfigurasi/rahasia lewat web.
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+<FilesMatch "\.(env|ini|log|sql|md)$">
+    Require all denied
+</FilesMatch>

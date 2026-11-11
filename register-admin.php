@@ -5,6 +5,11 @@ require __DIR__ . '/includes/koneksi.php';
 require __DIR__ . '/app/models/SiteRepository.php';
 require __DIR__ . '/app/controllers/AuthController.php';
 
+if (!isset($pdo) || !$pdo instanceof PDO) {
+    http_response_code(503);
+    exit($dbError ?? 'Koneksi database gagal.');
+}
+
 $auth = new AuthController($pdo);
 $ukms = $auth->getUkms();
 $siteTotals = (new SiteRepository($pdo))->totals();

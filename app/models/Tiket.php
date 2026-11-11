@@ -139,4 +139,81 @@ class Tiket
 
         return array_column($stmt->fetchAll(), 'nama_kategori');
     }
+
+    public function findByUserAndEvent(int $idPengguna, int $idEvent): array|false
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT id_tiket, id_event, id_pengguna, kode_qr, nominal, status_bayar
+             FROM tiket
+             WHERE id_pengguna = :id_pengguna AND id_event = :id_event
+             ORDER BY id_tiket DESC
+             LIMIT 1'
+        );
+
+        $stmt->execute([
+            'id_pengguna' => $idPengguna,
+            'id_event'    => $idEvent,
+        ]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Satu tiket milik peserta, lengkap dengan data event.
+     */
+    public function findForUser(int $idTiket, int $idPengguna): array|false
+    {
+        $sql = 'SELECT t.id_tiket, t.kode_qr, t.nominal, t.status_bayar, t.status_sertifikat,
+                       t.tanggal_daftar, t.check_in_at,
+                       e.id_event, e.nama_event, e.deskripsi, e.tanggal_mulai, e.tanggal_selesai,
+                       e.lokasi, e.harga, e.poster,
+                       k.nama_kategori, u.nama_ukm, u.singkatan
+                FROM tiket t
+                JOIN events e ON e.id_event = t.id_event
+                LEFT JOIN kategori_event k ON k.id_kategori = e.id_kategori
+                LEFT JOIN admin_ukm a ON a.id_admin_ukm = e.id_pembuat
+                LEFT JOIN ukm u ON u.id_ukm = a.id_ukm
+                WHERE t.id_tiket = :id_tiket AND t.id_pengguna = :id_pengguna
+                LIMIT 1';
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            'id_tiket'    => $idTiket,
+            'id_pengguna' => $idPengguna,
+        ]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Buat tiket baru. Status awal Belum Bayar untuk event berbayar,
+     * atau Lunas untuk event gratis.
+     */
+    public function create(
+        int $idPengguna,
+        int $idEvent,
+        float $nominal,
+        string $kodeQr,
+        string $statusBayar
+    ): int {
+        $sql = 'INSERT INTO tiket
+                    (id_event, id_pengguna, kode_qr, nominal, status_bayar,
+                     status_sertifikat, tanggal_daftar)
+                VALUES
+                    (:id_event, :id_pengguna, :kode_qr, :nominal, :status_bayar,
+                     :status_sertifikat, NOW())
+                RETURNING id_tiket';
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            'id_event'           => $idEvent,
+            'id_pengguna'        => $idPengguna,
+            'kode_qr'            => $kodeQr,
+            'nominal'            => $nominal,
+            'status_bayar'       => $statusBayar,
+            'status_sertifikat'  => 'Menunggu',
+        ]);
+
+        return (int) $stmt->fetchColumn();
+    }
 }

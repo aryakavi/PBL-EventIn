@@ -584,6 +584,19 @@ button { font-family: inherit; }
 .file-input-box:hover {
     border-color: var(--orange);
 }
+.upload-hint {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--muted);
+}
+.payment-status-line {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--muted);
+}
+.payment-status-line strong {
+    color: var(--text);
+}
 
 /* Ringkasan Pemesanan */
 .summary-event {
@@ -2086,6 +2099,7 @@ button { font-family: inherit; }
     cursor: pointer;
 }
 .acara-cta.btn-outline { border-color: var(--border); }
+.acara-cta-form { margin: 0; }
 .acara-secure { margin-top: 14px; font-size: 11px; line-height: 1.5; color: var(--slate-400); }
 
 @media (max-width: 900px) {

@@ -7,6 +7,7 @@ $statusMap = [
     'menunggu'     => 'Menunggu',
     'diverifikasi' => 'Diverifikasi',
     'ditolak'      => 'Ditolak',
+    'belum'        => null,
 ];
 
 $statusTab = $_GET['status'] ?? 'semua';
@@ -22,6 +23,30 @@ $pembayaranFiltered = $statusFilter === null
         $daftarPembayaran,
         static fn($p) => $p['status'] === $statusFilter
     ));
+
+$hitung = [
+    'semua'        => count($daftarPembayaran),
+    'menunggu'     => 0,
+    'diverifikasi' => 0,
+    'ditolak'      => 0,
+    'belum'        => count($daftarBelumBayar),
+];
+
+foreach ($daftarPembayaran as $p) {
+    $kunci = match ($p['status']) {
+        'Menunggu' => 'menunggu',
+        'Diverifikasi' => 'diverifikasi',
+        'Ditolak' => 'ditolak',
+        default => null,
+    };
+
+    if ($kunci !== null) {
+        $hitung[$kunci]++;
+    }
+}
+
+$tampilkanPembayaran = $statusTab !== 'belum';
+$tampilkanBelum = $statusTab === 'belum' || ($statusTab === 'semua' && count($daftarBelumBayar) > 0);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -48,74 +73,145 @@ require __DIR__ . '/../../../includes/head.php';
             </div>
         </div>
 
+        <?php if ($hitung['menunggu'] > 0): ?>
+            <p class="form-notice">
+                Ada <?= (int) $hitung['menunggu'] ?> transaksi menunggu verifikasi.
+                <a href="?status=menunggu">Lihat yang belum diverifikasi</a>.
+            </p>
+        <?php endif; ?>
+
         <!-- Tab Filter Status -->
         <div class="status-tabs" role="tablist" aria-label="Filter status pembayaran">
-            <a href="?status=semua" class="tab-item<?= $statusTab === 'semua' ? ' is-active' : '' ?>"
-               role="tab"<?= $statusTab === 'semua' ? ' aria-current="page"' : '' ?>>Semua</a>
-            <a href="?status=menunggu" class="tab-item<?= $statusTab === 'menunggu' ? ' is-active' : '' ?>"
-               role="tab"<?= $statusTab === 'menunggu' ? ' aria-current="page"' : '' ?>>Menunggu</a>
-            <a href="?status=diverifikasi" class="tab-item<?= $statusTab === 'diverifikasi' ? ' is-active' : '' ?>"
-               role="tab"<?= $statusTab === 'diverifikasi' ? ' aria-current="page"' : '' ?>>Diverifikasi</a>
-            <a href="?status=ditolak" class="tab-item<?= $statusTab === 'ditolak' ? ' is-active' : '' ?>"
-               role="tab"<?= $statusTab === 'ditolak' ? ' aria-current="page"' : '' ?>>Ditolak</a>
+            <?php
+            $tabLabel = [
+                'semua'        => 'Semua',
+                'menunggu'     => 'Menunggu',
+                'diverifikasi' => 'Diverifikasi',
+                'ditolak'      => 'Ditolak',
+                'belum'        => 'Tanpa Bukti',
+            ];
+            ?>
+            <?php foreach ($tabLabel as $key => $label): ?>
+                <a href="?status=<?= e($key) ?>" class="tab-item<?= $statusTab === $key ? ' is-active' : '' ?>"
+                   role="tab"<?= $statusTab === $key ? ' aria-current="page"' : '' ?>>
+                    <?= e($label) ?>
+                    <span class="tab-count"><?= (int) $hitung[$key] ?></span>
+                </a>
+            <?php endforeach; ?>
         </div>
 
-        <!-- Tabel Log Transaksi -->
-        <section class="payment-section">
-            <div class="table-wrap">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">ID Transaksi</th>
-                            <th scope="col">Peserta</th>
-                            <th scope="col">Event</th>
-                            <th scope="col">Jumlah</th>
-                            <th scope="col">Bukti</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (empty($pembayaranFiltered)): ?>
+        <?php if ($tampilkanPembayaran): ?>
+            <!-- Tabel Log Transaksi -->
+            <section class="payment-section">
+                <div class="table-wrap">
+                    <table class="table">
+                        <thead>
                             <tr>
-                                <td colspan="7" class="empty-state"><?= e($emptyText) ?></td>
+                                <th scope="col">ID Transaksi</th>
+                                <th scope="col">Peserta</th>
+                                <th scope="col">Event</th>
+                                <th scope="col">Jumlah</th>
+                                <th scope="col">Bukti</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Aksi</th>
                             </tr>
-                        <?php endif; ?>
-                        <?php foreach ($pembayaranFiltered as $p): ?>
-                            <?php
-                            $badgeClass = match ($p['status']) {
-                                'Diverifikasi' => 'badge-success',
-                                'Menunggu' => 'badge-warning',
-                                'Ditolak' => 'badge-danger',
-                                default => 'badge-neutral',
-                            };
-                            ?>
+                        </thead>
+                        <tbody>
+                            <?php if (empty($pembayaranFiltered)): ?>
+                                <tr>
+                                    <td colspan="7" class="empty-state">Belum ada transaksi pada filter ini.</td>
+                                </tr>
+                            <?php endif; ?>
+                            <?php foreach ($pembayaranFiltered as $p): ?>
+                                <?php
+                                $badgeClass = match ($p['status']) {
+                                    'Diverifikasi' => 'badge-success',
+                                    'Menunggu' => 'badge-warning',
+                                    'Ditolak' => 'badge-danger',
+                                    default => 'badge-neutral',
+                                };
+                                ?>
+                                <tr>
+                                    <td class="mono-id"><?= e($p['id'] !== '' ? $p['id'] : $emptyText) ?></td>
+                                    <td><?= e($p['peserta'] !== '' ? $p['peserta'] : $emptyText) ?></td>
+                                    <td class="muted"><?= e($p['event'] !== '' ? $p['event'] : $emptyText) ?></td>
+                                    <td><?= e($p['jumlah']) ?></td>
+                                    <td>
+                                        <?php if ($p['berkas'] !== ''): ?>
+                                            <span class="proof-tag" title="<?= e($p['berkas']) ?>">IMG</span>
+                                        <?php else: ?>
+                                            <span class="muted"><?= e($emptyText) ?></span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <span class="badge <?= $badgeClass ?>">
+                                            <?= e($p['status'] !== '' ? $p['status'] : $emptyText) ?>
+                                        </span>
+                                    </td>
+                                    <td class="actions">
+                                        <div class="row-actions">
+                                            <a href="pembayaran-verifikasi.php?id=<?= (int) $p['id'] ?>" class="actions-detail">Periksa</a>
+                                            <?php if ($p['id'] !== ''): ?>
+                                                <form action="pembayaran-verifikasi.php" method="post" class="inline-form">
+                                                    <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                                                    <input type="hidden" name="id_pembayaran" value="<?= (int) $p['id'] ?>">
+                                                    <button type="submit" name="aksi" value="verifikasi" class="link-btn link-ok">Lunas</button>
+                                                    <button type="submit" name="aksi" value="tolak" class="link-btn link-danger">Gagal</button>
+                                                </form>
+                                            <?php endif; ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        <?php endif; ?>
+
+        <?php if ($tampilkanBelum): ?>
+            <section class="payment-section">
+                <div class="section-title-row">
+                    <div>
+                        <h2>Tiket tanpa bukti upload</h2>
+                        <p>Peserta berbayar yang belum punya baris pembayaran. Buka transaksi untuk menandai Lunas atau Gagal secara manual, termasuk untuk membuat skenario pengujian.</p>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table class="table">
+                        <thead>
                             <tr>
-                                <td class="mono-id"><?= e($p['id'] !== '' ? $p['id'] : $emptyText) ?></td>
-                                <td><?= e($p['peserta'] !== '' ? $p['peserta'] : $emptyText) ?></td>
-                                <td class="muted"><?= e($p['event'] !== '' ? $p['event'] : $emptyText) ?></td>
-                                <td><?= e($p['jumlah']) ?></td>
-                                <td>
-                                    <?php if ($p['berkas'] !== ''): ?>
-                                        <span class="proof-tag" title="<?= e($p['berkas']) ?>">IMG</span>
-                                    <?php else: ?>
-                                        <span class="muted"><?= e($emptyText) ?></span>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <span class="badge <?= $badgeClass ?>">
-                                        <?= e($p['status'] !== '' ? $p['status'] : $emptyText) ?>
-                                    </span>
-                                </td>
-                                <td class="actions">
-                                    <a href="pembayaran-verifikasi.php?id=<?= (int) $p['id'] ?>" class="actions-detail">Periksa</a>
-                                </td>
+                                <th scope="col">ID Tiket</th>
+                                <th scope="col">Peserta</th>
+                                <th scope="col">Event</th>
+                                <th scope="col">Jumlah</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Aksi</th>
                             </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        </section>
+                        </thead>
+                        <tbody>
+                            <?php if (empty($daftarBelumBayar)): ?>
+                                <tr>
+                                    <td colspan="6" class="empty-state">Semua tiket berbayar sudah upload bukti.</td>
+                                </tr>
+                            <?php endif; ?>
+                            <?php foreach ($daftarBelumBayar as $t): ?>
+                                <tr>
+                                    <td class="mono-id"><?= (int) $t['id_tiket'] ?></td>
+                                    <td><?= e($t['peserta'] !== '' ? $t['peserta'] : $emptyText) ?></td>
+                                    <td class="muted"><?= e($t['event'] !== '' ? $t['event'] : $emptyText) ?></td>
+                                    <td><?= e($t['jumlah']) ?></td>
+                                    <td><span class="badge badge-neutral"><?= e($t['status'] !== '' ? $t['status'] : 'Belum Bayar') ?></span></td>
+                                    <td class="actions">
+                                        <a href="pembayaran-verifikasi.php?tiket=<?= (int) $t['id_tiket'] ?>" class="actions-detail">Periksa / Tandai</a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        <?php endif; ?>
     </main>
 </div>
 

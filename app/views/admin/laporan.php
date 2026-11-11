@@ -99,6 +99,8 @@ require __DIR__ . '/../../../includes/head.php';
                                 $badgeClass = 'badge-success';
                             } elseif ($row['status'] === 'Tertunda') {
                                 $badgeClass = 'badge-warning';
+                            } elseif ($row['status'] === 'Belum Bayar') {
+                                $badgeClass = 'badge-neutral';
                             } else {
                                 $badgeClass = 'badge-danger';
                             }

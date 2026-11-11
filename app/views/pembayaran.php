@@ -4,7 +4,9 @@ $base = '../../';
 
 require __DIR__ . '/../../includes/data.php';
 require __DIR__ . '/../../includes/koneksi.php';
-require __DIR__ . '/../../app/models/SiteRepository.php';
+require __DIR__ . '/../../app/models/Tiket.php';
+require __DIR__ . '/../../app/models/PembayaranRepository.php';
+require __DIR__ . '/../../includes/storage.php';
 
 $emptyText = 'kosong, masih kurang';
 
@@ -20,26 +22,90 @@ if (is_admin_role($sesi['role'] ?? '')) {
     exit;
 }
 
-// Gunakan ?mode=midtrans di URL jika ingin melihat tampilan Midtrans (tanpa upload bukti & tanpa QR manual)
-$isMidtrans = isset($_GET['mode']) && $_GET['mode'] === 'midtrans';
+$idPengguna = (int) $sesi['id_pengguna'];
+$idTiket = (int) ($_GET['id_tiket'] ?? $_POST['id_tiket'] ?? 0);
+$idEventFallback = (int) ($_GET['id'] ?? 0);
 
-$siteRepo = isset($pdo) && $pdo instanceof PDO ? new SiteRepository($pdo) : null;
+$tiketRepo = isset($pdo) && $pdo instanceof PDO ? new Tiket($pdo) : null;
+$bayarRepo = isset($pdo) && $pdo instanceof PDO ? new PembayaranRepository($pdo) : null;
 
-$idEvent = (int) ($_GET['id'] ?? 0);
-$acara = $siteRepo !== null && $idEvent > 0
-    ? $siteRepo->event($idEvent)
-    : ($siteRepo !== null ? $siteRepo->eventBerikutnya() : []);
+$tiket = $tiketRepo !== null && $idTiket > 0
+    ? $tiketRepo->findForUser($idTiket, $idPengguna)
+    : false;
+$tiketFound = $tiket !== false && !empty($tiket);
+
+$existing = $tiketFound && $bayarRepo !== null
+    ? $bayarRepo->latestForTicket($idTiket)
+    : false;
 
 $notice = '';
+$error = '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $notice = 'Mode baca-saja: pembayaran belum diproses karena aplikasi tidak menulis ke database.';
+    if (!$tiketFound) {
+        $error = 'Transaksi tidak ditemukan. Daftar event terlebih dahulu.';
+    } elseif (!csrf_valid($_POST['csrf_token'] ?? null)) {
+        $error = 'Sesi keamanan kedaluwarsa. Muat ulang halaman lalu coba lagi.';
+    } elseif (str_starts_with(strtolower((string) ($tiket['status_bayar'] ?? '')), 'lunas')) {
+        $error = 'Pembayaran tiket ini sudah lunas.';
+    } else {
+        $metodeKey = (string) ($_POST['metode'] ?? '');
+        $daftarMetode = [
+            'bank'   => 'Transfer Bank Terbuka',
+            'wallet' => 'Sistem Dompet Digital (E-Wallet)',
+            'qris'   => 'Pembayaran Cepat QRIS Mandiri',
+        ];
+
+        if (!isset($daftarMetode[$metodeKey])) {
+            $error = 'Pilih metode pembayaran terlebih dahulu.';
+        } else {
+            $upload = storage_upload_bukti($_FILES['bukti_bayar'] ?? [], $idTiket);
+
+            if (!$upload['success']) {
+                $error = $upload['message'];
+            } elseif ($bayarRepo === null) {
+                $error = 'Koneksi database gagal. Bukti belum tersimpan.';
+            } else {
+                try {
+                    $idPembayaran = $bayarRepo->createAndMarkPending(
+                        $idTiket,
+                        (string) $upload['path'],
+                        $daftarMetode[$metodeKey]
+                    );
+
+                    header('Location: konfirmasi-pembayaran.php?id=' . $idPembayaran);
+                    exit;
+                } catch (Throwable $e) {
+                    error_log('EventIn simpan pembayaran error: ' . $e->getMessage());
+                    $error = 'Bukti sudah terunggah, tetapi data pembayaran gagal disimpan. Coba lagi.';
+                }
+            }
+        }
+    }
 }
 
-$harga = (float) ($acara['harga'] ?? 0);
+$statusBayar = strtolower((string) ($tiket['status_bayar'] ?? ''));
+$isLunas = str_starts_with($statusBayar, 'lunas');
+$isMenunggu = str_starts_with($statusBayar, 'menunggu');
+$isBatal = str_starts_with($statusBayar, 'batal') || str_starts_with($statusBayar, 'ditolak');
+
+$labelStatus = match (true) {
+    $isLunas    => 'Lunas / Terverifikasi',
+    $isMenunggu => 'Menunggu Verifikasi Admin',
+    $isBatal    => 'Gagal / Ditolak',
+    default     => 'Belum Bayar',
+};
+
+$buktiPath = (string) ($existing['bukti_pembayaran'] ?? '');
+$buktiUrl = $buktiPath !== '' ? storage_public_url($buktiPath) : '';
+
+$harga = $tiketFound
+    ? (float) ($tiket['nominal'] ?? $tiket['harga'] ?? 0)
+    : 0.0;
 
 $ringkasan = [
-    'judul'    => ($acara['nama_event'] ?? '') !== '' ? $acara['nama_event'] : $emptyText,
-    'tiket'    => '1x Tiket ' . (($acara['nama_kategori'] ?? '') !== '' ? $acara['nama_kategori'] : $emptyText),
+    'judul'    => $tiketFound && ($tiket['nama_event'] ?? '') !== '' ? $tiket['nama_event'] : $emptyText,
+    'tiket'    => '1x Tiket ' . ($tiketFound && ($tiket['nama_kategori'] ?? '') !== '' ? $tiket['nama_kategori'] : $emptyText),
     'subtotal' => format_rupiah($harga),
     'admin'    => format_rupiah(0),
     'total'    => format_rupiah($harga),
@@ -57,7 +123,7 @@ $pageStyles = ['style.css'];
 require __DIR__ . '/../../includes/head.php';
 ?>
 </head>
-<body data-midtrans="<?= $isMidtrans ? 'true' : 'false' ?>">
+<body>
 
 <!-- Navbar Peserta -->
 <?php require __DIR__ . '/../../includes/navbar.php'; ?>
@@ -77,112 +143,140 @@ require __DIR__ . '/../../includes/head.php';
         </div>
     </div>
 
+    <?php if ($error !== ''): ?>
+        <div class="profil-alert profil-alert--error" role="alert"><?= e($error) ?></div>
+    <?php endif; ?>
+
     <?php if ($notice !== ''): ?>
         <div class="profil-alert profil-alert--success" role="status"><?= e($notice) ?></div>
     <?php endif; ?>
 
-    <!-- Grid 2 Kolom -->
-    <form action="" method="post" enctype="multipart/form-data" class="checkout-grid">
-        <!-- Kolom Kiri: Metode Pembayaran & Upload Bukti -->
-        <div class="checkout-left">
-            <section class="checkout-card">
-                <h2 class="checkout-card-title">Pilih Metode Pembayaran</h2>
+    <?php if (!$tiketFound): ?>
+        <div class="profil-alert profil-alert--error" role="alert">
+            Transaksi tidak ditemukan. Silakan daftar event terlebih dahulu.
+            <?php if ($idEventFallback > 0): ?>
+                <a href="event-detail.php?id=<?= (int) $idEventFallback ?>">Kembali ke detail event</a>.
+            <?php else: ?>
+                <a href="<?= e($base . $routes['explore']) ?>">Jelajah event</a>.
+            <?php endif; ?>
+        </div>
+    <?php else: ?>
 
-                <div class="method-list">
-                    <!-- Opsi 1: Transfer Bank Terbuka -->
-                    <label class="method-option is-selected" data-method="bank">
-                        <div class="method-header">
-                            <div class="method-info">
-                                <span class="method-badge">Bank</span>
-                                <span class="method-name">Transfer Bank Terbuka</span>
+        <?php if ($buktiUrl !== ''): ?>
+            <div class="profil-alert <?= $isLunas ? 'profil-alert--success' : ($isBatal ? 'profil-alert--error' : '') ?>" role="status">
+                Status pembayaran: <strong><?= e($labelStatus) ?></strong>.
+                <a href="<?= e($buktiUrl) ?>" target="_blank" rel="noopener">Lihat bukti terakhir</a>.
+            </div>
+        <?php endif; ?>
+
+        <!-- Grid 2 Kolom -->
+        <form action="" method="post" enctype="multipart/form-data" class="checkout-grid">
+            <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+            <input type="hidden" name="id_tiket" value="<?= (int) $idTiket ?>">
+
+            <!-- Kolom Kiri: Metode Pembayaran & Upload Bukti -->
+            <div class="checkout-left">
+                <section class="checkout-card">
+                    <h2 class="checkout-card-title">Pilih Metode Pembayaran</h2>
+
+                    <div class="method-list">
+                        <label class="method-option is-selected" data-method="bank">
+                            <div class="method-header">
+                                <div class="method-info">
+                                    <span class="method-badge">Bank</span>
+                                    <span class="method-name">Transfer Bank Terbuka</span>
+                                </div>
+                                <input type="radio" name="metode" value="bank" class="method-radio" checked>
                             </div>
-                            <input type="radio" name="metode" value="bank" class="method-radio" checked>
-                        </div>
-                    </label>
+                        </label>
 
-                    <!-- Opsi 2: E-Wallet -->
-                    <label class="method-option" data-method="wallet">
-                        <div class="method-header">
-                            <div class="method-info">
-                                <span class="method-badge">Wallet</span>
-                                <span class="method-name">Sistem Dompet Digital (E-Wallet)</span>
+                        <label class="method-option" data-method="wallet">
+                            <div class="method-header">
+                                <div class="method-info">
+                                    <span class="method-badge">Wallet</span>
+                                    <span class="method-name">Sistem Dompet Digital (E-Wallet)</span>
+                                </div>
+                                <input type="radio" name="metode" value="wallet" class="method-radio">
                             </div>
-                            <input type="radio" name="metode" value="wallet" class="method-radio">
-                        </div>
-                    </label>
+                        </label>
 
-                    <!-- Opsi 3: QRIS Mandiri -->
-                    <label class="method-option" data-method="qris">
-                        <div class="method-header">
-                            <div class="method-info">
-                                <span class="method-badge">QR</span>
-                                <span class="method-name">Pembayaran Cepat QRIS Mandiri</span>
+                        <label class="method-option" data-method="qris">
+                            <div class="method-header">
+                                <div class="method-info">
+                                    <span class="method-badge">QR</span>
+                                    <span class="method-name">Pembayaran Cepat QRIS Mandiri</span>
+                                </div>
+                                <input type="radio" name="metode" value="qris" class="method-radio">
                             </div>
-                            <input type="radio" name="metode" value="qris" class="method-radio">
-                        </div>
 
-                        <?php if (!$isMidtrans): ?>
-                            <!-- Kotak QR Code (Hanya muncul saat opsi QRIS dipilih pada mode non-midtrans) -->
                             <div class="qris-preview" id="qris-box" hidden>
                                 <div class="qris-code" aria-label="Kode QRIS">
-                                    <!-- Ilustrasi SVG QR Code -->
                                     <svg viewBox="0 0 120 120" width="128" height="128" fill="#0f172a">
                                         <path d="M10 10h36v36H10V10zm6 6v24h24V16H16zm6 6h12v12H22V22zm52-12h36v36H74V10zm6 6v24h24V16H80zm6 6h12v12H86V22zM10 74h36v36H10V74zm6 6v24h24V80H16zm6 6h12v12H22V86zm32-76h8v16h-8V10zm12 8h6v14h-6V18zm-12 20h18v8H54v-8zm-44 20h16v8H10v-8zm24 0h32v8H34v-8zm40 0h12v8H74v-8zm20 0h16v8H94v-8zM54 74h12v12H54V74zm20 0h8v20h-8V74zm16 0h20v8H90v-8zm-36 20h16v16H54V94zm24 8h16v8H78v-8zm20-16h12v24H98V86z"/>
                                     </svg>
                                 </div>
                             </div>
-                        <?php endif; ?>
-                    </label>
-                </div>
-            </section>
+                        </label>
+                    </div>
+                </section>
 
-            <?php if (!$isMidtrans): ?>
-                <!-- Card Upload Bukti Pembayaran (Hanya di mode non-midtrans) -->
                 <section class="checkout-card">
                     <h2 class="checkout-card-title">Upload Bukti Pembayaran</h2>
                     <label for="bukti_bayar" class="file-input-box">
                         <span id="file-label-text">Upload File</span>
-                        <input type="file" id="bukti_bayar" name="bukti_bayar" accept="image/*,.pdf" hidden>
+                        <input type="file" id="bukti_bayar" name="bukti_bayar" accept="image/jpeg,image/png,image/webp,application/pdf" hidden>
                     </label>
+                    <p class="upload-hint">Format JPG, PNG, WEBP, atau PDF. Maksimal 5 MB.</p>
+                    <?php if ($buktiUrl !== ''): ?>
+                        <p class="upload-hint">Bukti sebelumnya: <a href="<?= e($buktiUrl) ?>" target="_blank" rel="noopener">buka file</a></p>
+                    <?php endif; ?>
                 </section>
-            <?php endif; ?>
-        </div>
+            </div>
 
-        <!-- Kolom Kanan: Ringkasan Pemesanan -->
-        <aside class="checkout-right">
-            <section class="checkout-card summary-card">
-                <h2 class="checkout-card-title">Ringkasan Pemesanan</h2>
+            <!-- Kolom Kanan: Ringkasan Pemesanan -->
+            <aside class="checkout-right">
+                <section class="checkout-card summary-card">
+                    <h2 class="checkout-card-title">Ringkasan Pemesanan</h2>
 
-                <div class="summary-event">
-                    <span class="summary-sublabel">DETAIL TENTANG ACARA</span>
-                    <strong class="summary-event-title"><?= e($ringkasan['judul']) ?></strong>
-                    <span class="summary-ticket-type"><?= e($ringkasan['tiket']) ?></span>
-                </div>
-
-                <hr class="summary-divider">
-
-                <div class="summary-rows">
-                    <div class="summary-row">
-                        <span class="muted">Subtotal Tiket</span>
-                        <span class="summary-price"><?= e($ringkasan['subtotal']) ?></span>
+                    <div class="summary-event">
+                        <span class="summary-sublabel">DETAIL TENTANG ACARA</span>
+                        <strong class="summary-event-title"><?= e($ringkasan['judul']) ?></strong>
+                        <span class="summary-ticket-type"><?= e($ringkasan['tiket']) ?></span>
                     </div>
-                    <div class="summary-row">
-                        <span class="muted">Biaya Administrasi</span>
-                        <span class="summary-price"><?= e($ringkasan['admin']) ?></span>
+
+                    <p class="payment-status-line">Status: <strong><?= e($labelStatus) ?></strong></p>
+
+                    <hr class="summary-divider">
+
+                    <div class="summary-rows">
+                        <div class="summary-row">
+                            <span class="muted">Subtotal Tiket</span>
+                            <span class="summary-price"><?= e($ringkasan['subtotal']) ?></span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="muted">Biaya Administrasi</span>
+                            <span class="summary-price"><?= e($ringkasan['admin']) ?></span>
+                        </div>
                     </div>
-                </div>
 
-                <hr class="summary-divider">
+                    <hr class="summary-divider">
 
-                <div class="summary-total">
-                    <strong>Total Pembayaran</strong>
-                    <strong class="total-amount"><?= e($ringkasan['total']) ?></strong>
-                </div>
+                    <div class="summary-total">
+                        <strong>Total Pembayaran</strong>
+                        <strong class="total-amount"><?= e($ringkasan['total']) ?></strong>
+                    </div>
 
-                <button type="submit" class="btn btn-primary btn-block">Bayar Sekarang</button>
-            </section>
-        </aside>
-    </form>
+                    <?php if ($isLunas): ?>
+                        <a href="tiket-saya.php" class="btn btn-primary btn-block">Lihat Tiket Saya</a>
+                    <?php else: ?>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <?= $buktiUrl !== '' ? 'Kirim Ulang Bukti' : 'Bayar Sekarang' ?>
+                        </button>
+                    <?php endif; ?>
+                </section>
+            </aside>
+        </form>
+    <?php endif; ?>
 </main>
 
 <?php include __DIR__ . '/../../includes/footer.php'; ?>

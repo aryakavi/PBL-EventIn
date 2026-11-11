@@ -22,9 +22,9 @@ $stats = [
     [number_format($totals['organisasi'], 0, ',', '.'), 'Organisasi Kampus'],
 ];
 
-$eventModel = new Event($pdo);
-$eventController = new EventController($eventModel);
-$eventsDb = $eventController->index();
+$eventModel = $pdo instanceof PDO ? new Event($pdo) : null;
+$eventController = $eventModel !== null ? new EventController($eventModel) : null;
+$eventsDb = $eventController !== null ? $eventController->index() : [];
 
 /* Kategori filter diambil dari tabel kategori_event. */
 $categories = ['semua' => 'Semua Kategori'];

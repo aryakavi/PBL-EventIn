@@ -75,6 +75,7 @@ $statusPembayaran = static function (?string $status): string {
         'lunas', 'diverifikasi', 'sukses' => 'Diverifikasi',
         'menunggu', 'tertunda', 'pending' => 'Menunggu',
         'ditolak', 'gagal', 'batal' => 'Ditolak',
+        'belum bayar' => 'Belum Bayar',
         default => '',
     };
 };
@@ -155,6 +156,28 @@ foreach ($paymentRows as $p) {
         'daftar'     => $tanggalId($p['tanggal_daftar'] ?? null),
         'check_in'   => $tanggalId($p['waktu_checkin'] ?? null, 'd M Y, H:i'),
         'sertifikat' => (string) ($p['status_sertifikat'] ?? ''),
+    ];
+}
+
+/* ---------- Tiket berbayar yang belum upload bukti ---------- */
+$daftarBelumBayar = [];
+$unpaidRows = $adminRepo !== null ? $adminRepo->unpaidTickets() : [];
+
+foreach ($unpaidRows as $t) {
+    $daftarBelumBayar[] = [
+        'id_tiket' => (int) ($t['id_tiket'] ?? 0),
+        'id_event' => (int) ($t['id_event'] ?? 0),
+        'peserta'  => (string) ($t['peserta'] ?? ''),
+        'email'    => (string) ($t['email'] ?? ''),
+        'nim'      => (string) ($t['nim'] ?? ''),
+        'event'    => (string) ($t['nama_event'] ?? ''),
+        'kategori' => (string) ($t['nama_kategori'] ?? ''),
+        'jumlah'   => format_rupiah($t['nominal'] ?? 0),
+        'nominal'  => (float) ($t['nominal'] ?? 0),
+        'status'   => $statusPembayaran($t['status_bayar'] ?? ''),
+        'status_raw' => (string) ($t['status_bayar'] ?? ''),
+        'kode_qr'  => (string) ($t['kode_qr'] ?? ''),
+        'tanggal'  => $tanggalId($t['tanggal_daftar'] ?? null),
     ];
 }
 
@@ -250,6 +273,7 @@ foreach ($reportRows as $r) {
     $status = match (strtolower((string) ($r['status_bayar'] ?? ''))) {
         'lunas' => 'Lunas',
         'menunggu' => 'Tertunda',
+        'belum bayar' => 'Belum Bayar',
         default => 'Ditolak',
     };
 
