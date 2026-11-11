@@ -31,15 +31,20 @@ $user = $_SESSION['user'] ?? null;
         <?php endif; ?>
     </nav>
 
-    <div class="actions">
+    <div class="navbar-right">
         <?php if ($user): ?>
             <div class="user-info">
                 <strong><?= e($user['nama']) ?></strong><br>
                 <span><?= e(ucfirst($user['role'])) ?></span>
             </div>
-
-            <a class="btn btn-outline" href="?page=logout">Logout</a>
-
+            <span class="avatar"><?= e($inisial) ?></span>
+            <div class="user-menu-wrap">
+                <button class="user-menu-btn" type="button" aria-label="Menu akun" aria-expanded="false"><?= icon('menu') ?></button>
+                <div class="user-menu-dropdown" hidden>
+                    <a href="#" class="user-menu-item">Edit Profil</a>
+                    <a href="?page=logout" class="user-menu-item user-menu-item--danger">Logout</a>
+                </div>
+            </div>
         <?php else: ?>
             <a class="btn btn-outline" href="<?= e($routes['login']) ?>">Login</a>
             <a class="btn btn-primary" href="<?= e($routes['register']) ?>">Register</a>

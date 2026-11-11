@@ -1,5 +1,7 @@
 <?php
-
+require_once __DIR__.'/../app/models/Storage.php';
+require_once __DIR__.'/icons.php';
+$storageModel= new Storage();
 /**
  * Data & helper untuk landing page EventIn.
  * Semua konten dipisah di sini supaya index.php tetap bersih.
@@ -73,14 +75,6 @@ $featured = [
 ];
 
 $partners = ['Logo Mitra 1', 'Logo Mitra 2', 'Logo Mitra 3', 'Logo Mitra 4', 'Logo Mitra 5', 'Logo Mitra 6'];
-
-$categories = [
-    'semua'    => 'Semua Kategori',
-    'Seminar'  => 'Seminar',
-    'Workshop' => 'Workshop',
-    'Kompetisi' => 'Kompetisi',
-    'Webinar'  => 'Webinar',
-];
 
 $cardCategories = ['Semua', 'Workshop', 'Kompetisi', 'Webinar', 'Seminar', 'Workshop'];
 $events = [];

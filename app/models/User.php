@@ -22,6 +22,19 @@ class User
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function findAdminUkm(int $idPengguna){
+        $sql = "SELECT *
+                FROM admin_ukm
+                WHERE id_pengguna = :id_pengguna";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            'id_pengguna' => $idPengguna
+        ]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function countPesertaMhs(): int
     {
         $sql = "SELECT COUNT(*) FROM pengguna WHERE role = 'pengguna' AND nim is not null";

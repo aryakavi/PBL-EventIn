@@ -335,6 +335,7 @@ button { font-family: inherit; }
     cursor: pointer;
     margin-left: 4px;
 }
+.user-menu-btn svg { width: 20px; height: 20px; }
 .user-menu-wrap {
     position: relative;
 }
@@ -1571,6 +1572,8 @@ button { font-family: inherit; }
     font-family: var(--mono);
     font-size: 11px;
     color: var(--slate-400);
+    object-fit: contain;
+    overflow: hidden;
 }
 .org-card > div { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .org-card strong { font-size: 15px; font-weight: 700; }

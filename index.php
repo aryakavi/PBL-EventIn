@@ -10,8 +10,11 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require_once __DIR__ . '/includes/data.php';
 require_once __DIR__ . '/includes/koneksi.php';
+require_once __DIR__ . '/app/controllers/EventController.php';
 
 $page = $_GET['page'] ?? null;
+$eventController = new EventController($pdo);
+$categories = $eventController->getCategory();
 
 if ($page === null) {
     header('Location: ?page=home#hero');
@@ -128,15 +131,15 @@ if ($page === 'admin') {
 }
 
 if ($page === 'tiket') {
-   require __DIR__.'/app/views/tiket-saya.php';
+    require __DIR__ . '/app/views/tiket-saya.php';
 }
 
 if ($page === 'daftar_event') {
-    require __DIR__.'/app/views/pembayaran.php';
+    require __DIR__ . '/app/views/pembayaran.php';
 }
 
-if ($page=== 'konfirmasi_pembayaran') {
-    require __DIR__.'/app/views/konfirmasi-pembayaran.php';
+if ($page === 'konfirmasi_pembayaran') {
+    require __DIR__ . '/app/views/konfirmasi-pembayaran.php';
 }
 
 if ($page === 'admin/event') {
@@ -151,8 +154,29 @@ if ($page === 'admin/event') {
         exit;
     }
 
-
     require __DIR__ . '/app/views/admin/event.php';
+    exit;
+}
+
+if ($page === 'admin/tambah-event') {
+    if (!isset($_SESSION['user'])) {
+        header('Location: ?page=login');
+        exit;
+    }
+
+    if ($_SESSION['user']['role'] !== 'admin') {
+        http_response_code(403);
+        header('Location: ./');
+        exit;
+    }
+
+    if ($_SERVER['REQUEST_METHOD']=='POST') {
+        $result=$eventController->addEvent($_POST);
+        if ($result['success']) {
+            header('Location: ?page=admin/event');
+        }
+    }
+
     exit;
 }
 
@@ -167,7 +191,6 @@ if ($page === 'admin/pembayaran') {
         header('Location: ./');
         exit;
     }
-
 
     require __DIR__ . '/app/views/admin/pembayaran.php';
     exit;
@@ -210,21 +233,19 @@ if ($page === 'home') {
             exit;
         }
     }
-    require_once __DIR__ . '/app/controllers/EventController.php';
     require_once __DIR__ . '/app/controllers/DashboardController.php';
 
-    $eventController = new EventController($pdo);
     $dashboardController = new DashboardController($pdo);
 
     $eventsDb = $eventController->index();
     $orgs = $dashboardController->getUkm();
     $stats = $dashboardController->index();
     $featured = $dashboardController->recentEvent();
-    $categories = $eventController->getCategory();
     array_unshift(
-        $categories,
-        ['nama_kategori' => 'Semua']
-    );
+    $categories,
+    ['nama_kategori' => 'Semua']
+);
+
 
     require __DIR__ . '/app/views/home.php';
     exit;

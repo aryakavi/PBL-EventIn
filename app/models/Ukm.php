@@ -17,7 +17,7 @@ class Ukm
 
     public function getUkmEvent()
     {
-        $sql = "SELECT u.nama_ukm, u.id_ukm, u.deskripsi, u.singkatan, 
+        $sql = "SELECT u.nama_ukm, u.id_ukm, u.deskripsi, u.singkatan, u.logo,
         COUNT(e.id_event) as jumlah_event FROM ukm u 
         LEFT JOIN admin_ukm ak on u.id_ukm = ak.id_ukm
         LEFT JOIN events e on ak.id_admin_ukm = e.id_pembuat

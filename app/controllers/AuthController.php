@@ -228,8 +228,14 @@ class AuthController
             'id_pengguna' => $user['id_pengguna'],
             'nama' => $user['nama'],
             'email' => $user['email'],
-            'role' => $user['role']
+            'role' => $user['role'],
         ];
+
+        if ($user['role'] == 'admin') {
+            $admin = $this->userModel->findAdminUkm($user['id_pengguna']);
+            $_SESSION['user']['id_admin_ukm']=$admin['id_admin_ukm'];
+            $_SESSION['user']['id_ukm']=$admin['id_ukm'];
+        }
 
         return [
             'success' => true,
@@ -258,13 +264,11 @@ class AuthController
         session_destroy();
     }
 
-    public function cardStatistic():array|null
+    public function cardStatistic(): array|null
     {
         return [
-            "jumlah_peserta"=>$this->userModel->countPesertaMhs(),
-            "jumlah_event"=>$this->eventModel->countEvent()
+            "jumlah_peserta" => $this->userModel->countPesertaMhs(),
+            "jumlah_event" => $this->eventModel->countEvent()
         ];
     }
-
-
 }

@@ -1,5 +1,7 @@
 <?php
 require __DIR__ . '/../../../includes/admin/data.php';
+require __DIR__ . '/../../../includes/icons.php';
+
 $halamanAktif = 'pembayaran';
 
 $statusMap = [
@@ -132,7 +134,7 @@ require __DIR__ . '/../../../includes/head.php';
                     <div class="proof-col">
                         <span class="proof-title">Lampiran Bukti Transfer</span>
                         <div class="proof-preview">
-                            <span class="proof-icon">&#128196;</span>
+                            <span class="proof-icon"><?= icon('file') ?></span>
                             <span>Lampiran Bukti Transfer</span>
                         </div>
                         <span class="proof-filename"><?= e($transaksiAktif['berkas']) ?></span>

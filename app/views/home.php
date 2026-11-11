@@ -33,7 +33,7 @@
 
     <main>
         <!-- Hero -->
-        <section class="hero" >
+        <section class="hero">
             <div class="hero-text">
                 <span class="hero-tag">SISTEM INTEGRASI KAMPUS</span>
                 <h1>Temukan Event Kampus Terbaik &amp; Berjejaring Lebih Luas</h1>
@@ -106,7 +106,7 @@
 
             <div class="event-grid" id="event-grid">
                 <?php foreach ($eventsDb as $ev):
-                    $img = event_image($ev['id_event']); ?>
+                    $img = $storageModel->getImage($ev['poster']) ?>
                     <article class="event-card"
                         data-category="<?= e($ev['nama_kategori']) ?>">
                         <div class="event-cover cover-<?= $ev['id_event'] ?>"
@@ -153,7 +153,7 @@
         </section>
 
         <!-- Untuk penyelenggara -->
-        <section class="organizers" >
+        <section class="organizers">
             <div class="organizers-head">
                 <h2>Solusi Terbaik Bagi Penyelenggara Event</h2>
                 <p>Kelola pendaftaran, transaksi pembayaran, absensi digital, hingga pengiriman sertifikat secara instan dan efisien.</p>
@@ -182,13 +182,16 @@
             <div class="org-grid">
                 <?php foreach ($orgs as $org): ?>
                     <div class="org-card">
-                        <span class="org-logo">LOGO</span>
+                        <img class="org-logo"
+                            src="<?= e($storageModel->getImage($org['logo'])) ?>"
+                            alt="Logo <?= e($org['nama_ukm']) ?>">
                         <div>
                             <strong><?= e($org['nama_ukm']) ?></strong>
                             <span><?= e($org['jumlah_event']) ?> Event Terdaftar</span>
                         </div>
                     </div>
                 <?php endforeach; ?>
+            </div>
             </div>
         </section>
 

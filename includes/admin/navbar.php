@@ -1,4 +1,5 @@
 <?php
+require __DIR__.'/../../includes/icons.php';
 if (!function_exists('e')) {
     require_once __DIR__ . '/data.php';
 }
@@ -25,5 +26,12 @@ $organizer = $organizer ?? ['nama' => 'HMTI', 'role' => 'ORGANIZER', 'inisial' =
         </div>
          <a class="btn btn-outline" href="?page=logout">Logout</a>
         <span class="avatar"><?= e($organizer['inisial']) ?></span>
+        <div class="user-menu-wrap">
+            <button class="user-menu-btn" type="button" aria-label="Menu akun" aria-expanded="false"><?= icon('menu') ?></button>
+            <div class="user-menu-dropdown" hidden>
+                <a href="#" class="user-menu-item">Edit Profil</a>
+                <a href="#" class="user-menu-item user-menu-item--danger">Logout</a>
+            </div>
+        </div>
     </div>
 </header>

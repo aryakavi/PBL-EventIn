@@ -12,6 +12,7 @@ $pageTitle  = 'Masuk Akun';
 $assetBase  = '../../assets';
 $pageStyles = ['style.css', 'auth.css'];
 require __DIR__ . '/../../includes/head.php';
+require __DIR__ . '/../../includes/icons.php';
 ?>
 </head>
 
@@ -42,12 +43,8 @@ require __DIR__ . '/../../includes/head.php';
                         <div class="field">
                             <label for="email">Email Institusi Kampus / Pribadi</label>
                             <div class="input-wrap">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                                    <rect x="3" y="5" width="18" height="14" rx="2"></rect>
-                                    <circle cx="8" cy="11" r="2"></circle>
-                                    <path d="M5.5 16a2.5 2.5 0 0 1 5 0M14 10h4M14 14h4"></path>
-                                </svg>
-                                <input type="email" id="email" name="email" required
+                                <?= icon('card') ?>
+                                <input type="email" id="email" name="email"
                                     placeholder="Mahasiswa@polinema.ac.id"
                                     autocomplete="email">
                             </div>
@@ -59,18 +56,12 @@ require __DIR__ . '/../../includes/head.php';
                                 <a class="link-orange" href="#">Lupa Kata Sandi?</a>
                             </div>
                             <div class="input-wrap input-wrap--toggle">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                                    <circle cx="8" cy="15" r="4"></circle>
-                                    <path d="m11 12 9-9M17 6l2 2M14 9l2 2"></path>
-                                </svg>
-                                <input type="password" id="password" name="password" placeholder="Masukkan minimal 8 karakter" required
+                                <?= icon('lock') ?>
+                                <input type="password" id="password" name="password" placeholder="Masukkan minimal 8 karakter"
                                     autocomplete="current-password">
                                 <button class="password-toggle" type="button" data-toggle-password="password"
                                     aria-label="Tampilkan kata sandi">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                                        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path>
-                                        <circle cx="12" cy="12" r="3"></circle>
-                                    </svg>
+                                    <?= icon('eye') ?>
                                 </button>
                             </div>
                         </div>
@@ -82,17 +73,14 @@ require __DIR__ . '/../../includes/head.php';
 
                         <button class="auth-submit" type="submit">
                             Masuk Sekarang
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                <path d="M5 12h14M13 6l6 6-6 6"></path>
-                            </svg>
-                        </button>
-                    </form>
+                            <?= icon('arrow-right') ?>
+                        </button>                    </form>
 
                     <div class="auth-switch">
                         Belum memiliki akun?
-                        <a class="link-orange" href="<?= e($routes['register'] ?? '#') ?>">Daftar sebagai Peserta</a>
+                        <a class="link-orange" href="<?= e($base . ($routes['register'] ?? '#')) ?>">Daftar sebagai Peserta</a>
                         <span class="dot" aria-hidden="true">&bull;</span>
-                        <a class="link-blue" href="#">Daftarkan Admin</a>
+                        <a class="link-blue" href="<?= e($base . ($routes['register-admin'] ?? '#')) ?>">Daftarkan Admin</a>
                     </div>
                 </section>
 
@@ -105,11 +93,7 @@ require __DIR__ . '/../../includes/head.php';
                     <div class="auth-stats">
                         <div class="auth-stat">
                             <span class="auth-stat-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="9" cy="7" r="4"></circle>
-                                    <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                </svg>
+                                <?= icon('stat-users') ?>
                             </span>
                             <strong><?= isset($cardData) ? $cardData['jumlah_peserta'] : '' ?></strong>
                             <span>Mahasiswa Aktif Terdaftar</span>
@@ -117,10 +101,7 @@ require __DIR__ . '/../../includes/head.php';
 
                         <div class="auth-stat">
                             <span class="auth-stat-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                                    <rect x="3" y="4" width="18" height="17" rx="2"></rect>
-                                    <path d="M16 2v4M8 2v4M3 10h18"></path>
-                                </svg>
+                                <?= icon('calendar') ?>
                             </span>
                             <strong><?= isset($cardData) ? $cardData['jumlah_event'] : '' ?></strong>
                             <span>Event &amp; Seminar Kampus</span>
@@ -129,10 +110,7 @@ require __DIR__ . '/../../includes/head.php';
 
                     <div class="auth-note">
                         <span class="auth-note-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                                <rect x="4" y="3" width="16" height="18" rx="2"></rect>
-                                <path d="M9 8h1M14 8h1M9 12h1M14 12h1M9 16h1M14 16h1"></path>
-                            </svg>
+                            <?= icon('note') ?>
                         </span>
                         <div>
                             <strong>Pengurus BEM / Himpunan?</strong>

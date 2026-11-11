@@ -60,4 +60,148 @@ class Event
         $result['hari'] = $namaHari;
         return $result;
     }
+
+
+
+    public function insert(
+        $id_pembuat,
+        $id_kategori,
+        $nama_event,
+        $deskripsi,
+        $tanggal_mulai,
+        $tanggal_selesai,
+        $lokasi,
+        $kuota,
+        $harga,
+        $poster
+    ) {
+
+        // Validasi ID pembuat
+        if (!filter_var($id_pembuat, FILTER_VALIDATE_INT) || $id_pembuat <= 0) {
+            return [
+                "success" => false,
+                "message" => "ID pembuat tidak valid."
+            ];
+        }
+
+        // Validasi kategori
+        if (!filter_var($id_kategori, FILTER_VALIDATE_INT) || $id_kategori <= 0) {
+            return [
+                "success" => false,
+                "message" => "Kategori event wajib dipilih."
+            ];
+        }
+
+        // Validasi teks
+        if (empty(trim($nama_event))) {
+            return [
+                "success" => false,
+                "message" => "Nama event wajib diisi."
+            ];
+        }
+
+        if (empty(trim($deskripsi))) {
+            return [
+                "success" => false,
+                "message" => "Deskripsi event wajib diisi."
+            ];
+        }
+
+        if (empty(trim($lokasi))) {
+            return [
+                "success" => false,
+                "message" => "Lokasi event wajib diisi."
+            ];
+        }
+
+        // Validasi tanggal
+        try {
+            $mulai = new DateTime($tanggal_mulai);
+            $selesai = new DateTime($tanggal_selesai);
+        } catch (Exception $e) {
+            return [
+                "success" => false,
+                "message" => "Format tanggal event tidak valid."
+            ];
+        }
+
+        if ($selesai <= $mulai) {
+            return [
+                "success" => false,
+                "message" => "Tanggal selesai harus setelah tanggal mulai."
+            ];
+        }
+
+        // Validasi kuota
+        if (
+            !filter_var($kuota, FILTER_VALIDATE_INT) ||
+            $kuota <= 0
+        ) {
+            return [
+                "success" => false,
+                "message" => "Kuota harus berupa bilangan bulat lebih dari 0."
+            ];
+        }
+
+        // Validasi harga
+        if (!is_numeric($harga) || $harga < 0) {
+            return [
+                "success" => false,
+                "message" => "Harga harus berupa angka dan tidak boleh negatif."
+            ];
+        }
+
+        // Validasi poster
+        if (empty(trim($poster))) {
+            return [
+                "success" => false,
+                "message" => "Poster event wajib diunggah."
+            ];
+        }
+
+        // Simpan ke database
+        try {
+            $this->pdo->beginTransaction();
+
+            $sql = "INSERT INTO events (
+            id_pembuat, id_kategori, nama_event, deskripsi,
+            tanggal_mulai, tanggal_selesai, lokasi, kuota, harga, poster
+        ) VALUES (
+            :id_pembuat, :id_kategori, :nama_event, :deskripsi,
+            :tanggal_mulai, :tanggal_selesai, :lokasi, :kuota, :harga, :poster
+        )";
+
+            $query = $this->pdo->prepare($sql);
+
+            $query->execute([
+                'id_pembuat' => $id_pembuat,
+                'id_kategori' => $id_kategori,
+                'nama_event' => trim($nama_event),
+                'deskripsi' => trim($deskripsi),
+                'tanggal_mulai' => $tanggal_mulai,
+                'tanggal_selesai' => $tanggal_selesai,
+                'lokasi' => trim($lokasi),
+                'kuota' => $kuota,
+                'harga' => $harga,
+                'poster' => $poster
+            ]);
+
+            $this->pdo->commit();
+
+            return [
+                "success" => true,
+                "message" => "Event berhasil ditambahkan."
+            ];
+        } catch (PDOException $e) {
+
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+
+            return [
+                "success" => false,
+                "message" => "Gagal menambahkan event. Silakan coba lagi."
+            ];
+        }
+    }
 }

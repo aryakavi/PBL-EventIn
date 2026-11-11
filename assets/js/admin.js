@@ -37,3 +37,25 @@
         });
     });
 })();
+
+// Dropdown menu akun (Edit Profil & Logout)
+(function () {
+    var btn = document.querySelector('.user-menu-btn');
+    var menu = document.querySelector('.user-menu-dropdown');
+
+    if (!btn || !menu) {
+        return;
+    }
+
+    btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var open = menu.hidden;
+        menu.hidden = !open;
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    document.addEventListener('click', function () {
+        menu.hidden = true;
+        btn.setAttribute('aria-expanded', 'false');
+    });
+})();

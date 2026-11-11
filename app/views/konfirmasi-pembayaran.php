@@ -1,4 +1,5 @@
 <?php
+require __DIR__ . '/../../includes/icons.php';
 $activeNav = 'tiket';
 $base = '../../';
 
@@ -61,7 +62,7 @@ require __DIR__ . '/../../includes/head.php';
     <!-- Stepper -->
     <div class="stepper">
         <div class="step-item is-done">
-            <span class="step-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m5 12 4 4 10-10"></path></svg></span>
+            <span class="step-circle"><?= icon('check') ?></span>
             <span class="step-label">Pembayaran</span>
         </div>
         <div class="pay-step-line"></div>
@@ -73,15 +74,15 @@ require __DIR__ . '/../../includes/head.php';
 
     <!-- Bar Simulasi Status -->
     <div class="sim-switcher" role="tablist" aria-label="Simulasi Status Pembayaran">
-        <a href="?status=gagal" class="sim-tab<?= $status === 'gagal' ? ' is-active' : '' ?>">
+        <a href="?page=konfirmasi_pembayaran&status=gagal" class="sim-tab<?= $status === 'gagal' ? ' is-active' : '' ?>">
             <span class="sim-dot dot-danger"></span>
             Simulasi: Batas Waktu / Gagal
         </a>
-        <a href="?status=menunggu" class="sim-tab<?= $status === 'menunggu' ? ' is-active' : '' ?>">
+        <a href="?page=konfirmasi_pembayaran&status=menunggu" class="sim-tab<?= $status === 'menunggu' ? ' is-active' : '' ?>">
             <span class="sim-dot dot-warning"></span>
             Simulasi: Menunggu Verifikasi
         </a>
-        <a href="?status=sukses" class="sim-tab<?= $status === 'sukses' ? ' is-active' : '' ?>">
+        <a href="?page=konfirmasi_pembayaran&status=sukses" class="sim-tab<?= $status === 'sukses' ? ' is-active' : '' ?>">
             <span class="sim-dot dot-success"></span>
             Simulasi: Sukses Terverifikasi
         </a>
@@ -91,7 +92,7 @@ require __DIR__ . '/../../includes/head.php';
     <section class="confirm-card theme-<?= e($statusAktif['tema']) ?>">
         <div class="confirm-icon-ring">
             <span class="confirm-icon-inner">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><?= $ikonStatus[$statusAktif['ikon']] ?></svg>
+                <?= icon($statusAktif['ikon']) ?>
             </span>
         </div>
 
@@ -142,11 +143,11 @@ require __DIR__ . '/../../includes/head.php';
         <!-- Tombol Aksi -->
         <div class="confirm-actions">
             <a href="<?= e($statusAktif['btn_utama']['href']) ?>" class="btn <?= e($statusAktif['btn_utama']['class']) ?> confirm-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><?= $ikonTombol[$statusAktif['btn_utama']['ikon']] ?></svg>
+                <?= icon($statusAktif['btn_utama']['ikon']) ?>
                 <?= $statusAktif['btn_utama']['teks'] ?>
             </a>
             <a href="<?= e($statusAktif['btn_kedua']['href']) ?>" class="btn btn-outline confirm-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><?= $ikonTombol[$statusAktif['btn_kedua']['ikon']] ?></svg>
+                <?= icon($statusAktif['btn_kedua']['ikon']) ?>
                 <?= $statusAktif['btn_kedua']['teks'] ?>
             </a>
         </div>
@@ -157,15 +158,15 @@ require __DIR__ . '/../../includes/head.php';
     <!-- Badge Jaminan Keamanan Bawah -->
     <div class="trust-badges">
         <div class="trust-pill">
-            <span class="trust-icon trust-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><?= $ikonTrust['shield'] ?></svg></span>
+            <span class="trust-icon trust-green"><?= icon('shield') ?></span>
             <span>100% Terverifikasi Otomatis</span>
         </div>
         <div class="trust-pill">
-            <span class="trust-icon trust-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><?= $ikonTrust['lock'] ?></svg></span>
+            <span class="trust-icon trust-blue"><?= icon('lock') ?></span>
             <span>Enkripsi 256-Bit SSL Kampus</span>
         </div>
         <div class="trust-pill">
-            <span class="trust-icon trust-orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><?= $ikonTrust['headset'] ?></svg></span>
+            <span class="trust-icon trust-orange"><?= icon('headset') ?></span>
             <span>Dukungan Mahasiswa 24/7</span>
         </div>
     </div>

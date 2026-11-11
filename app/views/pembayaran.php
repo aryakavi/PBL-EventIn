@@ -103,9 +103,7 @@ require __DIR__ . '/../../includes/head.php';
                             <div class="qris-preview" id="qris-box" hidden>
                                 <div class="qris-code" aria-label="Kode QRIS">
                                     <!-- Ilustrasi SVG QR Code -->
-                                    <svg viewBox="0 0 120 120" width="128" height="128" fill="#0f172a">
-                                        <path d="M10 10h36v36H10V10zm6 6v24h24V16H16zm6 6h12v12H22V22zm52-12h36v36H74V10zm6 6v24h24V16H80zm6 6h12v12H86V22zM10 74h36v36H10V74zm6 6v24h24V80H16zm6 6h12v12H22V86zm32-76h8v16h-8V10zm12 8h6v14h-6V18zm-12 20h18v8H54v-8zm-44 20h16v8H10v-8zm24 0h32v8H34v-8zm40 0h12v8H74v-8zm20 0h16v8H94v-8zM54 74h12v12H54V74zm20 0h8v20h-8V74zm16 0h20v8H90v-8zm-36 20h16v16H54V94zm24 8h16v8H78v-8zm20-16h12v24H98V86z"/>
-                                    </svg>
+                                    <e?= $ikonQrKecil ?>
                                 </div>
                             </div>
                         <?php endif; ?>
