@@ -1,6 +1,7 @@
 <?php
 require __DIR__ . '/../../../includes/admin/data.php';
 require __DIR__ . '/../../../app/models/PembayaranRepository.php';
+require __DIR__ . '/../../../app/models/PembayaranGatewayRepository.php';
 require __DIR__ . '/../../../includes/storage.php';
 
 $halamanAktif = 'pembayaran';
@@ -111,6 +112,30 @@ $buktiExt  = $buktiUrl !== ''
 $buktiGambar = in_array($buktiExt, ['jpg', 'jpeg', 'png', 'webp', 'gif'], true);
 
 $punyaTransaksi = $transaksi !== [];
+
+/* --- Transaksi gateway (Midtrans), kalau ada --- */
+$gatewayInfo = [];
+if ($adminRepo !== null && isset($pdo) && $pdo instanceof PDO) {
+    $idTiketGateway = (int) ($transaksi['id_tiket'] ?? $idTiket);
+
+    if ($idTiketGateway > 0) {
+        $gatewayRow = (new PembayaranGatewayRepository($pdo))->latestForTicket($idTiketGateway);
+
+        if ($gatewayRow !== false) {
+            $raw = $gatewayRow['raw_response'] ?? null;
+            $raw = is_string($raw) ? json_decode($raw, true) : (is_array($raw) ? $raw : []);
+            $raw = is_array($raw) ? $raw : [];
+
+            $gatewayInfo = [
+                'order_id'  => (string) ($gatewayRow['order_id'] ?? ''),
+                'status'    => (string) ($gatewayRow['transaction_status'] ?? ''),
+                'tipe'      => (string) ($raw['payment_type'] ?? ''),
+                'redirect'  => (string) ($raw['redirect_url'] ?? ''),
+                'waktu'     => $tanggal($gatewayRow['created_at'] ?? null),
+            ];
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -236,6 +261,27 @@ require __DIR__ . '/../../../includes/head.php';
                             <span class="info-label">SERTIFIKAT</span>
                             <span class="info-text"><?= e($tampil($transaksi['status_sertifikat'] ?? '')) ?></span>
                         </div>
+
+                        <?php if ($gatewayInfo !== []): ?>
+                            <div class="info-item">
+                                <span class="info-label">TRANSAKSI MIDTRANS</span>
+                                <span class="info-text mono-id"><?= e($tampil($gatewayInfo['order_id'])) ?></span>
+                                <span class="info-text">
+                                    Status gateway: <strong><?= e($tampil($gatewayInfo['status'])) ?></strong>
+                                    <?php if ($gatewayInfo['tipe'] !== ''): ?>
+                                        &middot; <?= e($gatewayInfo['tipe']) ?>
+                                    <?php endif; ?>
+                                    <?php if ($gatewayInfo['waktu'] !== ''): ?>
+                                        &middot; <?= e($gatewayInfo['waktu']) ?>
+                                    <?php endif; ?>
+                                </span>
+                                <?php if ($gatewayInfo['redirect'] !== ''): ?>
+                                    <a class="proof-link" href="<?= e($gatewayInfo['redirect']) ?>" target="_blank" rel="noopener">
+                                        Buka halaman Midtrans
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
 
                         <form action="" method="post" class="detail-actions">
                             <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">

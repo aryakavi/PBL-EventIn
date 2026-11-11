@@ -2,11 +2,14 @@
 $activeNav = 'tiket';
 $base = '../../';
 
-require __DIR__ . '/../../includes/data.php';
-require __DIR__ . '/../../includes/koneksi.php';
-require __DIR__ . '/../../app/models/Tiket.php';
-require __DIR__ . '/../../app/models/PembayaranRepository.php';
-require __DIR__ . '/../../includes/storage.php';
+require_once __DIR__ . '/../../includes/data.php';
+require_once __DIR__ . '/../../includes/koneksi.php';
+require_once __DIR__ . '/../../app/models/Tiket.php';
+require_once __DIR__ . '/../../app/models/PembayaranRepository.php';
+require_once __DIR__ . '/../../app/models/PembayaranGatewayRepository.php';
+require_once __DIR__ . '/../../app/controllers/MidtransController.php';
+require_once __DIR__ . '/../../includes/storage.php';
+require_once __DIR__ . '/../../includes/midtrans.php';
 
 $emptyText = 'kosong, masih kurang';
 
@@ -41,13 +44,30 @@ $existing = $tiketFound && $bayarRepo !== null
 $notice = '';
 $error = '';
 
+$midtransController = isset($pdo) && $pdo instanceof PDO ? new MidtransController($pdo) : null;
+$gatewayRepo = isset($pdo) && $pdo instanceof PDO ? new PembayaranGatewayRepository($pdo) : null;
+$midtransReady = $midtransController !== null && $midtransController->gatewayReady();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $aksi = (string) ($_POST['aksi'] ?? 'manual');
+
     if (!$tiketFound) {
         $error = 'Transaksi tidak ditemukan. Daftar event terlebih dahulu.';
     } elseif (!csrf_valid($_POST['csrf_token'] ?? null)) {
         $error = 'Sesi keamanan kedaluwarsa. Muat ulang halaman lalu coba lagi.';
     } elseif (str_starts_with(strtolower((string) ($tiket['status_bayar'] ?? '')), 'lunas')) {
         $error = 'Pembayaran tiket ini sudah lunas.';
+    } elseif ($aksi === 'midtrans') {
+        $hasil = $midtransController !== null
+            ? $midtransController->start($idTiket, $idPengguna, is_array($sesi) ? $sesi : [])
+            : ['success' => false, 'message' => 'Koneksi database gagal.'];
+
+        if (!$hasil['success']) {
+            $error = $hasil['message'];
+        } else {
+            header('Location: pembayaran.php?id_tiket=' . $idTiket . '&bayar=' . rawurlencode((string) ($hasil['order_id'] ?? '')));
+            exit;
+        }
     } else {
         $metodeKey = (string) ($_POST['metode'] ?? '');
         $daftarMetode = [
@@ -82,6 +102,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
+}
+
+/* --- Transaksi Midtrans yang masih berjalan --- */
+$orderIdAktif  = (string) ($_GET['bayar'] ?? '');
+$snapToken     = '';
+$snapRedirect  = '';
+$gatewayRow    = false;
+
+if ($gatewayRepo !== null && $tiketFound) {
+    $gatewayRow = $orderIdAktif !== ''
+        ? $gatewayRepo->findByOrderId($orderIdAktif)
+        : $gatewayRepo->latestForTicket($idTiket);
+
+    if ($gatewayRow !== false && $orderIdAktif !== '' && (int) ($gatewayRow['id_tiket'] ?? 0) !== $idTiket) {
+        $gatewayRow = false;
+    }
+}
+
+if ($gatewayRow !== false && $orderIdAktif !== '') {
+    $raw = $gatewayRow['raw_response'] ?? null;
+    $raw = is_string($raw) ? json_decode($raw, true) : (is_array($raw) ? $raw : []);
+    $raw = is_array($raw) ? $raw : [];
+
+    $snapToken    = (string) ($raw['token'] ?? '');
+    $snapRedirect = (string) ($raw['redirect_url'] ?? '');
+}
+
+if (($_GET['midtrans'] ?? '') === 'selesai') {
+    $notice = 'Pembayaran diproses. Status tiket akan diperbarui otomatis setelah Midtrans mengirim notifikasi.';
 }
 
 $statusBayar = strtolower((string) ($tiket['status_bayar'] ?? ''));
@@ -268,8 +317,19 @@ require __DIR__ . '/../../includes/head.php';
 
                     <?php if ($isLunas): ?>
                         <a href="tiket-saya.php" class="btn btn-primary btn-block">Lihat Tiket Saya</a>
+                    <?php elseif ($midtransReady): ?>
+                        <button type="submit" name="aksi" value="midtrans" class="btn btn-primary btn-block" formnovalidate>
+                            Bayar Online (Midtrans)
+                        </button>
+                        <p class="upload-hint">
+                            Virtual account, e-wallet, QRIS, dan kartu. Status tiket diperbarui otomatis
+                            setelah pembayaran berhasil.
+                        </p>
+                        <button type="submit" name="aksi" value="manual" class="btn btn-outline btn-block">
+                            <?= $buktiUrl !== '' ? 'Kirim Ulang Bukti Transfer' : 'Upload Bukti Transfer Manual' ?>
+                        </button>
                     <?php else: ?>
-                        <button type="submit" class="btn btn-primary btn-block">
+                        <button type="submit" name="aksi" value="manual" class="btn btn-primary btn-block">
                             <?= $buktiUrl !== '' ? 'Kirim Ulang Bukti' : 'Bayar Sekarang' ?>
                         </button>
                     <?php endif; ?>
@@ -282,5 +342,25 @@ require __DIR__ . '/../../includes/head.php';
 <?php include __DIR__ . '/../../includes/footer.php'; ?>
 
 <script src="../../assets/js/main.js?v=<?= e(asset_version('assets/js/main.js')) ?>"></script>
+
+<?php if ($snapToken !== '' && !$isLunas): ?>
+    <script src="<?= e(MidtransClient::snapScriptUrl()) ?>" data-client-key="<?= e(MidtransClient::clientKey()) ?>"></script>
+    <script>
+    (function () {
+        var tujuan = 'pembayaran.php?id_tiket=<?= (int) $idTiket ?>';
+
+        if (!window.snap) {
+            return;
+        }
+
+        window.snap.pay(<?= json_encode($snapToken, JSON_UNESCAPED_SLASHES) ?>, {
+            onSuccess: function () { window.location.href = tujuan + '&midtrans=selesai'; },
+            onPending: function () { window.location.href = tujuan + '&midtrans=selesai'; },
+            onError: function () { window.location.href = tujuan + '&midtrans=selesai'; },
+            onClose: function () { window.location.href = tujuan; }
+        });
+    })();
+    </script>
+<?php endif; ?>
 </body>
 </html>

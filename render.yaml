@@ -28,3 +28,11 @@ services:
         value: bukti_pembayaran
       - key: MAX_UPLOAD_BYTES
         value: "5242880"
+      - key: MIDTRANS_SERVER_KEY
+        sync: false
+      - key: MIDTRANS_CLIENT_KEY
+        sync: false
+      - key: MIDTRANS_IS_PRODUCTION
+        value: "false"
+      - key: MIDTRANS_FINISH_URL
+        sync: false

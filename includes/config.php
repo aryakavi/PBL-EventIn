@@ -70,6 +70,15 @@ function app_config(): array
         'supabase_bucket' => env_value('SUPABASE_BUCKET', 'image_event'),
         'bukti_folder'    => trim(env_value('SUPABASE_BUKTI_FOLDER', 'bukti_pembayaran'), '/'),
         'max_upload'      => (int) env_value('MAX_UPLOAD_BYTES', (string) (5 * 1024 * 1024)),
+
+        'midtrans_server_key' => env_value('MIDTRANS_SERVER_KEY', ''),
+        'midtrans_client_key' => env_value('MIDTRANS_CLIENT_KEY', ''),
+        'midtrans_production' => in_array(
+            strtolower(env_value('MIDTRANS_IS_PRODUCTION', 'false')),
+            ['1', 'true', 'yes', 'on'],
+            true
+        ),
+        'midtrans_finish_url' => env_value('MIDTRANS_FINISH_URL', ''),
     ];
 
     return $config;
