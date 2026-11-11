@@ -141,7 +141,7 @@ require __DIR__ . '/../../includes/head.php';
             </a>
         </div>
 
-        <a href="<?= e($base . $routes['home']) ?>" class="back-home-link">&larr; Kembali ke Beranda Jelajah Event</a>
+        <a href="<?= e($base . $routes['home']) ?>" class="back-home-link"><?= icon('arrow-left') ?> Kembali ke Beranda Jelajah Event</a>
     </section>
 
     <!-- Badge Jaminan Keamanan Bawah -->

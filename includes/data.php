@@ -320,5 +320,19 @@ $konfigurasiStatus = [
         'btn_utama'   => ['teks' => 'Lihat &amp; Unduh Tiket Saya', 'ikon' => 'ticket', 'href' => 'tiket-saya.php', 'class' => 'btn-primary'],
         'btn_kedua'   => ['teks' => 'Unduh Invoice (PDF)', 'ikon' => 'download', 'href' => '#'],
     ],
+
+    
 ];
+
+$profil = [
+    'nama_singkat' => 'Aryakavi',
+    'role'         => 'PESERTA',
+    'inisial_nav'  => 'A',
+    'inisial_card' => 'A',
+    'nama_lengkap' => 'Aryakavi Raditya Imaran',
+    'nomor_induk'  => '254107020000',
+    'email'        => 'halohalobandung@gmail.com',
+    'telepon'      => '081200003454',
+];
+
 

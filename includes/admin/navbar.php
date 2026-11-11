@@ -11,7 +11,7 @@ $organizer = $organizer ?? ['nama' => 'HMTI', 'role' => 'ORGANIZER', 'inisial' =
                 aria-controls="sidebar" aria-expanded="false">
             <span></span><span></span><span></span>
         </button>
-        <a href="index.php" class="navbar-back" aria-label="Kembali">&larr;</a>
+        <a href="index.php" class="navbar-back" aria-label="Kembali"><?= icon('arrow-left') ?></a>
         <span class="logo-box">EI</span>
         <div class="brand">
             <strong class="brand-name">EventIn</strong>
@@ -27,7 +27,7 @@ $organizer = $organizer ?? ['nama' => 'HMTI', 'role' => 'ORGANIZER', 'inisial' =
         <div class="user-menu-wrap">
             <button class="user-menu-btn" type="button" aria-label="Menu akun" aria-expanded="false"><?= icon('menu') ?></button>
             <div class="user-menu-dropdown" hidden>
-                <a href="#" class="user-menu-item">Edit Profil</a>
+                <a href="profil.php" class="user-menu-item">Edit Profil</a>
                 <a href="#" class="user-menu-item user-menu-item--danger">Logout</a>
             </div>
         </div>

@@ -11,6 +11,7 @@ $ikon = [
     'lock'          => '<circle cx="8" cy="15" r="4"></circle><path d="m11 12 9-9M17 6l2 2M14 9l2 2"></path>',
     'eye'           => '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle>',
     'arrow-right'   => '<path d="M5 12h14M13 6l6 6-6 6"></path>',
+    'arrow-left'    => '<path d="M19 12H5M11 6l-6 6 6 6"></path>',
     'building'      => '<path d="M3 21h18M5 21V5a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16"></path><rect x="8" y="8" width="3" height="3" rx=".5"></rect><rect x="13" y="8" width="3" height="3" rx=".5"></rect><rect x="8" y="14" width="3" height="3" rx=".5"></rect><rect x="13" y="14" width="3" height="3" rx=".5"></rect>',
     'calendar'      => '<rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path>',
     'stat-users'    => '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path>',

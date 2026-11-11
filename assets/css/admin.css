@@ -56,7 +56,8 @@ ul { list-style: none; }
     padding: 0 24px;
 }
 .navbar-left, .navbar-right { display: flex; align-items: center; gap: 12px; }
-.navbar-back { font-size: 24px; margin-right: 8px; }
+.navbar-back { margin-right: 8px; color: var(--text); display: inline-flex; align-items: center; }
+.navbar-back svg { width: 24px; height: 24px; }
 
 .navbar-toggle {
     display: none;
@@ -810,6 +811,244 @@ ul { list-style: none; }
     color: var(--muted);
 }
 
+/* ===== Halaman Profil & Edit Data ===== */
+.profile-container {
+    max-width: 1040px;
+    margin: 0 auto;
+}
+
+.profile-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 14px;
+    transition: color .15s;
+}
+.profile-back-link:hover { color: var(--text); }
+.profile-back-link svg { width: 14px; height: 14px; }
+
+.profile-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.profile-page-header h1 {
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+.profile-page-header p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+}
+
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font);
+}
+
+/* Kartu Banner Identitas */
+.profile-banner-card {
+    background: var(--white);
+    border: 1px solid #f1f5f9;
+    border-radius: 16px;
+    padding: 22px 28px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, .04);
+}
+.profile-banner-left {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+.profile-initials-box {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    background: #fff7ed;
+    border: 1px solid #ffedd5;
+    color: var(--orange-dark);
+    font-size: 16px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.profile-banner-name {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text);
+}
+.edit-mode-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 999px;
+    color: var(--orange-dark);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* Kartu Detail & Form */
+.profile-detail-card {
+    background: var(--white);
+    border: 1px solid #f1f5f9;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, .04);
+}
+.profile-card-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 16px;
+}
+
+/* Daftar Baris Informasi (Mode Lihat) */
+.profile-info-list {
+    display: flex;
+    flex-direction: column;
+}
+.profile-info-row {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #f1f5f9;
+    gap: 16px;
+}
+.profile-info-row:last-child {
+    border-bottom: none;
+    padding-bottom: 4px;
+}
+.profile-info-row dt {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+}
+.profile-info-row dd {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+/* Form Edit Data Profil */
+.profile-form-header {
+    margin-bottom: 22px;
+}
+.profile-form-header .profile-card-title {
+    margin-bottom: 4px;
+}
+.profile-form-header p {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.profile-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 24px;
+    margin-bottom: 22px;
+}
+.profile-form-grid .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.profile-form-grid .form-group label {
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+.profile-input {
+    width: 100%;
+    height: 42px;
+    padding: 0 14px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--font);
+    font-size: 13px;
+    color: var(--text);
+    transition: border-color .15s;
+}
+.profile-input:focus {
+    outline: none;
+    border-color: var(--orange);
+}
+.profile-input::placeholder {
+    color: #94a3b8;
+}
+.field-hint {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: -2px;
+}
+
+.profile-form-notice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 24px;
+}
+.form-notice-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid #64748b;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.profile-form-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    border-top: 1px solid #f1f5f9;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.footer-note {
+    font-size: 11px;
+    color: #94a3b8;
+}
+.profile-form-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 /* ===== Responsif ===== */
 @media (max-width: 1100px) {
     .kpi { grid-template-columns: repeat(2, 1fr); }
@@ -840,6 +1079,10 @@ ul { list-style: none; }
     .form-grid { grid-template-columns: 1fr; }
     .form-control, .form-control-md, .form-control-sm { max-width: 100%; }
     .form-group--full { grid-column: auto; }
+
+    .profile-info-row { grid-template-columns: 1fr; gap: 4px; }
+    .profile-form-grid { grid-template-columns: 1fr; }
+    .profile-form-footer { flex-direction: column; align-items: flex-start; }
 
     .navbar-toggle { display: flex; }
 
