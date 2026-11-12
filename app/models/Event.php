@@ -118,10 +118,18 @@ class Event
         try {
             $mulai = new DateTime($tanggal_mulai);
             $selesai = new DateTime($tanggal_selesai);
+            $hariIni = new DateTime('today');
         } catch (Exception $e) {
             return [
                 "success" => false,
                 "message" => "Format tanggal event tidak valid."
+            ];
+        }
+
+        if ($mulai < $hariIni) {
+            return [
+                "success" => false,
+                "message" => "Tanggal mulai event tidak boleh sebelum hari ini."
             ];
         }
 

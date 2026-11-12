@@ -51,9 +51,12 @@ $pageUrl = static function (int $p) use ($queryParams): string {
 </head>
 
 <body>
-<?php if (isset($_SESSION['addEvent']['success'])) {?>
-<script>alert('Tambah Event Berhasil')</script>
-<?php } ?>
+    <?php if (isset($_SESSION['addEvent']['success'])) { ?>
+        <script>
+            alert('<?= $_SESSION['addEvent']['message'] ?>')
+        </script>
+    <?php unset($_SESSION['addEvent']);
+    } ?>
     <?php include __DIR__ . '/../../../includes/admin/navbar.php'; ?>
 
     <div class="layout">
@@ -164,17 +167,17 @@ $pageUrl = static function (int $p) use ($queryParams): string {
                         <!-- Nama Event -->
                         <div class="form-group">
                             <label for="nama_event">Nama Event</label>
-                            <input type="text" id="nama_event" name="nama_event" class="form-control" placeholder="Masukkan nama event resmi.">
+                            <input type="text" id="nama_event" name="nama_event" class="form-control" placeholder="Masukkan nama event resmi." required>
                         </div>
 
                         <!-- Kategori -->
                         <div class="form-group">
                             <label for="id_kategori">Kategori Event</label>
-                            <select id="id_kategori" name="id_kategori" class="form-control">
+                            <select id="id_kategori" name="id_kategori" class="form-control" required>
                                 <option value="" selected disabled>Pilih kategori..</option>
                                 <?php if (isset($categories)) {
-                                    foreach ($categories as $cat) {?>
-                                    <option value="<?= $cat['id_kategori'] ?>"><?= e($cat['nama_kategori']) ?></option>
+                                    foreach ($categories as $cat) { ?>
+                                        <option value="<?= $cat['id_kategori'] ?>"><?= e($cat['nama_kategori']) ?></option>
                                 <?php
                                     }
                                 } ?>
@@ -184,38 +187,38 @@ $pageUrl = static function (int $p) use ($queryParams): string {
                         <!-- Deskripsi Event (lebar penuh) -->
                         <div class="form-group form-group--full">
                             <label for="deskripsi">Deskripsi Event</label>
-                            <textarea id="deskripsi" name="deskripsi" class="form-control form-control-textarea" rows="4" placeholder="Jelaskan detail event.."></textarea>
+                            <textarea id="deskripsi" name="deskripsi" class="form-control form-control-textarea" rows="4" placeholder="Jelaskan detail event.." required></textarea>
                         </div>
 
                         <!-- Tanggal Mulai & Selesai -->
                         <div class="form-group">
                             <label for="tanggal_mulai">Tanggal Mulai</label>
-                            <input type="date" id="tanggal_mulai" name="tanggal_mulai" class="form-control">
+                            <input type="date" id="tanggal_mulai" name="tanggal_mulai" class="form-control" required min="<?= date('Y-m-d') ?>">
                         </div>
 
                         <div class="form-group">
                             <label for="tanggal_selesai">Tanggal Selesai</label>
-                            <input type="date" id="tanggal_selesai" name="tanggal_selesai" class="form-control">
+                            <input type="date" id="tanggal_selesai" name="tanggal_selesai" class="form-control" required min="<?= date('Y-m-d') ?>">
                         </div>
 
                         <!-- Jam Mulai & Berakhir -->
                         <div class="form-group">
                             <label for="jam_mulai">Jam Mulai</label>
-                            <input type="time" id="jam_mulai" name="jam_mulai" class="form-control">
+                            <input type="time" id="jam_mulai" name="jam_mulai" class="form-control" required>
                         </div>
 
                         <div class="form-group">
                             <label for="jam_selesai">Jam Berakhir</label>
-                            <input type="time" id="jam_selesai" name="jam_selesai" class="form-control">
+                            <input type="time" id="jam_selesai" name="jam_selesai" class="form-control" required>
                         </div>
 
                         <!-- Lokasi & Metode Pembayaran -->
                         <div class="form-group">
                             <label for="lokasi">Lokasi</label>
-                            <input type="text" id="lokasi" name="lokasi" class="form-control" placeholder="Contoh: Aula Gedung C">
+                            <input type="text" id="lokasi" name="lokasi" class="form-control" placeholder="Contoh: Aula Gedung C" required>
                         </div>
 
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label for="metode">Metode Pembayaran</label>
                             <select id="metode" name="metode" class="form-control">
                                 <option value="" selected disabled>Pilih metode..</option>
@@ -224,17 +227,17 @@ $pageUrl = static function (int $p) use ($queryParams): string {
                                 <option value="qris">QRIS</option>
                                 <option value="gratis">Gratis</option>
                             </select>
-                        </div>
+                        </div> -->
 
                         <!-- Kapasitas & Harga -->
                         <div class="form-group">
-                            <label for="kuota">kuota Kursi</label>
-                            <input type="number" id="kuota" name="kuota" class="form-control" placeholder="Contoh: 150">
+                            <label for="kuota">Kuota</label>
+                            <input type="number" id="kuota" name="kuota" class="form-control" placeholder="Contoh: 150" required min="1">
                         </div>
 
                         <div class="form-group">
                             <label for="harga">Harga Tiket (Rp)</label>
-                            <input type="number" id="harga" name="harga" class="form-control" placeholder="Contoh: 75.000">
+                            <input type="number" id="harga" name="harga" class="form-control" placeholder="Contoh: 75.000" required min="0">
                         </div>
 
                         <!-- Banner Event (lebar penuh) -->
@@ -243,7 +246,7 @@ $pageUrl = static function (int $p) use ($queryParams): string {
                             <label for="poster" class="upload-box">
                                 <span class="upload-icon">&uarr;</span>
                                 <span>Pilih berkas gambar banner event..</span>
-                                <input type="file" id="poster" name="poster" accept="image/*" hidden>
+                                <input type="file" id="poster" name="poster" accept="image/*" hidden required>
                             </label>
                         </div>
                     </div>

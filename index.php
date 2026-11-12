@@ -172,9 +172,6 @@ if ($page === 'admin/tambah-event') {
 
     if ($_SERVER['REQUEST_METHOD']=='POST') {
         $result=$eventController->addEvent($_POST);
-        if ($result['success']) {
-            header('Location: ?page=admin/event');
-        }
     }
 
     exit;

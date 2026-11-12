@@ -43,11 +43,11 @@ class EventController
             $poster
         );
         $_SESSION['addEvent'] = $result;
-        if ($result['success']) {
-            header('Location: ?page:admin/event');
+        if ($result['success']==true) {
+            header('Location: ?page=admin/event');
             exit;
         } else {
-            header('Location: ?page:admin/event#form-event');
+            header('Location: ?page=admin/event#form-event');
             exit;
         }
     }
