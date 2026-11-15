@@ -83,3 +83,14 @@ $rincianLaporan = [
     ['nama' => 'Dewi Lestari', 'email' => 'dewi@mahasiswa.ac.id',   'status' => 'Lunas',    'kehadiran' => 'Hadir',       'sertifikat' => 'Sudah Dikirim', 'kategori' => 'Seminar',    'tanggal' => '2026-02-19'],
     ['nama' => 'Ahmad Dani',   'email' => 'ahmad@mahasiswa.ac.id',  'status' => 'Ditolak',  'kehadiran' => 'Tidak Hadir', 'sertifikat' => 'Ditangguhkan',  'kategori' => 'Workshop',   'tanggal' => '2026-01-30'],
 ];
+
+$profilAdmin = [
+    'nama_singkat' => 'HMTI',
+    'role'         => 'ORGANIZER',
+    'inisial_nav'  => 'H',
+    'inisial_card' => 'HM',
+    'nama_lengkap' => 'Himpunan Mahasiswa Teknologi Informasi',
+    'nomor_induk'  => '2141720001',
+    'email'        => 'hmti@polinema.ac.id',
+    'telepon'      => '08123456789',
+];

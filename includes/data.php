@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__.'/../app/models/Storage.php';
-require_once __DIR__.'/icons.php';
-$storageModel= new Storage();
+require_once __DIR__ . '/../app/models/Storage.php';
+require_once __DIR__ . '/icons.php';
+$storageModel = new Storage();
 /**
  * Data & helper untuk landing page EventIn.
  * Semua konten dipisah di sini supaya index.php tetap bersih.
@@ -17,12 +17,45 @@ function e(string $text): string
     return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 }
 
+function format_angka(int|float|string $angka): string
+{
+    return number_format((float) $angka, 0, ',', '.');
+}
 
-function format_tanggal($tanggal)
+
+function format_tanggal_jam($tanggal): string
 {
     $format = new IntlDateFormatter(
         'id_ID',
-        IntlDateFormatter::LONG,
+        IntlDateFormatter::NONE,
+        IntlDateFormatter::NONE,
+        'Asia/Jakarta',
+        IntlDateFormatter::GREGORIAN,
+         "EEEE, d MMMM yyyy (HH.mm)"
+    );
+
+    return $format->format(strtotime($tanggal));
+}
+
+function format_tanggal($tanggal): string
+{
+    $format = new IntlDateFormatter(
+        'id_ID',
+        IntlDateFormatter::NONE,
+        IntlDateFormatter::NONE,
+        'Asia/Jakarta',
+        IntlDateFormatter::GREGORIAN,
+         "EEEE, d MMMM yyyy"
+    );
+
+    return $format->format(strtotime($tanggal));
+}
+
+function format_jam($tanggal): string
+{
+    $format = new IntlDateFormatter(
+        'id_ID',
+        IntlDateFormatter::NONE,
         IntlDateFormatter::SHORT,
         'Asia/Jakarta'
     );
@@ -54,7 +87,7 @@ $routes = [
     'register' => '?page=register',
     'register-admin' => '?page=register-admin',
     'tiket' => '?page=tiket',
-    'daftar_event'=>'?page=daftar_event',
+    'daftar_event' => '?page=detail_event',
     'detail'    => '#'  // event-detail.php
 
 ];
@@ -311,6 +344,8 @@ $konfigurasiStatus = [
         'btn_utama'   => ['teks' => 'Lihat &amp; Unduh Tiket Saya', 'ikon' => 'ticket', 'href' => 'tiket-saya.php', 'class' => 'btn-primary'],
         'btn_kedua'   => ['teks' => 'Unduh Invoice (PDF)', 'ikon' => 'download', 'href' => '#'],
     ],
+
+
 ];
 
 // Peta ikon SVG untuk halaman konfirmasi pembayaran
@@ -331,4 +366,28 @@ $ikonTrust = [
     'shield'  => '<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"></path><path d="m9 12 2 2 4-4"></path>',
     'lock'    => '<rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path>',
     'headset' => '<path d="M4 14v-2a8 8 0 0 1 16 0v2"></path><rect x="2" y="14" width="4" height="6" rx="1"></rect><rect x="18" y="14" width="4" height="6" rx="1"></rect><path d="M20 20a3 3 0 0 1-3 2h-3"></path>',
+];
+$profil = [
+    'nama_singkat' => 'Aryakavi',
+    'role'         => 'PESERTA',
+    'inisial_nav'  => 'A',
+    'inisial_card' => 'A',
+    'nama_lengkap' => 'Aryakavi Raditya Imaran',
+    'nomor_induk'  => '254107020000',
+    'email'        => 'halohalobandung@gmail.com',
+    'telepon'      => '081200003454',
+];
+
+$event = [
+    'judul'          => 'Workshop Pembuatan Aplikasi Seluler Tanpa Kode (No-Code App)',
+    'penyelenggara'  => 'Himpunan Mahasiswa Teknologi Informasi (HMTI) - POLINEMA',
+    'inisial_org'    => 'H',
+    'harga'          => 'Rp 75.000',
+    'waktu'          => 'Sabtu, 28 April 2026 | 09:00 - 13:00',
+    'lokasi'         => 'Laboratorium Multimedia Gedung D Lt. 2',
+    'kursi_tersisa'  => 15,
+    'kursi_total'    => 50,
+    'persen_terisi'  => 70,
+    'paragraf_1'     => 'Kegiatan workshop ini dirancang untuk membantu mahasiswa memahami cara membangun aplikasi seluler secara praktis tanpa harus menulis kode pemrograman dari awal. Peserta akan mempelajari perancangan antarmuka, pengelolaan basis data visual, hingga proses publikasi prototipe aplikasi.',
+    'paragraf_2'     => 'Seluruh peserta yang terdaftar akan mendapatkan modul praktik digital, pendampingan langsung bersama praktisi industri, serta sertifikat resmi sebagai bukti partisipasi kegiatan akademik.',
 ];

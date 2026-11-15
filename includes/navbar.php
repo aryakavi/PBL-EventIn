@@ -1,4 +1,5 @@
-<?php require_once __DIR__ . '/data.php';
+<?php 
+require_once __DIR__ . '/data.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
