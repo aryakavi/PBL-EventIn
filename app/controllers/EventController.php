@@ -3,17 +3,20 @@
 require_once __DIR__ . '/../models/Event.php';
 require_once __DIR__ . '/../models/Category.php';
 require_once __DIR__ . '/../models/Storage.php';
+require_once __DIR__ . '/../models/Tiket.php';
 class EventController
 {
     private Event $eventModel;
     private Category $categoryModel;
     private Storage $storageModel;
+    private Tiket $tiketModel;
 
     public function __construct(PDO $pdo)
     {
         $this->eventModel = new Event($pdo);
         $this->categoryModel = new Category($pdo);
         $this->storageModel = new Storage();
+        $this->tiketModel = new Tiket($pdo);
     }
 
     public function index(): array
@@ -24,6 +27,13 @@ class EventController
     public function getCategory(): array
     {
         return $this->categoryModel->getAll();
+    }
+
+    public function getDetailEvent(int $id_event): array
+    {
+        $result=$this->eventModel->getEventById($id_event);
+        $result['kuota_terkonfirmasi']=$this->tiketModel->countSisaKuota($id_event);
+        return $result;
     }
 
     public function addEvent(array $data)

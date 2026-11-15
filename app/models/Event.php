@@ -37,13 +37,43 @@ class Event
 
     public function mostRecentEvent(): array|null
     {
-        $sql = "SELECT e.nama_event, e.tanggal_mulai,
+        $sql = "SELECT e.id_event, e.nama_event, e.tanggal_mulai,
         e.tanggal_mulai, e.lokasi,e.deskripsi, u.singkatan
         FROM events e
         JOIN admin_ukm ak ON e.id_pembuat = ak.id_admin_ukm
         JOIN ukm u ON ak.id_ukm = u.id_ukm
         ORDER BY id_event DESC LIMIT 1";
         $stmt = $this->pdo->query($sql);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $hari = [
+            'Minggu',
+            'Senin',
+            'Selasa',
+            'Rabu',
+            'Kamis',
+            'Jumat',
+            'Sabtu'
+        ];
+
+        $tanggal = new DateTime($result['tanggal_mulai']);
+        $namaHari = $hari[(int) $tanggal->format('w')];
+        $result['hari'] = $namaHari;
+        return $result;
+    }
+
+    public function getEventById(int $id_event)
+    {
+        $sql = "SELECT e.nama_event, e.tanggal_mulai,
+        e.tanggal_selesai, e.lokasi,e.deskripsi, e.harga,
+        e.poster, e.kuota, u.nama_ukm, u.singkatan, u.logo, 
+        us.nama, us.no_hp
+        FROM events e
+        JOIN admin_ukm ak ON e.id_pembuat = ak.id_admin_ukm
+        JOIN ukm u ON ak.id_ukm = u.id_ukm
+        JOIN pengguna us ON ak.id_pengguna = us.id_pengguna
+        WHERE id_event=  :id_event";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['id_event' => $id_event]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         $hari = [
             'Minggu',

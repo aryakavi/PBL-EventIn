@@ -83,7 +83,10 @@
                 <div class="featured-detail">
                     <h3><?= e($featured['nama_event']) ?></h3>
                     <p><?= e($featured['deskripsi']) ?></p>
-                    <a class="btn btn-primary" href="<?= e($routes['detail']) ?>">Lihat Detail Acara</a>
+                    <form action="<?= e($routes['daftar_event']) ?>" method="post">
+                        <input type="hidden" name="id_event" value="<?= e($featured['id_event']) ?>">
+                        <button class="btn btn-primary" type="submit">Lihat Detail Acara</button>
+                    </form>
                 </div>
             </div>
         </section>
@@ -116,13 +119,16 @@
                         <div class="event-body">
                             <h3><?= e($ev['nama_event']) ?></h3>
                             <div class="event-meta">
-                                <p>Tanggal: <?= e(date('d M Y : H:i', strtotime($ev['tanggal_mulai']))) ?></p>
+                                <p>Tanggal: <?= e(format_tanggal($ev['tanggal_mulai'])) ?></p>
                                 <p>Lokasi: <?= e($ev['lokasi']) ?></p>
                             </div>
                             <div class="event-footer">
-                                <span class="price">Rp.<?= e($ev['harga']) ?></span>
-                                <a class="btn btn-primary" href="<?= e($routes['daftar_event']) ?>">Daftar</a>
+                                <span class="price">Rp.<?= e(format_angka($ev['harga'])) ?></span>
+                                <form action="<?= e($routes['daftar_event']) ?>" method="post">
+                                    <input type="hidden" name="id_event" value="<?= (int)$ev['id_event'] ?>">
+                                    <button class="btn btn-primary">Daftar</button>
                             </div>
+                            </form>
                         </div>
                     </article>
                 <?php endforeach; ?>

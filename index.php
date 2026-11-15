@@ -134,6 +134,15 @@ if ($page === 'tiket') {
     require __DIR__ . '/app/views/tiket-saya.php';
 }
 
+if ($page==='detail_event') {
+    if(!isset($_POST['id_event'])){
+        header('Location: ?page=home');
+        exit;
+    }
+    $ev=$eventController->getDetailEvent((int) $_POST['id_event']);
+    require __DIR__.'/app/views/detail-event.php';
+}
+
 if ($page === 'daftar_event') {
     require __DIR__ . '/app/views/pembayaran.php';
 }
