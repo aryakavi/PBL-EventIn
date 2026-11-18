@@ -111,7 +111,7 @@
                 <?php foreach ($eventsDb as $ev):
                     $img = $storageModel->getImage($ev['poster']) ?>
                     <article class="event-card"
-                        data-category="<?= e($ev['nama_kategori']) ?>">
+                        data-category="<?= e($ev['nama_kategori']) ?>" style="display: <?= strtotime($ev['tanggal_mulai']) < time() ? 'none' : '' ?>;">
                         <div class="event-cover cover-<?= $ev['id_event'] ?>"
                             <?php if ($img): ?>style="background-image: url('<?= e($img) ?>');" <?php endif; ?>>
                             <span class="event-badge"><?= e(strtoupper($ev['nama_kategori'])) ?></span>

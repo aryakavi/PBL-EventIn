@@ -131,23 +131,33 @@ if ($page === 'admin') {
 }
 
 if ($page === 'tiket') {
+    require_once __DIR__ . '/app/controllers/PendaftaranController.php';
+    $daftarController = new PendaftaranController($pdo);
+    $daftarTiket= $daftarController->fetchHalamanTiket($_SESSION['user']['id_pengguna']);
     require __DIR__ . '/app/views/tiket-saya.php';
 }
 
-if ($page==='detail_event') {
-    if(!isset($_POST['id_event'])){
+if ($page === 'detail_event') {
+    if (!isset($_POST['id_event'])) {
         header('Location: ?page=home');
         exit;
     }
-    $ev=$eventController->getDetailEvent((int) $_POST['id_event']);
-    require __DIR__.'/app/views/detail-event.php';
+    $ev = $eventController->getDetailEvent((int) $_POST['id_event']);
+    require __DIR__ . '/app/views/detail-event.php';
 }
 
-if ($page === 'daftar_event') {
+if ($page === 'pembayaran') {
+    // if (!isset($_POST['id_event'])) {
+    //     header('Location: ?page=home');
+    //     exit;
+    // }
     require __DIR__ . '/app/views/pembayaran.php';
 }
 
 if ($page === 'konfirmasi_pembayaran') {
+    require_once __DIR__ . '/app/controllers/PendaftaranController.php';
+    $daftarController = new PendaftaranController($pdo);
+    $result = $daftarController->pesanTiket($_POST['id_event'], $_SESSION['user']['id_pengguna'], $_POST['status']);
     require __DIR__ . '/app/views/konfirmasi-pembayaran.php';
 }
 
@@ -179,8 +189,8 @@ if ($page === 'admin/tambah-event') {
         exit;
     }
 
-    if ($_SERVER['REQUEST_METHOD']=='POST') {
-        $result=$eventController->addEvent($_POST);
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $result = $eventController->addEvent($_POST);
     }
 
     exit;
@@ -213,6 +223,7 @@ if ($page === 'admin/qr') {
         header('Location: ./');
         exit;
     }
+    $daftarQrEvent=$eventController->getEventByUkmID($_SESSION['user']['id_ukm']);
     require __DIR__ . '/app/views/admin/qr.php';
     exit;
 }
@@ -248,9 +259,9 @@ if ($page === 'home') {
     $stats = $dashboardController->index();
     $featured = $dashboardController->recentEvent();
     array_unshift(
-    $categories,
-    ['nama_kategori' => 'Semua']
-);
+        $categories,
+        ['nama_kategori' => 'Semua']
+    );
 
 
     require __DIR__ . '/app/views/home.php';

@@ -63,7 +63,7 @@ class Event
 
     public function getEventById(int $id_event)
     {
-        $sql = "SELECT e.nama_event, e.tanggal_mulai,
+        $sql = "SELECT e.id_event, e.nama_event, e.tanggal_mulai,
         e.tanggal_selesai, e.lokasi,e.deskripsi, e.harga,
         e.poster, e.kuota, u.nama_ukm, u.singkatan, u.logo, 
         us.nama, us.no_hp
@@ -91,7 +91,18 @@ class Event
         return $result;
     }
 
-
+    public function getEventByIdUkm(int $idUkm)
+    {
+        $sql="SELECT e.nama_event, e.id_event FROM events e
+        INNER JOIN admin_ukm ak on e.id_pembuat= ak.id_admin_ukm
+        INNER JOIN ukm u on ak.id_ukm = u.id_ukm
+        WHERE u.id_ukm = :id_ukm";
+        $stmt=$this->pdo->prepare($sql);
+        $stmt->execute([
+            'id_ukm'=>$idUkm
+        ]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     public function insert(
         $id_pembuat,

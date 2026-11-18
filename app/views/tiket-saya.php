@@ -4,6 +4,7 @@ if (!isset($_SESSION['user'])) {
     exit;
 }
 require __DIR__ . '/../../includes/icons.php';
+require_once __DIR__ . '/../../includes/qr.php';
 /**
  * Variabel yang dikirim dari index.php
  *
@@ -30,6 +31,43 @@ if (!isset($_SESSION['user'])) {
     ];
 }
 
+$tiketTampilan = [];
+
+foreach ($daftarTiket as $t) {
+
+    // Tentukan status tiket
+    if ($t['status_bayar'] !== 'Lunas') {
+        $status = 'batal';
+    } else if (
+       !isset($t['check_in_by']) == null ||
+        strtotime($t['tanggal_selesai']) < time()
+    ) {
+        $status = 'selesai';
+    } else {
+        $status = 'aktif';
+    }
+
+    $tiketTampilan[] = [
+        'id'       => 'tiket-' . $t['id_tiket'],
+        'kategori' => mb_strtolower($t['nama_kategori']),
+        'status'   => $status,
+        'judul'    => $t['nama_event'],
+        'tanggal'  => format_tanggal($t['tanggal_mulai']),
+        'lokasi'   => $t['lokasi'],
+        'gambar'   => $storageModel->getImage($t['poster']),
+        'kode'     => $t['kode_qr'],
+        'pemilik'  => $_SESSION['user']['nama'],
+        'nim'      => $t['nim'] ?? '-',
+        'akses'    => 'Peserta',
+        'meja'     => '-',
+        'jam'     => format_jam($t['tanggal_mulai'])
+            . ' WIB',
+        'terbuka'  => false,
+    ];
+}
+
+$daftarTiket = $tiketTampilan;
+
 $jmlStatus = ['aktif' => 0, 'selesai' => 0, 'batal' => 0];
 foreach ($daftarTiket as $t) {
     $jmlStatus[$t['status']]++;
@@ -40,6 +78,7 @@ foreach ($daftarTiket as $t) {
 
 <head>
     <?php
+
     $pageTitle  = 'Tiket Elektronik Saya';
     $assetBase  = '../../assets';
     $pageStyles = ['style.css'];
@@ -119,7 +158,10 @@ foreach ($daftarTiket as $t) {
                         <!-- Kolom Kiri: QR Code -->
                         <div class="ticket-qr-box">
                             <div class="ticket-qr-frame">
-                                <?= qr_icon('besar') ?>
+                                <img
+                                    src="<?= e(generate_qr($t['kode'])) ?>"
+                                    alt="QR Code Tiket"
+                                    style="width: 100%; height: 100%; object-fit: contain;">
                             </div>
                             <div class="ticket-qr-caption">
                                 <strong><span class="qr-mini-icon" aria-hidden="true"><?= icon('shield-check') ?></span> Scan saat tiba di lokasi</strong>
@@ -160,7 +202,7 @@ foreach ($daftarTiket as $t) {
 
                                 <div class="cred-footer">
                                     <span><strong class="seat-icon" aria-hidden="true"><?= icon('seat') ?></strong> Alokasi Meja: <strong><?= e($t['meja']) ?></strong></span>
-                                    <span>Sesi: <strong><?= e($t['sesi']) ?></strong></span>
+                                    <span>Jam: <strong><?= e($t['jam']) ?></strong></span>
                                 </div>
                             </div>
 

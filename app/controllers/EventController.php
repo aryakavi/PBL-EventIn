@@ -32,8 +32,13 @@ class EventController
     public function getDetailEvent(int $id_event): array
     {
         $result=$this->eventModel->getEventById($id_event);
-        $result['kuota_terkonfirmasi']=$this->tiketModel->countSisaKuota($id_event);
+        $result['kuota_terkonfirmasi']=$this->tiketModel->countJumlahPendaftar($id_event);
         return $result;
+    }
+
+    public function getEventByUkmID(int $idUkm)
+    {
+        return $this->eventModel->getEventByIdUkm($idUkm);
     }
 
     public function addEvent(array $data)

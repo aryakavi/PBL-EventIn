@@ -31,7 +31,7 @@ function format_tanggal_jam($tanggal): string
         IntlDateFormatter::NONE,
         'Asia/Jakarta',
         IntlDateFormatter::GREGORIAN,
-         "EEEE, d MMMM yyyy (HH.mm)"
+        "EEEE, d MMMM yyyy (HH.mm)"
     );
 
     return $format->format(strtotime($tanggal));
@@ -45,7 +45,7 @@ function format_tanggal($tanggal): string
         IntlDateFormatter::NONE,
         'Asia/Jakarta',
         IntlDateFormatter::GREGORIAN,
-         "EEEE, d MMMM yyyy"
+        "EEEE, d MMMM yyyy"
     );
 
     return $format->format(strtotime($tanggal));
@@ -88,8 +88,8 @@ $routes = [
     'register-admin' => '?page=register-admin',
     'tiket' => '?page=tiket',
     'daftar_event' => '?page=detail_event',
-    'detail'    => '#'  // event-detail.php
-
+    'konfirmasi' => '?page=konfirmasi_pembayaran',
+    'pembayaran'    => '?page=pembayaran'  // event-detail.php
 ];
 
 $stats = [];
@@ -341,7 +341,7 @@ $konfigurasiStatus = [
         'judul'       => 'Pemesanan Tiket Berhasil!',
         'deskripsi'   => 'Terima kasih, pembayaran Anda telah diverifikasi otomatis oleh sistem. E-tiket resmi dan invoice digital telah dikirimkan ke <strong>{email}</strong>.',
         'badge_label' => 'Lunas Otomatis',
-        'btn_utama'   => ['teks' => 'Lihat &amp; Unduh Tiket Saya', 'ikon' => 'ticket', 'href' => 'tiket-saya.php', 'class' => 'btn-primary'],
+        'btn_utama'   => ['teks' => 'Lihat &amp; Unduh Tiket Saya', 'ikon' => 'ticket', 'href' => $routes['tiket'], 'class' => 'btn-primary'],
         'btn_kedua'   => ['teks' => 'Unduh Invoice (PDF)', 'ikon' => 'download', 'href' => '#'],
     ],
 

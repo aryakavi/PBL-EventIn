@@ -37,8 +37,8 @@ if (!isset($_SESSION['user'])) {
 }
 
 // Status simulasi aktif: 'gagal' | 'menunggu' | 'sukses'
-$status = $_GET['status'] ?? 'sukses';
-if (!in_array($status, ['gagal', 'menunggu', 'sukses'], true)) {
+$status = strtolower($_POST['status']);
+if ($status == 'lunas') {
     $status = 'sukses';
 }
 
@@ -80,17 +80,17 @@ $statusAktif['deskripsi'] = str_replace('{email}', $emailHtml, $statusAktif['des
 
         <!-- Bar Simulasi Status -->
         <div class="sim-switcher" role="tablist" aria-label="Simulasi Status Pembayaran">
-            <a href="?page=konfirmasi_pembayaran&status=gagal" class="sim-tab<?= $status === 'gagal' ? ' is-active' : '' ?>">
+            <a href="?page=konfirmasi_pembayaran&status=gagal" class="sim-tab<?= $status === 'gagal' ? ' is-active' : '' ?>" style="display: <?= $status === 'gagal' ? '' : 'none' ?>;">
                 <span class="sim-dot dot-danger"></span>
-                Simulasi: Batas Waktu / Gagal
+                Batas Waktu / Gagal
             </a>
-            <a href="?page=konfirmasi_pembayaran&status=menunggu" class="sim-tab<?= $status === 'menunggu' ? ' is-active' : '' ?>">
+            <a href="?page=konfirmasi_pembayaran&status=menunggu" class="sim-tab<?= $status === 'menunggu' ? ' is-active' : '' ?>" style="display: <?= $status === 'menunggu' ? '' : 'none' ?>;">
                 <span class="sim-dot dot-warning"></span>
-                Simulasi: Menunggu Verifikasi
+                Menunggu Verifikasi
             </a>
-            <a href="?page=konfirmasi_pembayaran&status=sukses" class="sim-tab<?= $status === 'sukses' ? ' is-active' : '' ?>">
+            <a href="?page=konfirmasi_pembayaran&status=sukses" class="sim-tab<?= $status === 'sukses' ? ' is-active' : '' ?>" style="display: <?= $status === 'sukses' ? '' : 'none' ?>;">
                 <span class="sim-dot dot-success"></span>
-                Simulasi: Sukses Terverifikasi
+                Sukses Terverifikasi
             </a>
         </div>
 

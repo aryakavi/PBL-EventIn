@@ -9,11 +9,11 @@ $organizer = [
     'inisial' => 'H',
 ];
 
-$daftarQrEvent = [
-    'simposium-ai'     => 'Simposium Nasional AI',
-    'workshop-nocode'  => 'Workshop No-Code App',
-    'kompetisi-uiux'   => 'Kompetisi UI/UX Nasional',
-];
+// $daftarQrEvent = [
+//     'simposium-ai'     => 'Simposium Nasional AI',
+//     'workshop-nocode'  => 'Workshop No-Code App',
+//     'kompetisi-uiux'   => 'Kompetisi UI/UX Nasional',
+// ];
 
 $menu = [
     ['label' => 'Dashboard',  'href' => 'admin',       'key' => 'dashboard'],

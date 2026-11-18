@@ -59,3 +59,34 @@
         btn.setAttribute('aria-expanded', 'false');
     });
 })();
+
+// QR Code Scanner
+(function () {
+    var reader = document.getElementById('reader');
+
+    if (!reader || typeof Html5Qrcode === 'undefined') {
+        return;
+    }
+
+    var scanner = new Html5Qrcode('reader');
+
+    scanner.start(
+        { facingMode: 'environment' },
+        {
+            fps: 10,
+            qrbox: {
+                width: 250,
+                height: 250
+            }
+        },
+        function (decodedText) {
+            console.log('QR terbaca:', decodedText);
+            scanner.stop();
+        },
+        function (errorMessage) {
+            // QR belum terbaca
+        }
+    ).catch(function (error) {
+        console.error('Kamera gagal dibuka:', error);
+    });
+})();

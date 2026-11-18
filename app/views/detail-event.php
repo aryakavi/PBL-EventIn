@@ -112,8 +112,13 @@ if (isset($ev)) {
                                 <div class="quota-bar" style="width: <?= (int)($ev['kuota_terkonfirmasi'] / $ev['kuota'] * 100) ?>%;"></div>
                             </div>
                         </div>
-
-                        <a href="<?= e($base . 'app/views/pembayaran.php') ?>" class="btn btn-primary btn-block">Daftar Sekarang</a>
+                        <form action="<?= $ev['harga'] == 0 ? $routes['konfirmasi'] : $routes['pembayaran'] ?>" method="post">
+                            <?php if ($ev['harga'] == 0) { ?>
+                                <input type="hidden" name="status" value="Lunas">
+                            <?php } ?>
+                            <input type="hidden" name="id_event" value=<?= $ev['id_event'] ?>>
+                            <button type="submit" class="btn btn-primary btn-block">Daftar Sekarang</button>
+                        </form>
 
                         <hr class="booking-divider">
 
