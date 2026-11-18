@@ -14,6 +14,8 @@ $aktif = function ($key) use ($activeNav) {
     return $activeNav === $key ? ' is-active' : '';
 };
 
+$navAnchors = $navAnchors ?? [];
+
 $base = $base ?? '';
 ?>
 <header class="navbar user-navbar">
@@ -23,9 +25,9 @@ $base = $base ?? '';
     </div>
 
     <nav class="user-nav" aria-label="Menu utama">
-        <a href="<?= e($base . $routes['home']) ?>" class="user-nav-link<?= $aktif('home') ?>">Beranda</a>
-        <a href="<?= e($routes['explore']) ?>" class="user-nav-link<?= $aktif('explore') ?>">Jelajah Event</a>
-        <a href="<?= e($routes['partners']) ?>" class="user-nav-link<?= $aktif('partners') ?>">Mitra</a>
+        <a href="<?= e($navAnchors['home'] ?? $base . $routes['home']) ?>" class="user-nav-link<?= $aktif('home') ?>">Beranda</a>
+        <a href="<?= e($navAnchors['explore'] ?? $routes['explore']) ?>" class="user-nav-link<?= $aktif('explore') ?>">Jelajah Event</a>
+        <a href="<?= e($navAnchors['partners'] ?? $routes['partners']) ?>" class="user-nav-link<?= $aktif('partners') ?>">Mitra</a>
         <?php if ($login): ?>
             <a href="<?= e($base . $routes['tiket']) ?>" class="user-nav-link<?= $aktif('tiket') ?>">Tiket Saya</a>
         <?php endif; ?>

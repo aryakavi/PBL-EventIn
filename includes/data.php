@@ -348,3 +348,95 @@ $event = [
     'paragraf_1'     => 'Kegiatan workshop ini dirancang untuk membantu mahasiswa memahami cara membangun aplikasi seluler secara praktis tanpa harus menulis kode pemrograman dari awal. Peserta akan mempelajari perancangan antarmuka, pengelolaan basis data visual, hingga proses publikasi prototipe aplikasi.',
     'paragraf_2'     => 'Seluruh peserta yang terdaftar akan mendapatkan modul praktik digital, pendampingan langsung bersama praktisi industri, serta sertifikat resmi sebagai bukti partisipasi kegiatan akademik.',
 ];
+
+// ===== Data halaman beranda (landing) =====
+
+$statistikHero = [
+    ['angka' => '500+', 'label' => 'Event Terdaftar'],
+    ['angka' => '10K+', 'label' => 'Peserta Aktif'],
+    ['angka' => '100+', 'label' => 'Mitra Industri'],
+    ['angka' => '50+',  'label' => 'Mitra Kampus'],
+];
+
+$katalogEvent = [
+    ['no' => 1, 'kategori' => 'SEMINAR',   'warna' => 'orange', 'gambar' => 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=600&q=80'],
+    ['no' => 2, 'kategori' => 'WORKSHOP',  'warna' => 'purple', 'gambar' => 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=600&q=80'],
+    ['no' => 3, 'kategori' => 'KOMPETISI', 'warna' => 'pink',   'gambar' => 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80'],
+    ['no' => 4, 'kategori' => 'WEBINAR',   'warna' => 'blue',   'gambar' => 'https://images.unsplash.com/photo-1591115765373-5207764f72e7?auto=format&fit=crop&w=600&q=80'],
+    ['no' => 5, 'kategori' => 'SEMINAR',   'warna' => 'orange', 'gambar' => 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=600&q=80'],
+    ['no' => 6, 'kategori' => 'WORKSHOP',  'warna' => 'purple', 'gambar' => 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=600&q=80'],
+    ['no' => 7, 'kategori' => 'KOMPETISI', 'warna' => 'pink',   'gambar' => 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=600&q=80'],
+    ['no' => 8, 'kategori' => 'WEBINAR',   'warna' => 'blue',   'gambar' => 'https://images.unsplash.com/photo-1559223607-a43c990c692c?auto=format&fit=crop&w=600&q=80'],
+    ['no' => 9, 'kategori' => 'SEMINAR',   'warna' => 'orange', 'gambar' => 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=600&q=80'],
+];
+
+$daftarOrganisasi = [
+    'BEM POLINEMA',
+    'HMTI POLINEMA',
+    'HME POLINEMA',
+    'UKM WORKSHOP',
+    'UKM RISET & INOVASI',
+    'GDSC CAMPUS',
+];
+
+$fiturMitra = [
+    [
+        'ikon'  => '&#128179;',
+        'warna' => 'orange',
+        'judul' => 'Manajemen Tiket Cepat & Transparan',
+        'deskripsi' => 'Tiket gratis maupun berbayar dengan auto-verifikasi QRIS dan transfer. Rekap dana langsung tersinkronisasi tanpa rekap manual.',
+        'tag'   => 'QRIS & Virtual Account Siap',
+    ],
+    [
+        'ikon'  => '&#127941;',
+        'warna' => 'blue',
+        'judul' => 'E-Sertifikat Terintegrasi SKPI',
+        'deskripsi' => 'Generator template otomatis dengan QR verifikasi keaslian sertifikat yang diakui universitas untuk poin kelulusan SKPI.',
+        'tag'   => 'Validasi Hash Akademik',
+    ],
+    [
+        'ikon'  => '&#9638;',
+        'warna' => 'orange',
+        'judul' => 'Presensi QR Code Real-time',
+        'deskripsi' => 'Check-in cepat di pintu masuk gedung/lab tanpa antrean panjang. Scanner langsung dari kamera ponsel panitia.',
+        'tag'   => 'Anti-Duplikasi Tiket',
+    ],
+    [
+        'ikon'  => '&#128202;',
+        'warna' => 'blue',
+        'judul' => 'Laporan & Analitik Peserta',
+        'deskripsi' => 'Statistik demografi jurusan, tingkat kehadiran, dan rekap keuangan transparan siap diekspor dalam format Excel atau PDF LPJ.',
+        'tag'   => 'Ekspor LPJ Instan',
+    ],
+];
+
+$langkahMitra = [
+    ['no' => 1, 'judul' => 'Registrasi Organisasi',     'teks' => 'Daftarkan nama organisasi Anda (HMP/UKM/BEM/Komunitas) beserta data ketua umum organisasi.'],
+    ['no' => 2, 'judul' => 'Verifikasi Kampus',         'teks' => 'Tim EventIn memverifikasi keabsahan institusi dalam waktu maksimal 1x24 jam.'],
+    ['no' => 3, 'judul' => 'Daftarkan Akun Admin UKM',  'teks' => 'Daftarkan Admin yang akan memegang seluruh data event, peserta, dan detail event.'],
+    ['no' => 4, 'judul' => 'Buat & Publikasikan Event', 'teks' => 'Atur detail event, kuota tiket, harga, kriteria peserta, dan unggah pamflet banner resmi acara Anda.'],
+    ['no' => 5, 'judul' => 'Kelola Peserta & Sertifikat','teks' => 'Gunakan pemindai QR saat acara berlangsung dan kirim e-sertifikat terakreditasi langsung ke email mahasiswa.'],
+];
+
+$daftarFaqBeranda = [
+    [
+        'tanya' => 'Apakah platform ini gratis bagi seluruh mahasiswa?',
+        'jawab' => 'Ya, pembuatan akun mahasiswa dan pendaftaran untuk seluruh kegiatan seminar, workshop, maupun webinar tidak dikenakan biaya langganan bulanan.',
+    ],
+    [
+        'tanya' => 'Bagaimana cara melakukan verifikasi e-sertifikat yang sah?',
+        'jawab' => 'Setiap e-sertifikat dilengkapi kode QR dan nomor seri unik yang dapat dipindai langsung oleh pihak akademik untuk memvalidasi keikutsertaan mahasiswa pada sistem SKPI.',
+    ],
+    [
+        'tanya' => 'Metode pembayaran apa saja yang saat ini didukung?',
+        'jawab' => 'Kami mendukung pembayaran instan melalui QRIS Mandiri, Virtual Account bank nasional, dompet digital (E-Wallet), serta transfer bank terbuka.',
+    ],
+    [
+        'tanya' => 'Bagaimana jika saya terlambat menghadiri event yang sudah dibeli?',
+        'jawab' => 'Peserta tetap dapat melakukan pemindaian QR check-in selama sesi presensi belum ditutup oleh panitia penyelenggara di lokasi kegiatan.',
+    ],
+    [
+        'tanya' => 'Bagaimana cara mengajukan pengembalian dana (refund)?',
+        'jawab' => 'Pengajuan refund dapat dilakukan melalui menu Tiket Saya paling lambat 3 hari sebelum kegiatan berlangsung atau apabila acara resmi dibatalkan oleh penyelenggara.',
+    ],
+];

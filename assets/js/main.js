@@ -175,3 +175,123 @@
 
     applyFilter();
 })();
+
+// 7. Jelajah event beranda: filter pill kategori & pencarian judul
+(function () {
+    var pills = document.querySelectorAll('[data-filter-cat]');
+    var cards = document.querySelectorAll('.catalog-card');
+
+    if (!cards.length) {
+        return;
+    }
+
+    var search = document.getElementById('explore-search');
+    var activeCat = 'ALL';
+
+    function applyFilter() {
+        var keyword = search ? search.value.trim().toLowerCase() : '';
+
+        cards.forEach(function (card) {
+            var cat = card.getAttribute('data-category');
+            var titleEl = card.querySelector('.catalog-title');
+            var title = titleEl ? titleEl.textContent.toLowerCase() : '';
+            var matchCat = activeCat === 'ALL' || cat === activeCat;
+            var matchKey = keyword === '' || title.indexOf(keyword) !== -1;
+            card.style.display = (matchCat && matchKey) ? '' : 'none';
+        });
+    }
+
+    pills.forEach(function (pill) {
+        pill.addEventListener('click', function () {
+            pills.forEach(function (p) { p.classList.remove('is-active'); });
+            pill.classList.add('is-active');
+            activeCat = pill.getAttribute('data-filter-cat');
+            applyFilter();
+        });
+    });
+
+    if (search) {
+        search.addEventListener('input', applyFilter);
+    }
+})();
+
+// 8. Accordion FAQ beranda
+(function () {
+    var questions = document.querySelectorAll('.faq-question');
+
+    if (!questions.length) {
+        return;
+    }
+
+    questions.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var answer = btn.nextElementSibling;
+
+            if (!answer) {
+                return;
+            }
+
+            var isOpen = !answer.hasAttribute('hidden');
+            if (isOpen) {
+                answer.setAttribute('hidden', '');
+                btn.setAttribute('aria-expanded', 'false');
+            } else {
+                answer.removeAttribute('hidden');
+                btn.setAttribute('aria-expanded', 'true');
+            }
+        });
+    });
+})();
+
+// 9. Scrollspy navbar beranda: highlight menu sesuai section yang tampil
+(function () {
+    var sections = document.querySelectorAll('.scroll-section');
+
+    if (!sections.length) {
+        return;
+    }
+
+    var links = [];
+    sections.forEach(function (sec) {
+        var link = document.querySelector('.user-nav-link[href="#' + sec.id + '"]');
+        if (link) {
+            links.push({ link: link, section: sec });
+        }
+    });
+
+    if (!links.length) {
+        return;
+    }
+
+    var OFFSET = 80;
+
+    function updateActive() {
+        var pos = window.scrollY + OFFSET;
+        var current = links[0];
+
+        links.forEach(function (item) {
+            if (item.section.offsetTop <= pos) {
+                current = item;
+            }
+        });
+
+        links.forEach(function (item) {
+            item.link.classList.toggle('is-active', item === current);
+        });
+    }
+
+    var ticking = false;
+    window.addEventListener('scroll', function () {
+        if (ticking) {
+            return;
+        }
+        ticking = true;
+        window.requestAnimationFrame(function () {
+            updateActive();
+            ticking = false;
+        });
+    });
+
+    window.addEventListener('hashchange', updateActive);
+    updateActive();
+})();
