@@ -62,72 +62,64 @@
 
 // QR Code Scanner
 (function () {
-  var reader = document.getElementById("reader");
+    var reader = document.getElementById('reader');
 
-  if (!reader || typeof Html5Qrcode === "undefined") {
-    return;
-  }
-
-  var scanner = new Html5Qrcode("reader");
-
-  Html5Qrcode.getCameras()
-    .then(function (cameras) {
-      if (cameras.length === 0) {
-        alert("Kamera tidak ditemukan.");
+    if (!reader || typeof Html5Qrcode === 'undefined') {
         return;
-      }
+    }
 
-      console.log("Daftar kamera:", cameras);
+    var scanner = new Html5Qrcode('reader');
 
-      // Prioritaskan kamera belakang.
-      var kamera = cameras.find(function (camera) {
-        return /back|rear|environment|belakang/i.test(camera.label);
-      });
+    Html5Qrcode.getCameras().then(function (cameras) {
+        if (cameras.length === 0) {
+            alert('Kamera tidak ditemukan.');
+            return;
+        }
 
-      // Jika tidak ditemukan, pilih kamera fisik pertama.
-      if (!kamera) {
-        kamera = cameras.find(function (camera) {
-          return !/virtual|obs/i.test(camera.label);
+        console.log('Daftar kamera:', cameras);
+
+        // Prioritaskan kamera belakang.
+        var kamera = cameras.find(function (camera) {
+            return /back|rear|environment|belakang/i.test(camera.label);
         });
-      }
 
-      if (!kamera) {
-        alert("Kamera tidak ditemukan.");
-        return;
-      }
-
-      console.log("Kamera dipilih:", kamera);
-
-      scanner
-        .start(
-          kamera.id,
-          {
-            fps: 10,
-            qrbox: function (viewfinderWidth, viewfinderHeight) {
-              var size = Math.min(viewfinderWidth, viewfinderHeight) * 0.75;
-
-              return {
-                width: Math.floor(size),
-                height: Math.floor(size),
-              };
-            },
-          },
-          function (decodedText) {
-            console.log("QR terbaca:", decodedText);
-
-            scanner.stop().catch(function (error) {
-              console.error("Gagal menghentikan scanner:", error);
+        // Jika tidak ditemukan, pilih kamera fisik pertama.
+        if (!kamera) {
+            kamera = cameras.find(function (camera) {
+                return !/virtual|obs/i.test(camera.label);
             });
-          },
-          function (errorMessage) {},
-        )
-        .catch(function (error) {
-          console.error("Kamera gagal dibuka:", error);
-          alert("Gagal membuka kamera: " + error);
+        }
+
+        if (!kamera) {
+            alert('Kamera tidak ditemukan.');
+            return;
+        }
+
+        console.log('Kamera dipilih:', kamera);
+
+        scanner.start(
+            kamera.id,
+            {
+                fps: 10,
+                qrbox: {
+                    width: 250,
+                    height: 250
+                }
+            },
+            function (decodedText) {
+                console.log('QR terbaca:', decodedText);
+
+                scanner.stop().catch(function (error) {
+                    console.error('Gagal menghentikan scanner:', error);
+                });
+            },
+            function (errorMessage) {}
+        ).catch(function (error) {
+            console.error('Kamera gagal dibuka:', error);
+            alert('Gagal membuka kamera: ' + error);
         });
-    })
-    .catch(function (error) {
-      console.error("Gagal mendeteksi kamera:", error);
-      alert("Gagal mendeteksi kamera:", error);
+    }).catch(function (error) {
+        console.error('Gagal mendeteksi kamera:', error);
+        alert('Gagal mendeteksi kamera:', error);
     });
 })();
