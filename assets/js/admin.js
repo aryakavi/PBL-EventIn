@@ -61,7 +61,6 @@
 })();
 
 // QR Code Scanner
-// QR Code Scanner
 (function () {
     var reader = document.getElementById('reader');
 
@@ -77,17 +76,25 @@
             return;
         }
 
-        // Prioritaskan kamera fisik, bukan kamera virtual OBS.
+        console.log('Daftar kamera:', cameras);
+
+        // Prioritaskan kamera belakang.
         var kamera = cameras.find(function (camera) {
-            return !/virtual|obs/i.test(camera.label);
+            return /back|rear|environment|belakang/i.test(camera.label);
         });
 
+        // Jika tidak ditemukan, pilih kamera fisik pertama.
         if (!kamera) {
-            alert('Kamera fisik tidak ditemukan.');
+            kamera = cameras.find(function (camera) {
+                return !/virtual|obs/i.test(camera.label);
+            });
+        }
+
+        if (!kamera) {
+            alert('Kamera tidak ditemukan.');
             return;
         }
 
-        console.log('Daftar kamera:', cameras);
         console.log('Kamera dipilih:', kamera);
 
         scanner.start(
@@ -106,15 +113,13 @@
                     console.error('Gagal menghentikan scanner:', error);
                 });
             },
-            function (errorMessage) {
-                // QR belum terbaca.
-            }
+            function (errorMessage) {}
         ).catch(function (error) {
             console.error('Kamera gagal dibuka:', error);
             alert('Gagal membuka kamera: ' + error);
         });
     }).catch(function (error) {
         console.error('Gagal mendeteksi kamera:', error);
-        alert('Gagal mendeteksi kamera: ' + error);
+        alert('Gagal mendeteksi kamera:', error);
     });
 })();
