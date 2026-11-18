@@ -1049,6 +1049,27 @@ ul { list-style: none; }
     gap: 10px;
 }
 
+.scanner-box {
+    background: #000;
+    position: relative;
+    overflow: hidden;
+}
+
+#reader {
+    width: 100%;
+    border: none !important;
+}
+
+#reader video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+}
+
+#reader img {
+    display: none;
+}
+
 /* ===== Responsif ===== */
 @media (max-width: 1100px) {
     .kpi { grid-template-columns: repeat(2, 1fr); }

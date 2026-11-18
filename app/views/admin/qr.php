@@ -56,8 +56,11 @@ $qrAktif = $eventDipilih !== null;
                         <h2 class="qr-section-title">Pemindai Kamera Aktif</h2>
                         <div class="scanner-box">
                             <div id="reader"></div>
+
                             <strong class="scanner-title">Arahkan QR Code ke Kamera</strong>
-                            <p class="scanner-sub">Arahkan QR Code peserta ke kamera untuk memindai tiket</p>
+                            <p class="scanner-sub">
+                                Arahkan QR Code peserta ke kamera untuk memindai tiket
+                            </p>
                         </div>
                     </div>
 

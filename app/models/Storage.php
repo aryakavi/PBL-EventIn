@@ -2,8 +2,8 @@
 
 class Storage
 {
-    private $supabaseUrl ='https://aypwdgvqcizpsnccrfwc.supabase.co';
-    private $apiKey = 'sb_secret_fMi95mTB27Kv_HHcNUSS6w_TMcFhhNq';
+    private $supabaseUrl = 'https://aypwdgvqcizpsnccrfwc.supabase.co';
+    private $apiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cHdkZ3ZxY2l6cHNuY2NyZndjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MTkxODkxMCwiZXhwIjoyMTA3NDk0OTEwfQ.Ns_9FarrfdZJySFafzO4Q_F1Q-rEu3P4oWjIeIw-q6g';
 
     private $bucket = 'image_event';
     public function upload($file, $folder)
@@ -30,10 +30,10 @@ class Storage
             throw new Exception('Format gambar tidak didukung.');
         }
 
-        $filename = $folder. '/' . uniqid() . '.' . $allowed[$mime];
+        $filename = $folder . '/' . uniqid() . '.' . $allowed[$mime];
 
         $url = $this->supabaseUrl . '/storage/v1/object/'
-             . $this->bucket . '/' . $filename;
+            . $this->bucket . '/' . $filename;
 
         $content = file_get_contents($file['tmp_name']);
 
@@ -62,7 +62,8 @@ class Storage
         return $filename;
     }
 
-    public function getImage(string $path){
-        return $this->supabaseUrl. '/storage/v1/object/public/'. $this->bucket . '/' . $path;
+    public function getImage(string $path)
+    {
+        return $this->supabaseUrl . '/storage/v1/object/public/' . $this->bucket . '/' . $path;
     }
 }
