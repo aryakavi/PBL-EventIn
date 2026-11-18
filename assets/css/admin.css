@@ -1057,12 +1057,13 @@ ul { list-style: none; }
 
 #reader {
     width: 100%;
-    border: none !important;
+    min-height: 250px;
 }
 
 #reader video {
+    display: block;
     width: 100% !important;
-    height: 100% !important;
+    height: auto !important;
     object-fit: cover;
 }
 
