@@ -111,15 +111,19 @@
 
             if (hasil) {
               hasil.textContent = "Kode QR: " + decodedText;
-            } else {
-              console.error("Elemen hasil-qr tidak ditemukan!");
             }
+
+            console.log("Kamera masih berjalan:", scanner.isScanning);
           },
-          function (errorMessage) {},
+          function (errorMessage) {
+            // QR belum terbaca.
+          },
         )
+        .then(function () {
+          console.log("Scanner berhasil dijalankan.");
+        })
         .catch(function (error) {
           console.error("Kamera gagal dibuka:", error);
-          alert("Gagal membuka kamera: " + error);
         });
     })
     .catch(function (error) {
