@@ -105,17 +105,15 @@
             fps: 10,
           },
           function (decodedText) {
-            console.log("QR terbaca:", decodedText);
+            console.log("QR BERHASIL DIBACA:", decodedText);
 
             var hasil = document.getElementById("hasil-qr");
 
             if (hasil) {
               hasil.textContent = "Kode QR: " + decodedText;
+            } else {
+              console.error("Elemen hasil-qr tidak ditemukan!");
             }
-
-            scanner.stop().catch(function (error) {
-              console.error("Gagal menghentikan scanner:", error);
-            });
           },
           function (errorMessage) {},
         )
