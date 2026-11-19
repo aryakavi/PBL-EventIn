@@ -4,7 +4,10 @@ require __DIR__ . '/../../../includes/icons.php';
 $halamanAktif = 'qr';
 
 
-$eventDipilih = $_POST['event'] ?? null;
+$eventDipilih = isset($_POST['event']) && $_POST['event'] !== ''
+    ? (int) $_POST['event']
+    : null;
+// var_dump($_POST['event']);
 // if (!array_key_exists($eventDipilih, $daftarQrEvent)) {
 //     $eventDipilih = null;
 // }
