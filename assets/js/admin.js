@@ -107,6 +107,12 @@
           function (decodedText) {
             console.log("QR terbaca:", decodedText);
 
+            var hasil = document.getElementById("hasil-qr");
+
+            if (hasil) {
+              hasil.textContent = "Kode QR: " + decodedText;
+            }
+
             scanner.stop().catch(function (error) {
               console.error("Gagal menghentikan scanner:", error);
             });

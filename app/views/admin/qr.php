@@ -61,6 +61,7 @@ $qrAktif = $eventDipilih !== null;
                             <p class="scanner-sub">
                                 Arahkan QR Code peserta ke kamera untuk memindai tiket
                             </p>
+                            <p id="hasil-qr">Belum ada QR yang dipindai.</p>
                         </div>
                     </div>
 
