@@ -240,7 +240,7 @@ if ($page === 'admin/absensi') {
         );
 ?>
         <form id="redirectForm" action="?page=admin/qr" method="POST">
-            <input type="hidden" name="id_event" value="<?= htmlspecialchars($_POST['id_event']) ?>">
+            <input type="hidden" name="event" value="<?= htmlspecialchars($_POST['id_event']) ?>">
         </form>
 
         <script>

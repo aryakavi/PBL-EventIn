@@ -84,6 +84,7 @@ foreach ($daftarTiket as $t) {
     $pageStyles = ['style.css'];
     require __DIR__ . '/../../includes/head.php';
     ?>
+    
 </head>
 
 <body>
@@ -130,7 +131,7 @@ foreach ($daftarTiket as $t) {
 
         <!-- Daftar Kartu Tiket -->
         <section class="ticket-list">
-            <?php foreach ($daftarTiket as $t): ?>
+            <?php foreach ($daftarTiket as $t): var_dump($t)?>
                 <article class="ticket-card<?= $t['terbuka'] ? ' is-open' : '' ?>" id="<?= e($t['id']) ?>" data-nama="<?= e(mb_strtolower($t['judul'])) ?>" data-kategori="<?= e(mb_strtolower($t['kategori'])) ?>" data-status="<?= e($t['status']) ?>">
                     <!-- Bagian Atas (Ringkasan Event) -->
                     <div class="ticket-summary">

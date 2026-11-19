@@ -69,7 +69,7 @@
   }
 
   var scanner = new Html5Qrcode("reader");
-
+  var sudahScan = false;
   Html5Qrcode.getCameras()
     .then(function (cameras) {
       if (cameras.length === 0) {
@@ -107,13 +107,31 @@
               useBarCodeDetectorIfSupported: false,
             },
           },
-          function (decodedText) {
-            var inputKode = document.getElementById("kode-qr");
-            var formScan = document.getElementById("form-scan");
+          async function (decodedText) {
+            if (sudahScan) return;
+            sudahScan = true;
+            try {
+              // Ambil video yang dibuat html5-qrcode.
+              var video = reader.querySelector("video");
+              // Hentikan scanner dan tunggu stream ditutup.
+              await scanner.stop();
+              // Pastikan elemen video tidak lagi menggunakan stream.
+              if (video) {
+                video.pause();
+                video.srcObject = null;
+              }
+              // Baru kirim form.
+              var inputKode = document.getElementById("kode-qr");
+              var formScan = document.getElementById("form-scan");
 
-            if (inputKode && formScan) {
+              if (!inputKode || !formScan) {
+                throw new Error("Form scan tidak ditemukan.");
+              }
               inputKode.value = decodedText;
               formScan.submit();
+            } catch (error) {
+              console.error("Gagal menghentikan kamera:", error);
+              sudahScan = false;
             }
           },
           function (errorMessage) {

@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Event.php';
 require_once __DIR__ . '/../models/Ukm.php';
+require_once __DIR__ . '/../models/AdminUkm.php';
 
 
 class AuthController
@@ -10,6 +11,7 @@ class AuthController
     private User $userModel;
     private Event $eventModel;
     private Ukm $ukmModel;
+    private AdminUkm $adminModel;
 
     public function __construct(PDO $pdo)
     {
@@ -178,7 +180,7 @@ class AuthController
                 PASSWORD_DEFAULT
             );
 
-            $this->userModel->registerAdmin(
+            $this->adminModel->registerAdmin(
                 $nama,
                 $email,
                 $noHp !== '' ? $noHp : null,
