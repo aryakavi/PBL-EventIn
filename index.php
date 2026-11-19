@@ -133,7 +133,7 @@ if ($page === 'admin') {
 if ($page === 'tiket') {
     require_once __DIR__ . '/app/controllers/PendaftaranController.php';
     $daftarController = new PendaftaranController($pdo);
-    $daftarTiket= $daftarController->fetchHalamanTiket($_SESSION['user']['id_pengguna']);
+    $daftarTiket = $daftarController->fetchHalamanTiket($_SESSION['user']['id_pengguna']);
     require __DIR__ . '/app/views/tiket-saya.php';
 }
 
@@ -223,9 +223,33 @@ if ($page === 'admin/qr') {
         header('Location: ./');
         exit;
     }
-    $daftarQrEvent=$eventController->getEventByUkmID($_SESSION['user']['id_ukm']);
+    $daftarQrEvent = $eventController->getEventByUkmID($_SESSION['user']['id_ukm']);
     require __DIR__ . '/app/views/admin/qr.php';
     exit;
+}
+
+if ($page === 'admin/absensi') {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        require_once __DIR__ . '/app/controllers/AbsensiController.php';
+
+        $absensiController = new AbsensiController($pdo);
+
+        $result = $absensiController->absensi(
+            $_POST['kode_qr'],
+            $_POST['id_event']
+        );
+?>
+        <form id="redirectForm" action="?page=admin/qr" method="POST">
+            <input type="hidden" name="id_event" value="<?= htmlspecialchars($_POST['id_event']) ?>">
+        </form>
+
+        <script>
+            alert(<?= json_encode($result['message']) ?>);
+            document.getElementById('redirectForm').submit();
+        </script>
+<?php
+        exit;
+    }
 }
 
 if ($page === 'admin/laporan') {

@@ -76,4 +76,34 @@ class Tiket
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getByKodeQr($kodeQr)
+    {
+        $sql = "select id_tiket, id_event, status_bayar, check_in_at
+            from tiket
+            where kode_qr = :kode_qr";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            ':kode_qr' => $kodeQr
+        ]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function updateCheckIn($idTiket, $idPetugas)
+    {
+        $this->pdo->beginTransaction();
+        $sql = "update tiket
+            set check_in_at = now(),
+                check_in_by = :id_petugas
+            where id_tiket = :id_tiket";
+
+        $stmt = $this->pdo->prepare($sql);
+        $this->pdo->commit();
+        return $stmt->execute([
+            ':id_petugas' => $idPetugas,
+            ':id_tiket' => $idTiket
+        ]);
+    }
 }

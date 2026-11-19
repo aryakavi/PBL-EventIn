@@ -61,7 +61,18 @@ $qrAktif = $eventDipilih !== null;
                             <p class="scanner-sub">
                                 Arahkan QR Code peserta ke kamera untuk memindai tiket
                             </p>
-                            <p id="hasil-qr">Belum ada QR yang dipindai.</p>
+                            <form method="POST" action="?page=admin/absensi" id="form-scan">
+                                <input
+                                    type="hidden"
+                                    id="kode-qr"
+                                    name="kode_qr"
+                                    readonly>
+
+                                <input
+                                    type="hidden"
+                                    name="id_event"
+                                    value="<?= e($eventDipilih) ?>">
+                            </form>
                         </div>
                     </div>
 

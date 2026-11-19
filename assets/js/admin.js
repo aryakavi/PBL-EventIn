@@ -108,7 +108,13 @@
             },
           },
           function (decodedText) {
-            alert("Kode QR: " + decodedText);
+            var inputKode = document.getElementById("kode-qr");
+            var formScan = document.getElementById("form-scan");
+
+            if (inputKode && formScan) {
+              inputKode.value = decodedText;
+              formScan.submit();
+            }
           },
           function (errorMessage) {
             // QR belum terbaca.
