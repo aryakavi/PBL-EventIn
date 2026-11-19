@@ -103,17 +103,12 @@
           kamera.id,
           {
             fps: 10,
+            experimentalFeatures: {
+              useBarCodeDetectorIfSupported: false,
+            },
           },
           function (decodedText) {
-            console.log("QR BERHASIL DIBACA:", decodedText);
-
-            var hasil = document.getElementById("hasil-qr");
-
-            if (hasil) {
-              hasil.textContent = "Kode QR: " + decodedText;
-            }
-
-            console.log("Kamera masih berjalan:", scanner.isScanning);
+            alert("Kode QR: " + decodedText);
           },
           function (errorMessage) {
             // QR belum terbaca.
