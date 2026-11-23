@@ -180,6 +180,18 @@
     height: 18px;
 }
 
+.password-toggle .password-icon,
+.password-toggle .password-icon--off {
+    grid-area: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.password-toggle [hidden] {
+    display: none;
+}
+
 .password-toggle.is-visible {
     color: #1d4ed8;
 }

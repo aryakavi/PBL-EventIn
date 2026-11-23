@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '/../../../includes/admin/data.php';
-$halamanAktif = '';
+$halamanAktif = 'profil';
 
 // Jika form disimpan, perbarui data tampilan sementara lalu kembali ke mode lihat profil.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

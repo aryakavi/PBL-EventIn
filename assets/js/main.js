@@ -295,3 +295,39 @@
     window.addEventListener('hashchange', updateActive);
     updateActive();
 })();
+
+// 10. Tampilkan/sembunyikan kata sandi (tombol mata)
+(function () {
+    var toggles = document.querySelectorAll('.password-toggle[data-toggle-password]');
+
+    if (!toggles.length) {
+        return;
+    }
+
+    toggles.forEach(function (btn) {
+        var input = document.getElementById(btn.getAttribute('data-toggle-password'));
+
+        if (!input) {
+            return;
+        }
+
+        var eyeOn = btn.querySelector('.password-icon');
+        var eyeOff = btn.querySelector('.password-icon--off');
+
+        btn.addEventListener('click', function () {
+            var show = input.type === 'password';
+
+            input.type = show ? 'text' : 'password';
+            btn.classList.toggle('is-visible', show);
+            btn.setAttribute('aria-pressed', show ? 'true' : 'false');
+            btn.setAttribute('aria-label', show ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi');
+
+            if (eyeOn) {
+                eyeOn.hidden = show;
+            }
+            if (eyeOff) {
+                eyeOff.hidden = !show;
+            }
+        });
+    });
+})();

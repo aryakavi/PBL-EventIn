@@ -48,8 +48,9 @@ require __DIR__ . '/../../includes/head.php';
                                 <input type="password" id="password" name="password" placeholder="Masukkan minimal 8 karakter"
                                     autocomplete="current-password">
                                 <button class="password-toggle" type="button" data-toggle-password="password"
-                                    aria-label="Tampilkan kata sandi">
-                                    <?= icon('eye') ?>
+                                    aria-label="Tampilkan kata sandi" aria-pressed="false">
+                                    <span class="password-icon"><?= icon('eye') ?></span>
+                                    <span class="password-icon--off" hidden><?= icon('eye-off') ?></span>
                                 </button>
                             </div>
                         </div>

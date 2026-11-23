@@ -10,6 +10,7 @@ $ikon = [
     'phone'         => '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.4 2.1L8.1 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.6 1.9Z"></path>',
     'lock'          => '<circle cx="8" cy="15" r="4"></circle><path d="m11 12 9-9M17 6l2 2M14 9l2 2"></path>',
     'eye'           => '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle>',
+    'eye-off'       => '<path d="M3 3l18 18"></path><path d="M10.6 5.1A10.9 10.9 0 0 1 12 5c6.5 0 10 7 10 7a18 18 0 0 1-3.2 3.9"></path><path d="M6.6 6.6A18 18 0 0 0 2 12s3.5 7 10 7a10.9 10.9 0 0 0 5-1.2"></path><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path>',
     'arrow-right'   => '<path d="M5 12h14M13 6l6 6-6 6"></path>',
     'arrow-left'    => '<path d="M19 12H5M11 6l-6 6 6 6"></path>',
     'building'      => '<path d="M3 21h18M5 21V5a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16"></path><rect x="8" y="8" width="3" height="3" rx=".5"></rect><rect x="13" y="8" width="3" height="3" rx=".5"></rect><rect x="8" y="14" width="3" height="3" rx=".5"></rect><rect x="13" y="14" width="3" height="3" rx=".5"></rect>',

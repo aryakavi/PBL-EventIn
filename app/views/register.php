@@ -76,8 +76,9 @@ require __DIR__ . '/../../includes/head.php';
                             <input type="password" id="password" name="password" placeholder="Masukkan minimal 8 karakter"
                                 autocomplete="new-password">
                             <button class="password-toggle" type="button" data-toggle-password="password"
-                                aria-label="Tampilkan kata sandi">
-                                <?= icon('eye') ?>
+                                aria-label="Tampilkan kata sandi" aria-pressed="false">
+                                <span class="password-icon"><?= icon('eye') ?></span>
+                                <span class="password-icon--off" hidden><?= icon('eye-off') ?></span>
                             </button>
                         </div>
                     </div>
@@ -89,8 +90,9 @@ require __DIR__ . '/../../includes/head.php';
                             <input type="password" id="konfirmasi_password" name="konfirmasi_password"
                                 placeholder="Masukkan ulang minimal 8 karakter" autocomplete="new-password">
                             <button class="password-toggle" type="button" data-toggle-password="konfirmasi_password"
-                                aria-label="Tampilkan ulangi kata sandi">
-                                <?= icon('eye') ?>
+                                aria-label="Tampilkan ulangi kata sandi" aria-pressed="false">
+                                <span class="password-icon"><?= icon('eye') ?></span>
+                                <span class="password-icon--off" hidden><?= icon('eye-off') ?></span>
                             </button>
                         </div>
                     </div>

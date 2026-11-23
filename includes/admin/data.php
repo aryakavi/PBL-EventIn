@@ -21,7 +21,10 @@ $menu = [
     ['label' => 'Pembayaran', 'href' => 'pembayaran.php',  'key' => 'pembayaran'],
     ['label' => 'Qr-Checker', 'href' => 'qr.php',          'key' => 'qr'],
     ['label' => 'Laporan',    'href' => 'laporan.php',     'key' => 'laporan'],
+    ['label' => 'Profil',     'href' => 'profil.php',      'key' => 'profil',  'mobile' => true],
 ];
+
+$menuLogout = ['label' => 'Logout', 'href' => '#', 'key' => 'logout'];
 
 $kpi = [
     ['label' => 'Total Event',       'nilai' => '24',           'tren' => '+4 event baru bulan ini',     'arah' => 'up'],
