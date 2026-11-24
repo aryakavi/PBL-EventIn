@@ -37,7 +37,8 @@ class Kehadiran
         INNER JOIN ukm u on ak.id_ukm = u.id_ukm
         INNER JOIN tiket t on k.id_tiket = t.id_tiket
         INNER JOIN pengguna p on t.id_pengguna = p.id_pengguna
-        WHERE u.id_ukm = :id_ukm";
+        WHERE u.id_ukm = :id_ukm
+        LIMIT 5";
 
         $stmt=$this->pdo->prepare($sql);
         $stmt->execute([

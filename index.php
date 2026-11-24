@@ -223,8 +223,9 @@ if ($page === 'admin/qr') {
         header('Location: ./');
         exit;
     }
-    $daftarQrEvent = $eventController->getEventByUkmID($_SESSION['user']['id_ukm']);
-    require __DIR__ . '/app/views/admin/qr.php';
+    require_once __DIR__.'/app/controllers/PendaftaranController.php';
+    $pendaftaranController=new PendaftaranController($pdo);
+    $pendaftaranController->fetchHalamanTiket($_SESSION['user']['id_ukm']);
     exit;
 }
 

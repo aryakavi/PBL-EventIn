@@ -55,13 +55,13 @@ $daftarPembayaran = [
     ['id' => 'TX-100297', 'peserta' => 'Ahmad Dani',     'event' => 'Simposium Nasional AI', 'jumlah' => 'Rp 75.000', 'status' => 'Ditolak',      'metode' => 'QRIS',                         'waktu' => '20 April 2026, 16:23 WIB', 'berkas' => 'qris-bukti.jpg'],
 ];
 
-$presensiTerkini = [
-    ['inisial' => 'DA', 'nama' => 'Dani Alamsyah', 'waktu' => '10:45 WIB', 'status' => 'Hadir'],
-    ['inisial' => 'SA', 'nama' => 'Siska Amelia',  'waktu' => '10:44 WIB', 'status' => 'Hadir'],
-    ['inisial' => 'RG', 'nama' => 'Rony Gunawan',  'waktu' => '10:42 WIB', 'status' => 'Hadir'],
-    ['inisial' => 'FA', 'nama' => 'Farah Adiba',   'waktu' => '10:39 WIB', 'status' => 'Hadir'],
-    ['inisial' => 'BS', 'nama' => 'Bayu Saputra',  'waktu' => '10:35 WIB', 'status' => 'Hadir'],
-];
+// $presensiTerkini = [
+//     ['inisial' => 'DA', 'nama' => 'Dani Alamsyah', 'waktu' => '10:45 WIB', 'status' => 'Hadir'],
+//     ['inisial' => 'SA', 'nama' => 'Siska Amelia',  'waktu' => '10:44 WIB', 'status' => 'Hadir'],
+//     ['inisial' => 'RG', 'nama' => 'Rony Gunawan',  'waktu' => '10:42 WIB', 'status' => 'Hadir'],
+//     ['inisial' => 'FA', 'nama' => 'Farah Adiba',   'waktu' => '10:39 WIB', 'status' => 'Hadir'],
+//     ['inisial' => 'BS', 'nama' => 'Bayu Saputra',  'waktu' => '10:35 WIB', 'status' => 'Hadir'],
+// ];
 
 $kpiQr = [
     ['label' => 'Total Hadir',          'nilai' => '150',   'tren' => '75% tingkat kehadiran',        'arah' => 'up'],
