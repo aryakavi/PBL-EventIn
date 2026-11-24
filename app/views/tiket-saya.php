@@ -11,13 +11,13 @@ require_once __DIR__ . '/../../includes/qr.php';
  * @var array|null $pembayaranPeserta
  * @var array|null $daftarTiket
  */
+var_dump($daftarTiket);
 
 $activeNav = 'tiket';
 $base = '../../';
 // require __DIR__ . '/../../includes/data.php';
 
 $peserta = $pembayaranPeserta;
-
 // Anggap pengguna sudah login (auth asli belum tersambung) agar navbar menampilkan profil.
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -34,19 +34,16 @@ if (!isset($_SESSION['user'])) {
 $tiketTampilan = [];
 
 foreach ($daftarTiket as $t) {
-
     // Tentukan status tiket
-    if ($t['status_bayar'] !== 'Lunas') {
-        $status = 'batal';
-    } else if (
-       !isset($t['check_in_by']) == null ||
-        strtotime($t['tanggal_selesai']) < time()
+    if (
+        $t['waktu_checkin'] !== null
     ) {
         $status = 'selesai';
+    } else if (strtotime($t['tanggal_selesai']) < time() && $t['waktu_checkin'] === null) {
+        $status = 'batal';
     } else {
         $status = 'aktif';
     }
-
     $tiketTampilan[] = [
         'id'       => 'tiket-' . $t['id_tiket'],
         'kategori' => mb_strtolower($t['nama_kategori']),
@@ -84,7 +81,7 @@ foreach ($daftarTiket as $t) {
     $pageStyles = ['style.css'];
     require __DIR__ . '/../../includes/head.php';
     ?>
-    
+
 </head>
 
 <body>
@@ -131,7 +128,7 @@ foreach ($daftarTiket as $t) {
 
         <!-- Daftar Kartu Tiket -->
         <section class="ticket-list">
-            <?php foreach ($daftarTiket as $t): var_dump($t)?>
+            <?php foreach ($daftarTiket as $t): ?>
                 <article class="ticket-card<?= $t['terbuka'] ? ' is-open' : '' ?>" id="<?= e($t['id']) ?>" data-nama="<?= e(mb_strtolower($t['judul'])) ?>" data-kategori="<?= e(mb_strtolower($t['kategori'])) ?>" data-status="<?= e($t['status']) ?>">
                     <!-- Bagian Atas (Ringkasan Event) -->
                     <div class="ticket-summary">

@@ -63,11 +63,20 @@ class Tiket
 
     public function getTiketByUserID(int $id_pengguna)
     {
-        $sql = "SELECT * FROM tiket t
-        INNER JOIN pengguna p on t.id_pengguna= p.id_pengguna
-        INNER JOIN events e ON t.id_event = e.id_event
-        INNER JOIN kategori_event k ON e.id_kategori = k.id_kategori
-        WHERE t.id_pengguna = :id_pengguna";
+        $sql = "SELECT 
+    t.*,
+    kh.id_kehadiran,
+    kh.id_petugas,
+    kh.waktu_checkin,
+    p.*,
+    e.*,
+    k.nama_kategori
+    FROM tiket t
+    LEFT JOIN kehadiran kh ON t.id_tiket = kh.id_tiket
+    INNER JOIN pengguna p ON t.id_pengguna = p.id_pengguna
+    INNER JOIN events e ON t.id_event = e.id_event
+    INNER JOIN kategori_event k ON e.id_kategori = k.id_kategori
+    WHERE t.id_pengguna = :id_pengguna";
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
@@ -79,8 +88,9 @@ class Tiket
 
     public function getByKodeQr($kodeQr)
     {
-        $sql = "select id_tiket, id_event, status_bayar, check_in_at
-            from tiket
+        $sql = "select t.id_tiket, t.id_event, t.status_bayar, k.waktu_checkin
+            from tiket t
+            left join kehadiran k on k.id_tiket = t.id_tiket
             where kode_qr = :kode_qr";
 
         $stmt = $this->pdo->prepare($sql);
@@ -89,21 +99,5 @@ class Tiket
         ]);
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    public function updateCheckIn($idTiket, $idPetugas)
-    {
-        $this->pdo->beginTransaction();
-        $sql = "update tiket
-            set check_in_at = now(),
-                check_in_by = :id_petugas
-            where id_tiket = :id_tiket";
-
-        $stmt = $this->pdo->prepare($sql);
-        $this->pdo->commit();
-        return $stmt->execute([
-            ':id_petugas' => $idPetugas,
-            ':id_tiket' => $idTiket
-        ]);
     }
 }

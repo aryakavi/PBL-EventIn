@@ -44,7 +44,7 @@ class AbsensiController
         }
 
         // Periksa apakah tiket sudah pernah check-in.
-        if ($tiket['check_in_at'] !== null) {
+        if ($tiket['waktu_checkin'] !== null) {
             return [
                 'success' => false,
                 'message' => 'Tiket ini sudah melakukan check-in.'
@@ -52,11 +52,6 @@ class AbsensiController
         }
 
         try {
-            // Update waktu check-in pada tabel tiket.
-            $this->tiketModel->updateCheckIn(
-                $tiket['id_tiket'],
-                $idPetugas
-            );
 
             // Insert data ke tabel kehadiran.
             $this->kehadiranModel->insert(
