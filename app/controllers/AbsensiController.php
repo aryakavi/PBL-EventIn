@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__.'/../models/Tiket.php';
-require_once __DIR__.'/../models/Kehadiran.php';
+require_once __DIR__ . '/../models/Tiket.php';
+require_once __DIR__ . '/../models/Kehadiran.php';
 
 class AbsensiController
 {
@@ -48,6 +48,14 @@ class AbsensiController
             return [
                 'success' => false,
                 'message' => 'Tiket ini sudah melakukan check-in.'
+            ];
+        }
+
+        // Periksa apakah event sudah melewati waktu selesai.
+        if (strtotime($tiket['tanggal_selesai']) < time()) {
+            return [
+                'success' => false,
+                'message' => 'Tiket ini sudah melewati waktu event.'
             ];
         }
 

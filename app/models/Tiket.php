@@ -88,9 +88,10 @@ class Tiket
 
     public function getByKodeQr($kodeQr)
     {
-        $sql = "select t.id_tiket, t.id_event, t.status_bayar, k.waktu_checkin
+        $sql = "select t.id_tiket, t.id_event, t.status_bayar, k.waktu_checkin, e.tanggal_selesai
             from tiket t
             left join kehadiran k on k.id_tiket = t.id_tiket
+            inner join events e on t.id_event = e.id_event
             where kode_qr = :kode_qr";
 
         $stmt = $this->pdo->prepare($sql);

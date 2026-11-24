@@ -11,7 +11,6 @@ require_once __DIR__ . '/../../includes/qr.php';
  * @var array|null $pembayaranPeserta
  * @var array|null $daftarTiket
  */
-var_dump($daftarTiket);
 
 $activeNav = 'tiket';
 $base = '../../';
