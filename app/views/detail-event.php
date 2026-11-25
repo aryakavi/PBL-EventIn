@@ -11,8 +11,6 @@ if (isset($ev)) {
 
     require_once __DIR__ . '/../../includes/data.php';
 
-    $peserta = $pembayaranPeserta;
-
 ?>
     <!DOCTYPE html>
     <html lang="id">

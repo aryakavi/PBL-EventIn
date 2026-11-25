@@ -147,11 +147,19 @@ if ($page === 'detail_event') {
 }
 
 if ($page === 'pembayaran') {
-    // if (!isset($_POST['id_event'])) {
-    //     header('Location: ?page=home');
-    //     exit;
-    // }
+    require_once __DIR__ . '/app/controllers/PembayaranController.php';
+
+    $pembayaranController = new Pembayaran($pdo);
+
+    $dataPembayaran = $pembayaranController->fetchHalamanPembayaran(
+        (int) $_POST['id_event']
+    );
+
+    $ringkasanPesanan = $dataPembayaran['ringkasanPesanan'];
+    $rekInfo = $dataPembayaran['rekInfo'];
+
     require __DIR__ . '/app/views/pembayaran.php';
+    exit;
 }
 
 if ($page === 'konfirmasi_pembayaran') {
@@ -225,7 +233,7 @@ if ($page === 'admin/qr') {
     }
     require_once __DIR__.'/app/controllers/PendaftaranController.php';
     $pendaftaranController=new PendaftaranController($pdo);
-    $pendaftaranController->fetchHalamanTiket($_SESSION['user']['id_ukm']);
+    $pendaftaranController->fetchHalamanQr($_SESSION['user']['id_ukm']);
     exit;
 }
 

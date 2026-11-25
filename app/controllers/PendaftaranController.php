@@ -49,15 +49,13 @@ class PendaftaranController
         ];
     }
 
-    public function fetchHalamanTiket($id_ukm)
+    public function fetchHalamanTiket(int $id_pengguna)
     {
-        //         $presensiTerkini = [
-        //     ['inisial' => 'DA', 'nama' => 'Dani Alamsyah', 'waktu' => '10:45 WIB', 'status' => 'Hadir'],
-        //     ['inisial' => 'SA', 'nama' => 'Siska Amelia',  'waktu' => '10:44 WIB', 'status' => 'Hadir'],
-        //     ['inisial' => 'RG', 'nama' => 'Rony Gunawan',  'waktu' => '10:42 WIB', 'status' => 'Hadir'],
-        //     ['inisial' => 'FA', 'nama' => 'Farah Adiba',   'waktu' => '10:39 WIB', 'status' => 'Hadir'],
-        //     ['inisial' => 'BS', 'nama' => 'Bayu Saputra',  'waktu' => '10:35 WIB', 'status' => 'Hadir'],
-        // ];
+        return $this->tiketModel->getTiketByUserID($id_pengguna);
+    }
+
+    public function fetchHalamanQr($id_ukm)
+    {
         $daftarQrEvent = $this->eventModel->getEventByIdUkm($id_ukm);
         $presensi = $this->kehadiranModel->getLatestPerUkm($id_ukm);
         $presensiTerkini = [];
@@ -70,9 +68,9 @@ class PendaftaranController
             $jam = date('H:i', strtotime($p['waktu_checkin']));
             $presensiTerkini[] = [
                 'inisial' => $inisial,
-                'nama'=>$p['nama'],
-                'waktu'=>$jam,
-                'status'=>'Hadir'
+                'nama' => $p['nama'],
+                'waktu' => $jam,
+                'status' => 'Hadir'
             ];
         }
         require __DIR__ . '/../views/admin/qr.php';

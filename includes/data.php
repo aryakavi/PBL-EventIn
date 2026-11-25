@@ -159,12 +159,6 @@ $footerNav     = ['Beranda', 'Jelajah Event', 'Mitra Kampus'];
 $footerSupport = ['Pusat Bantuan', 'Syarat & Ketentuan', 'Kebijakan Privasi'];
 $socials       = ['Fb', 'Ig', 'X', 'In'];
 
-$pembayaranPeserta = [
-    'nama'    => 'Aryakavi',
-    'role'    => 'PESERTA',
-    'inisial' => 'A',
-];
-
 $ringkasanPesanan = [
     'judul'    => 'Workshop Pembuatan Aplikasi Seluler Tanpa Kode (No-Code App)',
     'tiket'    => '1x Tiket Akses Mandiri Utama',

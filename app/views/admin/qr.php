@@ -1,8 +1,17 @@
 <?php
+if (!isset($_SESSION['user'])) {
+    header('Location: ?page=login');
+    exit;
+}
+
+if ($_SESSION['user']['role'] !== 'admin') {
+    http_response_code(403);
+    header('Location: ./');
+    exit;
+}
 require __DIR__ . '/../../../includes/admin/data.php';
 require __DIR__ . '/../../../includes/icons.php';
 $halamanAktif = 'qr';
-var_dump($presensi);
 
 $eventDipilih = isset($_POST['event']) && $_POST['event'] !== ''
     ? (int) $_POST['event']

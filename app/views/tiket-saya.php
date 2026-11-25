@@ -5,30 +5,31 @@ if (!isset($_SESSION['user'])) {
 }
 require __DIR__ . '/../../includes/icons.php';
 require_once __DIR__ . '/../../includes/qr.php';
+require_once __DIR__.'/../../includes/data.php';
+
 /**
  * Variabel yang dikirim dari index.php
  *
  * @var array|null $pembayaranPeserta
+ * @var array|null $daftarTiket
  * @var array|null $daftarTiket
  */
 
 $activeNav = 'tiket';
 $base = '../../';
 // require __DIR__ . '/../../includes/data.php';
-
-$peserta = $pembayaranPeserta;
 // Anggap pengguna sudah login (auth asli belum tersambung) agar navbar menampilkan profil.
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-if (!isset($_SESSION['user'])) {
-    $_SESSION['user'] = [
-        'id_pengguna' => 1,
-        'nama'        => $pembayaranPeserta['nama'],
-        'email'       => '',
-        'role'        => $pembayaranPeserta['role'],
-    ];
-}
+// if (!isset($_SESSION['user'])) {
+//     $_SESSION['user'] = [
+//         'id_pengguna' => 1,
+//         'nama'        => $pembayaranPeserta['nama'],
+//         'email'       => '',
+//         'role'        => $pembayaranPeserta['role'],
+//     ];
+// }
 
 $tiketTampilan = [];
 
@@ -63,7 +64,6 @@ foreach ($daftarTiket as $t) {
 }
 
 $daftarTiket = $tiketTampilan;
-
 $jmlStatus = ['aktif' => 0, 'selesai' => 0, 'batal' => 0];
 foreach ($daftarTiket as $t) {
     $jmlStatus[$t['status']]++;
@@ -119,8 +119,9 @@ foreach ($daftarTiket as $t) {
                 </div>
                 <select class="filter-select ticket-cat-select" aria-label="Filter Kategori" data-ticket-cat>
                     <option value="">Semua Kategori</option>
-                    <option value="workshop">Workshop</option>
-                    <option value="seminar">Seminar</option>
+                 <?php foreach ($categories as $c) {?>
+                    <option value="<?= strtolower($c['nama_kategori']) ?>"><?= $c['nama_kategori'] ?></option>
+                 <?php } ?>
                 </select>
             </div>
         </div>

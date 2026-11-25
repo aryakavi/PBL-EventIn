@@ -65,7 +65,7 @@ class Event
     {
         $sql = "SELECT e.id_event, e.nama_event, e.tanggal_mulai,
         e.tanggal_selesai, e.lokasi,e.deskripsi, e.harga,
-        e.poster, e.kuota, u.nama_ukm, u.singkatan, u.logo, 
+        e.poster, e.kuota, u.id_ukm, u.nama_ukm, u.singkatan, u.logo, 
         us.nama, us.no_hp
         FROM events e
         JOIN admin_ukm ak ON e.id_pembuat = ak.id_admin_ukm

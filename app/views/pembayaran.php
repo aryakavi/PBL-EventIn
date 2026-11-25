@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../includes/data.php';
 if (!isset($_SESSION['user'])) {
     header('Location: ?page=login');
     exit;
@@ -11,26 +12,27 @@ $base = '../../';
  *
  * @var array|null $pembayaranPeserta
  * @var array|null $ringkasanPesanan
+ * @var array|null $rekInfo
  */
 
 // Gunakan ?mode=midtrans di URL jika ingin melihat tampilan Midtrans (tanpa upload bukti & tanpa QR manual)
 $isMidtrans = isset($_GET['mode']) && $_GET['mode'] === 'midtrans';
 
-$peserta  = $pembayaranPeserta;
+// $peserta  = $pembayaranPeserta;
 $ringkasan = $ringkasanPesanan;
 
 // Anggap pengguna sudah login (auth asli belum tersambung) agar navbar menampilkan profil.
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-if (!isset($_SESSION['user'])) {
-    $_SESSION['user'] = [
-        'id_pengguna' => 1,
-        'nama'        => $pembayaranPeserta['nama'],
-        'email'       => '',
-        'role'        => $pembayaranPeserta['role'],
-    ];
-}
+// if (!isset($_SESSION['user'])) {
+//     $_SESSION['user'] = [
+//         'id_pengguna' => 1,
+//         'nama'        => $pembayaranPeserta['nama'],
+//         'email'       => '',
+//         'role'        => $pembayaranPeserta['role'],
+//     ];
+// }
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -70,21 +72,21 @@ if (!isset($_SESSION['user'])) {
             <div class="checkout-left">
                 <section class="checkout-card">
                     <h2 class="checkout-card-title">Pilih Metode Pembayaran</h2>
-
+                    
                     <div class="method-list">
                         <!-- Opsi 1: Transfer Bank Terbuka -->
-                        <label class="method-option is-selected" data-method="bank">
+                        <label class="method-option is-selected" data-method="upload">
                             <div class="method-header">
                                 <div class="method-info">
-                                    <span class="method-badge">Bank</span>
-                                    <span class="method-name">Transfer Bank Terbuka</span>
+                                    <span class="method-badge">Upload</span>
+                                    <span class="method-name">Upload Bukti Pembayaran</span>
                                 </div>
                                 <input type="radio" name="metode" value="bank" class="method-radio" checked>
                             </div>
                         </label>
 
                         <!-- Opsi 2: E-Wallet -->
-                        <label class="method-option" data-method="wallet">
+                        <!-- <label class="method-option" data-method="wallet">
                             <div class="method-header">
                                 <div class="method-info">
                                     <span class="method-badge">Wallet</span>
@@ -92,7 +94,7 @@ if (!isset($_SESSION['user'])) {
                                 </div>
                                 <input type="radio" name="metode" value="wallet" class="method-radio">
                             </div>
-                        </label>
+                        </label> -->
 
                         <!-- Opsi 3: QRIS Mandiri -->
                         <label class="method-option" data-method="qris">
@@ -119,7 +121,27 @@ if (!isset($_SESSION['user'])) {
 
                 <?php if (!$isMidtrans): ?>
                     <!-- Card Upload Bukti Pembayaran (Hanya di mode non-midtrans) -->
-                    <section class="checkout-card">
+                    <section class="checkout-card" id="rek-box">
+                        <h2 class="checkout-card-title">Informasi Rekening Pembayaran</h2>
+
+                        <div class="summary-rows">
+                            <div class="summary-row">
+                                <span class="muted">Platform Transfer</span>
+                                <strong><?= $rekInfo['platform'] ?></strong>
+                            </div>
+
+                            <div class="summary-row">
+                                <span class="muted">Nomor Rekening</span>
+                                <strong><?= $rekInfo['nomor'] ?></strong>
+                            </div>
+
+                            <div class="summary-row">
+                                <span class="muted">Atas Nama</span>
+                                <strong><?= $rekInfo['nama_akun'] ?></strong>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="checkout-card" id="upload-bukti">
                         <h2 class="checkout-card-title">Upload Bukti Pembayaran</h2>
                         <label for="bukti_bayar" class="file-input-box">
                             <span id="file-label-text">Upload File</span>
@@ -145,19 +167,14 @@ if (!isset($_SESSION['user'])) {
                     <div class="summary-rows">
                         <div class="summary-row">
                             <span class="muted">Subtotal Tiket</span>
-                            <span class="summary-price"><?= e($ringkasan['subtotal']) ?></span>
-                        </div>
-                        <div class="summary-row">
-                            <span class="muted">Biaya Administrasi</span>
-                            <span class="summary-price"><?= e($ringkasan['admin']) ?></span>
+                            <span class="summary-price">Rp.<?= e(format_angka($ringkasan['subtotal'])) ?></span>
                         </div>
                     </div>
 
                     <hr class="summary-divider">
-
                     <div class="summary-total">
                         <strong>Total Pembayaran</strong>
-                        <strong class="total-amount"><?= e($ringkasan['total']) ?></strong>
+                        <strong class="total-amount">Rp.<?= e(format_angka($ringkasan['total'])) ?></strong>
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-block">Bayar Sekarang</button>
